@@ -34,6 +34,14 @@ return {
             j = "<Esc>",
           },
         },
+        s = { -- select mode
+          j = {
+            k = "<Esc>",
+          },
+          k = {
+            j = "<Esc>",
+          },
+        },
         c = { -- command mode
           j = {
             k = "<Esc>",

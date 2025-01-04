@@ -17,17 +17,11 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
-      -- ::Manually Setting::
-      -- local lspconfig = require("lspconfig")
-      -- lspconfig.lua_ls.setup({})
-      -- lspconfig.ts_ls.setup({})
-
-      -- ::Automatically Setting::
       local lspconfig = require("lspconfig")
       local mason_lspconfig = require("mason-lspconfig")
-      local keymaps = require("config.keymaps")
 
----@diagnostic disable-next-line: unused-local
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      local keymaps = require("config.keymaps")
       local on_attach = function(client, bufnr)
         -- 假設對 tsserver 禁用格式化
         -- if client.name == "tsserver" then
@@ -40,6 +34,7 @@ return {
         function(server_name)
           lspconfig[server_name].setup({
             on_attach = on_attach,
+            capabilities = capabilities,
           })
         end,
         -- ::Specific LSP Setting::
