@@ -2,43 +2,75 @@ local M = {}
 local opts = { noremap = true, silent = true }
 
 M.general = function()
-  -- using 'jk' as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in 'better-escape' module
+  -- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
+  vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+
+  -- yank to and paste from system clipboard
+  vim.keymap.set('n', '<leader>y', '"+y', { silent = true })
+  vim.keymap.set('v', '<leader>y', '"+y', { silent = true })
+  vim.keymap.set('n', '<leader>p', '"+p', { silent = true })
+  vim.keymap.set('v', '<leader>p', '"+p', { silent = true })
+
+  -- increment/decrement numbers
+  vim.keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
+  vim.keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
+
+  -- window management
+  vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })               -- split window vertically
+  vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })             -- split window horizontally
+  vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })                -- make split windows equal width & height
+  vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current split" })               -- close current split window
+
+  vim.keymap.set("n", "<leader>to", ":tabnew<CR>", { desc = "Open new tab" })                     -- open new tab
+  vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab" })              -- close current tab
+  vim.keymap.set("n", "<leader>tn", ":tabn<CR>", { desc = "Go to next tab" })                     --  go to next tab
+  vim.keymap.set("n", "<leader>tp", ":tabp<CR>", { desc = "Go to previous tab" })                 --  go to previous tab
+  vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 end
 
 M.lsp = function(bufnr)
   local bufopts = { noremap = true, silent = true, buffer = bufnr }
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
-  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+  local function with_desc(desc)
+    return vim.tbl_extend("force", bufopts, { desc = desc })
+  end
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
+  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
+  vim.keymap.set("n", "gd", vim.lsp.buf.definition, with_desc("Go to definition"))
+  vim.keymap.set("n", "gi", vim.lsp.buf.implementation, with_desc("Go to implementation"))
+  vim.keymap.set("n", "gr", vim.lsp.buf.references, with_desc("List references"))
+  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
+  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
+  vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, with_desc("Type definition"))
 end
 
 M.neo_tree = function()
   local function custom_toggle_neo_tree()
-    -- 找到所有 Neo-tree 視窗
-    local neo_tree_wins = {}
-    for _, win in pairs(vim.api.nvim_list_wins()) do
+    -- 獲取當前的 Tab 頁索引
+    local current_tab = vim.api.nvim_get_current_tabpage()
+
+    -- 獲取當前 Tab 的所有窗口
+    local tab_wins = vim.api.nvim_tabpage_list_wins(current_tab)
+    local neo_tree_win = nil
+
+    -- 找到當前 Tab 中的 Neo-tree 窗口
+    for _, win in ipairs(tab_wins) do
       local buf = vim.api.nvim_win_get_buf(win)
       local buf_name = vim.api.nvim_buf_get_name(buf)
       if buf_name:match("neo%-tree filesystem") then
-        table.insert(neo_tree_wins, win)
+        neo_tree_win = win
+        break
       end
     end
 
-    -- 檢查 Neo-tree 狀態
-    if #neo_tree_wins > 0 then
-      -- Neo-tree 已開啟
+    if neo_tree_win then
+      -- Neo-tree 在當前 Tab 中已打開，切換到該窗口或關閉
       local current_win = vim.api.nvim_get_current_win()
-      if vim.tbl_contains(neo_tree_wins, current_win) then
+      if neo_tree_win == current_win then
         -- 當前在 Neo-tree 視窗中，關閉它
         vim.cmd("silent Neotree close")
       else
-        -- 當前不在 Neo-tree 視窗中，切換到它
-        vim.api.nvim_set_current_win(neo_tree_wins[1])
+        -- 切換到 Neo-tree 視窗
+        vim.api.nvim_set_current_win(neo_tree_win)
       end
     else
       -- Neo-tree 未開啟，打開它
@@ -46,15 +78,25 @@ M.neo_tree = function()
     end
   end
 
-  vim.keymap.set('n', '<C-j>', ':Neotree toggle<CR>', {})
-  vim.keymap.set('n', '<leader>j', custom_toggle_neo_tree, { desc = "Custom toggle Neo-tree" })
+  vim.keymap.set("n", "<C-j>", ":Neotree toggle<cr>", {})
+  vim.keymap.set("n", "<leader>j", custom_toggle_neo_tree, { desc = "Toggle Neo-tree" })
 end
 
+
 M.telescope = function()
-  local builtin = require('telescope.builtin')
-  vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-  vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-  vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-  vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+  local builtin = require("telescope.builtin")
+  vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Fuzzy find files in cwd" })
+  vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
+  vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
+  vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
+  vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+  vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos" })
 end
+
+M.auto_session = function()
+  vim.keymap.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for root dir" })
+  vim.keymap.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" })
+end
+
 return M

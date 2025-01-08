@@ -19,12 +19,9 @@ require("lazy").setup({
   spec = {
     { import = "plugins" },
   },
+  change_detection = {
+    notify = false,
+  },
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "catppuccin" } },
 })
-
-vim.keymap.set('n', '<leader>y', '"+y', { silent = true })
-vim.keymap.set('v', '<leader>y', '"+y', { silent = true })
-vim.keymap.set('n', '<leader>p', '"+p', { silent = true })
-vim.keymap.set('v', '<leader>p', '"+p', { silent = true })
-vim.keymap.set('n', '<esc>', ":noh<cr>", { silent = true })
