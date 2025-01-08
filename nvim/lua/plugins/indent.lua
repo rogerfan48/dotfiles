@@ -1,10 +1,11 @@
 return {
   {
     "lukas-reineke/indent-blankline.nvim",
-    version = "*",
+    event = { "BufReadPre", "BufNewFile" },
+    main = "ibl",
     config = function()
       require("ibl").setup {
-        indent = { char = "│" },
+        indent = { char = "┊" },
         scope = {
           enabled = true,
           show_start = true,
@@ -22,7 +23,7 @@ return {
     version = "*",
     config = function()
       require("mini.indentscope").setup {
-        symbol = "│",
+        symbol = "┊",
         draw = {
           delay = 10,
           animation = require("mini.indentscope").gen_animation.none(),

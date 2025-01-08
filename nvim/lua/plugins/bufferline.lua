@@ -10,7 +10,7 @@ return {
         mode = "tabs",
         max_name_length = 30,
         max_prefix_length = 20,
-        tab_size = 21,
+        tab_size = 18,
         style_preset = bufferline.style_preset.no_italic,
         offsets = {
           {

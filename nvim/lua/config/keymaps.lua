@@ -16,16 +16,18 @@ M.general = function()
   vim.keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
 
   -- window management
-  vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })               -- split window vertically
-  vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })             -- split window horizontally
-  vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })                -- make split windows equal width & height
-  vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current split" })               -- close current split window
+  vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })
+  vim.keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })
+  vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })
+  vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current split", silent = true })
+  vim.keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>", { desc = "Max/min a split", silent = true })
 
-  vim.keymap.set("n", "<leader>to", ":tabnew<CR>", { desc = "Open new tab" })                     -- open new tab
-  vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab" })              -- close current tab
-  vim.keymap.set("n", "<leader>tn", ":tabn<CR>", { desc = "Go to next tab" })                     --  go to next tab
-  vim.keymap.set("n", "<leader>tp", ":tabp<CR>", { desc = "Go to previous tab" })                 --  go to previous tab
-  vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+  vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "Open new tab", silent = true })
+  vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab", silent = true })
+  vim.keymap.set("n", "<tab>", ":tabn<CR>", { desc = "Go to next tab", silent = true })
+  vim.keymap.set("n", "<S-tab>", ":tabp<CR>", { desc = "Go to previous tab", silent = true })
+  vim.keymap.set("n", "<leader>tp", ":BufferLinePick<CR>", { desc = "Pick tab", silent = true })
+  vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab", silent = true })
 end
 
 M.lsp = function(bufnr)
@@ -98,5 +100,12 @@ M.auto_session = function()
   vim.keymap.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for root dir" })
   vim.keymap.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" })
 end
+
+M.treesitter = {
+  init_selection = "<C-space>",
+  node_incremental = "<C-space>",
+  scope_incremental = false,
+  node_decremental = "<bs>",
+}
 
 return M
