@@ -5,7 +5,7 @@ M.general = function()
   -- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
   vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
-  vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) "})
+  vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) " })
   vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit NeoVim (:qa)" })
 
   -- yank to and paste from system clipboard
@@ -37,19 +37,27 @@ M.general = function()
   -- 'gc' + motion.   ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 end
 
-M.lsp = function(bufnr)
-  local bufopts = { noremap = true, silent = true, buffer = bufnr }
-  local function with_desc(desc)
-    return vim.tbl_extend("force", bufopts, { desc = desc })
-  end
-  vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
-  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition, with_desc("Go to definition"))
-  vim.keymap.set("n", "gi", vim.lsp.buf.implementation, with_desc("Go to implementation"))
-  vim.keymap.set("n", "gr", vim.lsp.buf.references, with_desc("List references"))
-  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
-  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
-  vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, with_desc("Type definition"))
+M.lsp = function()
+  vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+    callback = function(ev)
+      local bufopts = { noremap = true, silent = true, buffer = ev.buf }
+      local function with_desc(desc)
+        return vim.tbl_extend("force", bufopts, { desc = desc })
+      end
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
+      vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, with_desc("Go to definition"))
+      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, with_desc("Go to implementation"))
+      vim.keymap.set("n", "gr", vim.lsp.buf.references, with_desc("List references"))
+      vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, with_desc("Type definition"))
+      vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
+      vim.keymap.set("n", "]d", vim.diagnostic.goto_next, with_desc("Go to next diagnostic"))
+      vim.keymap.set("n", "[d", vim.diagnostic.goto_next, with_desc("Go to previous diagnostic"))
+      vim.keymap.set("n", "<leader>rs", ":LspRestart<CR>", with_desc("Restart LSP"))
+    end,
+  })
 end
 
 M.neo_tree = function()
@@ -115,10 +123,25 @@ M.treesitter = {
   node_decremental = "<bs>",
 }
 
-M.todo_comments = function ()
+M.todo_comments = function()
   local todo_comments = require("todo-comments")
   vim.keymap.set("n", "]t", function() todo_comments.jump_next() end, { desc = "Next todo comment" })
   vim.keymap.set("n", "[t", function() todo_comments.jump_prev() end, { desc = "Previous todo comment" })
 end
+
+M.substitute = function()
+  local substitute = require("substitute")
+  vim.keymap.set("n", "s", substitute.operator, { desc = "Substitute with motion" })
+  vim.keymap.set("n", "ss", substitute.line, { desc = "Substitute line" })
+  vim.keymap.set("n", "S", substitute.eol, { desc = "Substitute to end of line" })
+  vim.keymap.set("x", "s", substitute.visual, { desc = "Substitute in visual mode" })
+end
+
+-- surround:
+-- ys + motion + symbol: add surrounding
+-- ds + symbol: delete surrounding
+-- cs + ori_symbol + new_symbol: change symbol
+-- symbol: ', ", (, [, {, t, f
+--                        (t=tag, f=function)
 
 return M

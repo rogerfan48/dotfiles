@@ -9,7 +9,7 @@ return {
   },
   lazy = false,
   config = function()
-    local keymaps = require("config.keymaps")
+    local keymaps = require("roger.core.keymaps")
     keymaps.neo_tree()
 
     local function open_and_maybe_close(state, close)

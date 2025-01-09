@@ -6,7 +6,7 @@ return {
     "windwp/nvim-ts-autotag",
   },
   config = function()
-    local keymaps = require("config.keymaps")
+    local keymaps = require("roger.core.keymaps")
     local configs = require("nvim-treesitter.configs")
     configs.setup({
       auto_install = true,

@@ -15,13 +15,16 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup({
-  spec = {
-    { import = "plugins" },
+require("lazy").setup(
+  {
+    { import = "roger.plugins" },
+    { import = "roger.plugins.lsp" },
   },
-  change_detection = {
-    notify = false,
-  },
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "catppuccin" } },
-})
+  {
+    change_detection = {
+      notify = false,
+    },
+    -- colorscheme that will be used when installing plugins.
+    install = { colorscheme = { "catppuccin" } },
+  }
+)

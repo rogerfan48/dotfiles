@@ -9,7 +9,7 @@ return {
       'folke/trouble.nvim',
     },
     config = function()
-      local keymaps = require("config.keymaps")
+      local keymaps = require("roger.core.keymaps")
       keymaps.telescope()
 
       local telescope = require("telescope")
