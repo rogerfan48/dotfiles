@@ -5,6 +5,9 @@ M.general = function()
   -- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
   vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
+  vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) "})
+  vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit NeoVim (:qa)" })
+
   -- yank to and paste from system clipboard
   vim.keymap.set('n', '<leader>y', '"+y', { silent = true })
   vim.keymap.set('v', '<leader>y', '"+y', { silent = true })
@@ -22,12 +25,16 @@ M.general = function()
   vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current split", silent = true })
   vim.keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>", { desc = "Max/min a split", silent = true })
 
+  -- tab management
   vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "Open new tab", silent = true })
   vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab", silent = true })
   vim.keymap.set("n", "<tab>", ":tabn<CR>", { desc = "Go to next tab", silent = true })
   vim.keymap.set("n", "<S-tab>", ":tabp<CR>", { desc = "Go to previous tab", silent = true })
   vim.keymap.set("n", "<leader>tp", ":BufferLinePick<CR>", { desc = "Pick tab", silent = true })
   vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab", silent = true })
+
+  -- from comment.lua
+  -- 'gc' + motion.   ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 end
 
 M.lsp = function(bufnr)
@@ -87,7 +94,7 @@ end
 
 M.telescope = function()
   local builtin = require("telescope.builtin")
-  vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Fuzzy find files in cwd" })
+  vim.keymap.set("n", "<leader>fj", builtin.find_files, { desc = "Fuzzy find files in cwd" })
   vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
   vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
   vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
@@ -107,5 +114,11 @@ M.treesitter = {
   scope_incremental = false,
   node_decremental = "<bs>",
 }
+
+M.todo_comments = function ()
+  local todo_comments = require("todo-comments")
+  vim.keymap.set("n", "]t", function() todo_comments.jump_next() end, { desc = "Next todo comment" })
+  vim.keymap.set("n", "[t", function() todo_comments.jump_prev() end, { desc = "Previous todo comment" })
+end
 
 return M

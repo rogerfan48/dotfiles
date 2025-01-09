@@ -15,7 +15,7 @@ vim.o.autoindent = true
 vim.o.ignorecase = true -- ignore case when searching
 vim.o.smartcase = true -- if you include mixed case in your search, assumes you want case-sensitive
 
--- turn on termguicolors for tokyonight colorscheme to work
+-- turn on termguicolors for colorscheme to work
 -- (have to use iterm2 or any other true color terminal)
 vim.o.termguicolors = true
 vim.o.background = "dark" -- colorschemes that can be light or dark will be made dark

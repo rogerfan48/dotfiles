@@ -12,6 +12,7 @@ return {
         max_prefix_length = 20,
         tab_size = 18,
         style_preset = bufferline.style_preset.no_italic,
+        show_close_icon = false,
         offsets = {
           {
             filetype = "neo-tree",

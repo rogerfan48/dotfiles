@@ -26,13 +26,6 @@ return {
 
     require("neo-tree").setup({
       close_if_last_window = true,
-      window = {
-        mappings = {
-          ["c"] = "close_node",
-          ["C"] = "close_all_nodes",
-          ["b"] = "rename_basename",
-        },
-      },
       filesystem = {
         follow_current_file = {
           enabled = true,
@@ -51,6 +44,10 @@ return {
       window = {
         width = 40,
         mappings = {
+          ["C"] = "close_node",
+          ["Z"] = "close_all_nodes",
+          ["z"] = "expand_all_nodes",
+          -- ["b"] = "rename_basename",
           ["<cr>"] = function(state)
             open_and_maybe_close(state, false)
           end,
