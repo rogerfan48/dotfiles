@@ -25,11 +25,12 @@ return {
 				json = { "prettier" },
 				yaml = { "prettier" },
 			},
-			format_on_save = {
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 1000,
-			},
+			format_on_save = false,
+			--    {
+			-- 	lsp_fallback = true,
+			-- 	async = false,
+			-- 	timeout_ms = 1000,
+			-- },
 		})
 	end,
 }

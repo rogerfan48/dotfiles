@@ -7,14 +7,19 @@ return {
 
 		local lint = require("lint")
 		lint.linters = {
-			clangtidy = {
-				name = "clangtidy",
-				cmd = "clang-tidy",
-				args = { "--quiet" },
+			cppcheck = {
+				name = "cppcheck",
+				cmd = "cppcheck",
+				args = {
+					"--enable=all", -- 啟用所有檢查
+					"--std=c++17", -- 指定 C++ 標準
+					"--inconclusive", -- 啟用不確定檢查
+					"--template=gcc", -- 輸出格式類似 GCC
+					"--suppress=missingInclude", -- 忽略頭文件錯誤
+					vim.fn.expand("%:p"), -- 當前文件的完整路徑
+				},
 				stdin = false,
-				append_fname = true,
-				ignore_exitcode = true,
-				parser = require("lint.parser").from_errorformat([[%f:%l:%c: %tarning: %m;%f:%l:%c: %trror: %m]], {}),
+				parser = require("lint.parser").from_errorformat([[ %f:%l:%c: %m ]], { source = "cppcheck" }),
 			},
 			dartanalyzer = {
 				name = "dartanalyzer",
@@ -28,8 +33,8 @@ return {
 		}
 		lint.linters_by_ft = {
 			-- lua = {},
-			c = { "clangtidy" },
-			cpp = { "clangtidy" },
+			c = { "cppcheck" },
+			cpp = { "cppcheck" },
 			-- html = {},
 			-- css = {},
 			-- scss = {},

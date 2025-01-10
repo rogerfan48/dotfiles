@@ -41,6 +41,11 @@ M.lsp = function()
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 		callback = function(ev)
+			local client = vim.lsp.get_client_by_id(ev.data.client_id)
+			if client then
+				vim.notify("LSP " .. client.name .. " attached to buffer " .. ev.buf, vim.log.levels.INFO)
+			end
+
 			local bufopts = { noremap = true, silent = true, buffer = ev.buf }
 			local function with_desc(desc)
 				return vim.tbl_extend("force", bufopts, { desc = desc })

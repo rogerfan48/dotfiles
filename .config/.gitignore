@@ -1,8 +1,11 @@
 *
-!.config/
-!.zshrc
-!.p10k.zsh
-!.rogerrc
+!nvim/
+!tmux/
+
+!nvim/**
+!tmux/**
+tmux/plugins/**
+!.gitignore
 
 .DS_Store
 ._.DS_Store

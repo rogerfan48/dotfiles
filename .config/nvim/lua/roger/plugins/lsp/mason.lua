@@ -38,7 +38,7 @@ return {
 				"latexindent", -- LaTeX
 
 				-- Linters
-				-- "clangtidy", -- C/C++
+				-- "cppcheck", -- C/C++
 				"eslint_d", -- JavaScript/TypeScript, React.js
 				"pylint", -- Python
 				-- "dartanalyzer", -- Dart
