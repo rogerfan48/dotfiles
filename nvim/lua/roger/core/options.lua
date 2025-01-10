@@ -5,11 +5,19 @@ vim.o.relativenumber = true
 vim.o.number = true
 vim.o.cursorline = true
 
+vim.o.expandtab = true
+vim.o.autoindent = true
 vim.o.tabstop = 2
 vim.o.softtabstop = 2
 vim.o.shiftwidth = 2
-vim.o.expandtab = true
-vim.o.autoindent = true
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c", "cpp", "python" },
+	callback = function()
+		vim.opt_local.tabstop = 4
+		vim.opt_local.shiftwidth = 4
+		vim.opt_local.softtabstop = 4
+	end,
+})
 
 -- search settings
 vim.o.ignorecase = true -- ignore case when searching
