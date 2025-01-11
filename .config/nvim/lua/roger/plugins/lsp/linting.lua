@@ -6,30 +6,52 @@ return {
 		keymaps.linting()
 
 		local lint = require("lint")
+		local lp = require("lint.parser")
+		local function create_linter_config(config)
+			return vim.tbl_extend("force", {
+				stdin = false,
+				stream = "both",
+			}, config)
+		end
+		lint.debug = true
 		lint.linters = {
-			cppcheck = {
+			cppcheck = create_linter_config({
 				name = "cppcheck",
 				cmd = "cppcheck",
 				args = {
 					"--enable=all", -- 啟用所有檢查
-					"--std=c++17", -- 指定 C++ 標準
+					"--std=c++20", -- 指定 C++ 標準
 					"--inconclusive", -- 啟用不確定檢查
 					"--template=gcc", -- 輸出格式類似 GCC
-					"--suppress=missingInclude", -- 忽略頭文件錯誤
-					vim.fn.expand("%:p"), -- 當前文件的完整路徑
+					"--suppress=missingIncludeSystem", -- 忽略頭文件錯誤
+          "--suppress=checkersReport"
+					-- vim.fn.expand("%:p"), -- 當前文件的完整路徑
 				},
-				stdin = false,
-				parser = require("lint.parser").from_errorformat([[ %f:%l:%c: %m ]], { source = "cppcheck" }),
-			},
-			dartanalyzer = {
+				parser = lp.from_pattern(
+					[[(%d+):(%d+): (%a+): (.+)]],
+					{ "lnum", "col", "severity", "message" },
+					{
+            note = vim.diagnostic.severity.HINT,
+            warning = vim.diagnostic.severity.WARN,
+            error = vim.diagnostic.severity.ERROR,
+          },
+          { source = "cppcheck" }, {}
+				),
+				-- parser = lp.from_errorformat("%f:%l:%c: %m", { source = "cppcheck" }),
+			}),
+			yamllint = create_linter_config({
+				name = "yamllint",
+				cmd = "yamllint",
+				args = { "--format=parsable" },
+				parser = lp.from_errorformat("%f:%l:%c: %m", { source = "yamllint" }),
+			}),
+			dartanalyzer = create_linter_config({
 				name = "dartanalyzer",
 				cmd = "dart",
 				args = { "analyze", "--format", "machine" },
-				stdin = false,
 				append_fname = false,
-				ignore_exitcode = true,
-				parser = require("lint.parser").from_errorformat([[%f|%l|%c|%t|%m]], {}),
-			},
+				parser = lp.from_errorformat("%f|%l|%c|%t|%m", { source = "dartanalyzer" }),
+			}),
 		}
 		lint.linters_by_ft = {
 			-- lua = {},
