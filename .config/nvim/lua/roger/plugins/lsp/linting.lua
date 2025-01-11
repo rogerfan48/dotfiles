@@ -24,20 +24,18 @@ return {
 					"--inconclusive", -- 啟用不確定檢查
 					"--template=gcc", -- 輸出格式類似 GCC
 					"--suppress=missingIncludeSystem", -- 忽略頭文件錯誤
-          "--suppress=checkersReport"
+					"--suppress=checkersReport",
 					-- vim.fn.expand("%:p"), -- 當前文件的完整路徑
 				},
 				parser = lp.from_pattern(
-					[[(%d+):(%d+): (%a+): (.+)]],
-					{ "lnum", "col", "severity", "message" },
-					{
-            note = vim.diagnostic.severity.HINT,
-            warning = vim.diagnostic.severity.WARN,
-            error = vim.diagnostic.severity.ERROR,
-          },
-          { source = "cppcheck" }, {}
-				),
-				-- parser = lp.from_errorformat("%f:%l:%c: %m", { source = "cppcheck" }),
+          [[(%d+):(%d+): (%a+): (.+)]],
+          { "lnum", "col", "severity", "message" },
+          { -- because of --template=gcc, the severity type are mapped to only four instead of 6 from cppcheck
+            ["fatal error"] = vim.diagnostic.severity.ERROR,
+            ["error"]       = vim.diagnostic.severity.ERROR,
+            ["warning"]     = vim.diagnostic.severity.WARN,
+            ["note"]        = vim.diagnostic.severity.HINT,
+          }, { source = "cppcheck" }, {}),
 			}),
 			yamllint = create_linter_config({
 				name = "yamllint",
