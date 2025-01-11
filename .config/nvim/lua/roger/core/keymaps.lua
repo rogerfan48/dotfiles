@@ -78,7 +78,7 @@ end
 
 M.linting = function()
 	local lint = require("lint")
-	vim.keymap.set("n", "<leader>l", function()
+	vim.keymap.set("n", "<leader>ll", function()
 		lint.try_lint()
 	end, { desc = "Trigger linting for current file" })
 end
@@ -219,5 +219,9 @@ M.gitsigns = function(bufnr)
 
 	map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "Gitsigns select hunk")
 end
+
+M.lazygit = {
+	{ "<leader>lg", ":LazyGit<cr>", desc = "Open lazy git" },
+}
 
 return M
