@@ -37,6 +37,11 @@ return {
             ["note"]        = vim.diagnostic.severity.HINT,
           }, { source = "cppcheck" }, {}),
 			}),
+      markdownlint = create_linter_config({
+        name = "markdownlint",
+        cmd = "markdownlint",
+        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "markdownlint" }),
+      }),
 			yamllint = create_linter_config({
 				name = "yamllint",
 				cmd = "yamllint",

@@ -126,11 +126,30 @@ M.telescope = function()
 	local builtin = require("telescope.builtin")
 	vim.keymap.set("n", "<leader>fj", builtin.find_files, { desc = "Fuzzy find files in cwd" })
 	vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
-	vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Find string in cwd" })
+	vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find string in cwd" })
 	vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
 	vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
 	vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 	vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos" })
+	vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Show keymaps" })
+	vim.keymap.set("n", "<leader>/", function()
+    builtin.current_buffer_fuzzy_find({
+    layout_config = {
+      preview_width = 0,
+    },
+  })
+	end, { desc = "Fuzzy find in current buffer" })
+	vim.keymap.set("n", "<leader>fo", function()
+		builtin.live_grep({
+			grep_open_files = true,
+			prompt_title = "Live Grep in Open Files",
+		})
+	end, { desc = "Fuzzy find open files" })
+	vim.keymap.set("n", "<leader>fn", function()
+		builtin.find_files({
+			cwd = vim.fn.stdpath("config"),
+		})
+	end, { desc = "Fuzzy find Neovim files" })
 end
 
 M.auto_session = function()
