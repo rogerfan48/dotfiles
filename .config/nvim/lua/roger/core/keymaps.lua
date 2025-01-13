@@ -2,11 +2,11 @@ local M = {}
 
 M.general = function()
 	-- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
-	vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { silent = true, desc = "Clear search highlights" })
+	vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights", silent = true })
 
-	vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) " })
-	vim.keymap.set("n", "<leader>q<space>", ":q<CR>", { desc = "Quit current Nvim window (:q)" })
-	vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit all Nvim windows (:qa)" })
+	vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) ", silent = true })
+	vim.keymap.set("n", "<leader>q<space>", ":q<CR>", { desc = "Quit current Nvim window (:q)", silent = true })
+	vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit all Nvim windows (:qa)", silent = true })
 
 	-- centered vertical movement
 	vim.keymap.set("n", "<C-u>", "<C-u>zz", { remap = false, desc = "Scoll up half page" })

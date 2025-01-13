@@ -1,10 +1,6 @@
 *
 !nvim/
-!tmux/
-
 !nvim/**
-!tmux/**
-tmux/plugins/**
 !.gitignore
 
 .DS_Store
