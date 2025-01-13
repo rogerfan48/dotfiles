@@ -10,12 +10,15 @@ vim.o.smartindent = true
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "c", "cpp", "python" },
+	pattern = { "c", "cpp", "python", "sh", "bash" },
 	callback = function()
 		vim.opt_local.tabstop = 4
 		vim.opt_local.shiftwidth = 4
 	end,
 })
+
+-- Ensure 10 lines are visible above and below the cursor
+vim.o.scrolloff = 10
 
 -- search settings
 vim.o.ignorecase = true -- ignore case when searching

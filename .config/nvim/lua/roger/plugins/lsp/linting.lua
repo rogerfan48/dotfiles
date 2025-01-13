@@ -28,20 +28,23 @@ return {
 					-- vim.fn.expand("%:p"), -- 當前文件的完整路徑
 				},
 				parser = lp.from_pattern(
-          [[(%d+):(%d+): (%a+): (.+)]],
-          { "lnum", "col", "severity", "message" },
-          { -- because of --template=gcc, the severity type are mapped to only four instead of 6 from cppcheck
-            ["fatal error"] = vim.diagnostic.severity.ERROR,
-            ["error"]       = vim.diagnostic.severity.ERROR,
-            ["warning"]     = vim.diagnostic.severity.WARN,
-            ["note"]        = vim.diagnostic.severity.HINT,
-          }, { source = "cppcheck" }, {}),
+					[[(%d+):(%d+): (%a+): (.+)]],
+					{ "lnum", "col", "severity", "message" },
+					{ -- because of --template=gcc, the severity type are mapped to only four instead of 6 from cppcheck
+						["fatal error"] = vim.diagnostic.severity.ERROR,
+						["error"] = vim.diagnostic.severity.ERROR,
+						["warning"] = vim.diagnostic.severity.WARN,
+						["note"] = vim.diagnostic.severity.HINT,
+					},
+					{ source = "cppcheck" },
+					{}
+				),
 			}),
-      markdownlint = create_linter_config({
-        name = "markdownlint",
-        cmd = "markdownlint",
-        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "markdownlint" }),
-      }),
+			markdownlint = create_linter_config({
+				name = "markdownlint",
+				cmd = "markdownlint",
+				parser = lp.from_errorformat("%f:%l:%c: %m", { source = "markdownlint" }),
+			}),
 			yamllint = create_linter_config({
 				name = "yamllint",
 				cmd = "yamllint",
@@ -54,6 +57,25 @@ return {
 				args = { "analyze", "--format", "machine" },
 				append_fname = false,
 				parser = lp.from_errorformat("%f|%l|%c|%t|%m", { source = "dartanalyzer" }),
+			}),
+			shellcheck = create_linter_config({
+				name = "shellcheck",
+				cmd = "shellcheck",
+				args = { "--format=gcc", "--color=never" },
+        stream = "output", -- using "both" will appear twice
+        ignore_exitcode = true, -- shellcheck: "0": no problem occurred, "1": one or more problem(s) occurred, "2": command failed
+				parser = lp.from_pattern(
+					[[(%d+):(%d+): (%a+): (.+)]],
+					{ "lnum", "col", "severity", "message" },
+					{
+						["fatal error"] = vim.diagnostic.severity.ERROR,
+						["error"] = vim.diagnostic.severity.ERROR,
+						["warning"] = vim.diagnostic.severity.WARN,
+						["note"] = vim.diagnostic.severity.HINT,
+					},
+					{ source = "shellcheck" },
+					{}
+				),
 			}),
 		}
 		lint.linters_by_ft = {
@@ -73,6 +95,8 @@ return {
 			-- latex = { "chktex" },
 			json = { "jsonlint" },
 			yaml = { "yamllint" },
+      sh = { "shellcheck" },
+      bash = { "shellcheck" },
 		}
 
 		-- lint.linters = {

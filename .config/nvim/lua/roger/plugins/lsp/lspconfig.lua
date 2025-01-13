@@ -70,6 +70,12 @@ return {
 					},
 				})
 			end,
+			["bashls"] = function()
+				lspconfig.bashls.setup({
+					capabilities = capabilities,
+					filetypes = { "sh", "bash" },
+				})
+			end,
 		})
 	end,
 	-- "neovim/nvim-lspconfig",

@@ -22,6 +22,7 @@ return {
 				"marksman", -- markdown
 				"texlab", -- latex
 				"ast_grep", -- dart
+        "bashls", -- bash
 			},
 			-- automatic_installed = true,
 		})
@@ -36,6 +37,7 @@ return {
 				"black", -- Python
 				"ast_grep", -- Dart
 				"latexindent", -- LaTeX
+        "shfmt", -- Bash
 
 				-- Linters
 				-- "cppcheck", -- C/C++
@@ -46,6 +48,7 @@ return {
 				-- "chktex", -- LaTeX
 				"jsonlint",
 				"yamllint",
+        "shellcheck", -- Bash
 			},
 		})
 	end,

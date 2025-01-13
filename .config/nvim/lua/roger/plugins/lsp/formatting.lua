@@ -24,6 +24,8 @@ return {
 				latex = { "latexindent" },
 				json = { "prettier" },
 				yaml = { "prettier" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
 			},
 			-- format_on_save = {
 			-- 	lsp_fallback = false,

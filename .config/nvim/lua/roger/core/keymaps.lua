@@ -2,17 +2,23 @@ local M = {}
 
 M.general = function()
 	-- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
-	vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+	vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { silent = true, desc = "Clear search highlights" })
 
 	vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) " })
 	vim.keymap.set("n", "<leader>q<space>", ":q<CR>", { desc = "Quit current Nvim window (:q)" })
 	vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit all Nvim windows (:qa)" })
 
+	-- centered vertical movement
+	vim.keymap.set("n", "<C-u>", "<C-u>zz", { remap = false, desc = "Scoll up half page" })
+	vim.keymap.set("n", "<C-d>", "<C-d>zz", { remap = false, desc = "Scoll down half page" })
+	vim.keymap.set("n", "n", "nzz", { remap = false, desc = "See next search result" })
+	vim.keymap.set("n", "N", "Nzz", { remap = false, desc = "See previous search result" })
+
+	vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor pos" })
+
 	-- yank to and paste from system clipboard
-	vim.keymap.set("n", "<leader>y", '"+y', { silent = true })
-	vim.keymap.set("v", "<leader>y", '"+y', { silent = true })
-	vim.keymap.set("n", "<leader>p", '"+p', { silent = true })
-	vim.keymap.set("v", "<leader>p", '"+p', { silent = true })
+	vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { silent = true })
+	vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { silent = true })
 
 	-- increment/decrement numbers
 	vim.keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
@@ -133,11 +139,11 @@ M.telescope = function()
 	vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos" })
 	vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Show keymaps" })
 	vim.keymap.set("n", "<leader>/", function()
-    builtin.current_buffer_fuzzy_find({
-    layout_config = {
-      preview_width = 0,
-    },
-  })
+		builtin.current_buffer_fuzzy_find({
+			layout_config = {
+				preview_width = 0,
+			},
+		})
 	end, { desc = "Fuzzy find in current buffer" })
 	vim.keymap.set("n", "<leader>fo", function()
 		builtin.live_grep({
@@ -182,6 +188,19 @@ M.substitute = function()
 	vim.keymap.set("x", "s", substitute.visual, { desc = "Substitute in visual mode" })
 end
 
+M.surround = {
+	insert = "<C-g>s",
+	insert_line = "<C-g>S",
+	normal = "ys",
+	normal_cur = "yss",
+	normal_line = "yS",
+	normal_cur_line = "ySS",
+	visual = "S",
+	visual_line = "gS",
+	delete = "ds",
+	change = "cs",
+	change_line = "cS",
+}
 -- surround:
 -- ys + motion + symbol: add surrounding
 -- ds + symbol: delete surrounding
@@ -242,5 +261,10 @@ end
 M.lazygit = {
 	{ "<leader>lg", ":LazyGit<cr>", desc = "Open lazy git" },
 }
+
+M.undotree = function()
+	local undotree = require("undotree")
+	vim.keymap.set("n", "<leader>u", undotree.toggle, { desc = "Open undo tree" })
+end
 
 return M
