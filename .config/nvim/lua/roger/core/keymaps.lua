@@ -286,4 +286,9 @@ M.undotree = function()
 	vim.keymap.set("n", "<leader>u", undotree.toggle, { desc = "Open undo tree" })
 end
 
+M.treesj = function()
+  local treesj = require("treesj")
+  vim.keymap.set("n", "<leader>m", treesj.toggle, { desc = "Split/Join blocks of code" })
+end
+
 return M
