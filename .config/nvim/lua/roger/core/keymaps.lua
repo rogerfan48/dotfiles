@@ -16,9 +16,28 @@ M.general = function()
 
 	vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor pos" })
 
+  -- INFO: Need to set "option" key as "Meta" or "Esc+" key to function
+  -- Move current line/selection up or down
+  vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down", silent = true })
+  vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up", silent = true })
+  vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
+  vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
+
+  -- Duplicate current line up or down
+  vim.keymap.set("n", "<A-S-j>", "mzyyp`zj", { desc = "Duplicate line below", silent = true })
+  vim.keymap.set("n", "<A-S-k>", "mzyyP`zk", { desc = "Duplicate line above", silent = true })
+  vim.keymap.set("v", "<A-S-j>", "y'>p`[V`]", { desc = "Duplicate selection below", silent = true })
+  vim.keymap.set("v", "<A-S-k>", "y'<P`[V`]", { desc = "Duplicate selection above", silent = true })
+
+  -- Insert blank line above/below with still cursor
+  vim.keymap.set("n", "<A-o>", "mzo<Esc>`z", { desc = "Insert blank line below" })
+  vim.keymap.set("n", "<A-O>", "mzO<Esc>`z", { desc = "Insert blank line above" })
+
 	-- yank to and paste from system clipboard
 	vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { silent = true })
+	vim.keymap.set({ "n", "v" }, "<leader>Y", '"+Y', { silent = true })
 	vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { silent = true })
+	vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { silent = true })
 
 	-- increment/decrement numbers
 	vim.keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment

@@ -25,7 +25,40 @@ return {
 		end
 
 		require("neo-tree").setup({
-			close_if_last_window = true,
+      source_selector = {
+        winbar = true, -- toggle to show selector on winbar
+        statusline = false, -- toggle to show selector on statusline
+        show_scrolled_off_parent_node = false,                    -- boolean
+        sources = {                                               -- table
+          {
+            source = "filesystem",                                -- string
+            display_name = " 󰉓 File "                            -- string | nil
+          },
+          {
+            source = "buffers",                                   -- string
+            display_name = " 󰈚 Buffer "                          -- string | nil
+          },
+          {
+            source = "git_status",                                -- string
+            display_name = " 󰊢 Git "                              -- string | nil
+          },
+        },
+        content_layout = "center",                                 -- string
+        tabs_layout = "equal",                                     -- string
+        truncation_character = "…",                               -- string
+        tabs_min_width = nil,                                     -- int | nil
+        tabs_max_width = nil,                                     -- int | nil
+        padding = 0,                                              -- int | { left: int, right: int }
+        separator = { left = "", right= "" },                   -- string | { left: string, right: string, override: string | nil }
+        separator_active = nil,                                   -- string | { left: string, right: string, override: string | nil } | nil
+        show_separator_on_edge = nil,                           -- boolean
+        highlight_tab = "NeoTreeTabInactive",                     -- string
+        highlight_tab_active = "NeoTreeTabActive",                -- string
+        highlight_background = "NeoTreeTabInactive",              -- string
+        highlight_separator = "NeoTreeTabSeparatorInactive",      -- string
+        highlight_separator_active = "NeoTreeTabSeparatorActive", -- string
+      },
+      close_if_last_window = true,
 			filesystem = {
 				follow_current_file = {
 					enabled = true,
@@ -35,14 +68,18 @@ return {
 					hide_dotfiles = false,
 					hide_gitignored = false,
 					hide_by_name = {},
+          hide_by_pattern = {},
+          always_show = {},
+          always_show_by_pattern = {},
 					never_show = {
 						".DS_Store",
 						".Trash",
 					},
+          never_show_by_pattern = {},
 				},
 			},
 			window = {
-				width = 40,
+				width = 42,
 				mappings = {
 					["C"] = "close_node",
 					["Z"] = "close_all_nodes",
@@ -71,6 +108,10 @@ return {
 				},
 			},
 		})
+
+    vim.api.nvim_set_hl(0, "FileExplorerHL", { fg = "#dddddd", bg = "#313457", bold = true })
+    vim.api.nvim_set_hl(0, "NeoTreeTabActive", { fg = "#dddddd", bg = "#487385", bold = true })
+    vim.api.nvim_set_hl(0, "NeoTreeTabInactive", { bg = "#32435e" })
 
 		vim.cmd("silent Neotree reveal")
 	end,
