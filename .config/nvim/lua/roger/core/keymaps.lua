@@ -183,10 +183,10 @@ M.auto_session = function()
 end
 
 M.treesitter = {
-	init_selection = "<C-.>",
-	node_incremental = "<C-.>",
+	init_selection = "<leader>]",
+	node_incremental = "<leader>]",
 	scope_incremental = false,
-	node_decremental = "<C-,>",
+	node_decremental = "<leader>[",
 }
 
 M.todo_comments = function()

@@ -18,15 +18,25 @@ return {
 			cppcheck = create_linter_config({
 				name = "cppcheck",
 				cmd = "cppcheck",
-				args = {
-					"--enable=all", -- 啟用所有檢查
-					"--std=c++20", -- 指定 C++ 標準
-					"--inconclusive", -- 啟用不確定檢查
-					"--template=gcc", -- 輸出格式類似 GCC
-					"--suppress=missingIncludeSystem", -- 忽略頭文件錯誤
-					"--suppress=checkersReport",
-					-- vim.fn.expand("%:p"), -- 當前文件的完整路徑
-				},
+				args = function()
+					local args = {
+						"--enable=all", -- 啟用所有檢查
+						"--std=c++20", -- 指定 C++ 標準
+						"--inconclusive", -- 啟用不確定檢查
+						"--template=gcc", -- 輸出格式類似 GCC
+						"--suppress=missingIncludeSystem", -- 忽略頭文件錯誤
+						"--suppress=checkersReport",
+						-- vim.fn.expand("%:p"), -- 當前文件的完整路徑
+					}
+
+          -- check if "build/compile_commands.json" exists or not
+					local compile_commands_path = vim.fn.findfile("build/compile_commands.json", ".;")
+					if compile_commands_path and compile_commands_path ~= "" then
+						table.insert(args, "--project=" .. compile_commands_path)
+					end
+
+					return args
+				end,
 				parser = lp.from_pattern(
 					[[(%d+):(%d+): (%a+): (.+)]],
 					{ "lnum", "col", "severity", "message" },
@@ -62,20 +72,14 @@ return {
 				name = "shellcheck",
 				cmd = "shellcheck",
 				args = { "--format=gcc", "--color=never" },
-        stream = "output", -- using "both" will appear twice
-        ignore_exitcode = true, -- shellcheck: "0": no problem occurred, "1": one or more problem(s) occurred, "2": command failed
-				parser = lp.from_pattern(
-					[[(%d+):(%d+): (%a+): (.+)]],
-					{ "lnum", "col", "severity", "message" },
-					{
-						["fatal error"] = vim.diagnostic.severity.ERROR,
-						["error"] = vim.diagnostic.severity.ERROR,
-						["warning"] = vim.diagnostic.severity.WARN,
-						["note"] = vim.diagnostic.severity.HINT,
-					},
-					{ source = "shellcheck" },
-					{}
-				),
+				stream = "output", -- using "both" will appear twice
+				ignore_exitcode = true, -- shellcheck: "0": no problem occurred, "1": one or more problem(s) occurred, "2": command failed
+				parser = lp.from_pattern([[(%d+):(%d+): (%a+): (.+)]], { "lnum", "col", "severity", "message" }, {
+					["fatal error"] = vim.diagnostic.severity.ERROR,
+					["error"] = vim.diagnostic.severity.ERROR,
+					["warning"] = vim.diagnostic.severity.WARN,
+					["note"] = vim.diagnostic.severity.HINT,
+				}, { source = "shellcheck" }, {}),
 			}),
 		}
 		lint.linters_by_ft = {
@@ -95,8 +99,8 @@ return {
 			-- latex = { "chktex" },
 			json = { "jsonlint" },
 			yaml = { "yamllint" },
-      sh = { "shellcheck" },
-      bash = { "shellcheck" },
+			sh = { "shellcheck" },
+			bash = { "shellcheck" },
 		}
 
 		-- lint.linters = {
