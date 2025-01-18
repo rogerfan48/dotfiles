@@ -28,6 +28,9 @@ return {
 
       telescope.setup({
         defaults = {
+          file_ignore_patterns = {
+            "^.git/"  -- don't show .git/ in all Telescope utilities
+          },
           path_display = { "smart" },
           mappings = {
             i = {
