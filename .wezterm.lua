@@ -4,11 +4,28 @@ local wezterm = require("wezterm")
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
+config.initial_rows = 50
+config.initial_cols = 200
+
 config.font = wezterm.font("JetBrainsMono Nerd Font Mono", { weight = "Medium" })
 config.font_size = 13
 
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
+
+config.background = {
+  {
+    source = { File = "/Users/roger/.dotfiles/bg_image/Sonoma.jpeg" },
+    width = "Cover",
+    height = "Cover",
+  },
+  {
+    source = { Color = "#1e1e2e" },
+    width = "100%",
+    height = "100%",
+    opacity = 0.93,
+  },
+}
 
 local ansi_colors = {
 	"#45475a", -- black
