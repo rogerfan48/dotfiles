@@ -11,6 +11,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".rogerrc"]="$HOME/.rogerrc"
         [".p10k.zsh"]="$HOME/.p10k.zsh"
         [".tmux.conf"]="$HOME/.tmux.conf"
+        [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
@@ -19,6 +20,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".rogerrc"]="$HOME/.rogerrc"
         [".p10k.zsh"]="$HOME/.p10k.zsh"
         [".tmux.conf"]="$HOME/.tmux.conf"
+        [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
     )
 else
@@ -71,9 +73,6 @@ for file in "${!FILES_TO_LINK[@]}"; do
         echo "Removing existing directory: $link"
         rm -rf "$link"
     fi
-
-    echo "Target: $target"
-    echo "Link: $link"
 
     ln -sf "$target" "$link"
     echo "Linked: $link -> $target"
