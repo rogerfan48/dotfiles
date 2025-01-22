@@ -35,8 +35,8 @@ local ansi_colors = {
 	"#f38ba8", -- red
 	"#a6e3a1", -- green
 	"#f9e2af", -- yellow
-	"#89b4fa", -- blue
-	"#f5c2e7", -- magenta
+	"#6ec7ff", -- blue
+	"#ffa3e7", -- magenta
 	"#94e2d5", -- cyan
 	"#bac2de", -- white
 }
@@ -45,8 +45,8 @@ local bright_colors = {
 	"#f38ba8", -- red
 	"#a6e3a1", -- green
 	"#f9e2af", -- yellow
-	"#89b4fa", -- blue
-	"#f5c2e7", -- magenta
+	"#6ec7ff", -- blue
+	"#ffa3e7", -- magenta
 	"#94e2d5", -- cyan
 	"#a6adc8", -- white
 }

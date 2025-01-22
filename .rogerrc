@@ -9,7 +9,7 @@ ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=205 #207
 # ZSH_HIGHLIGHT_STYLES[precommand]=fg=2,underline #083
 ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=205 #207
 ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=205 #207
-ZSH_HIGHLIGHT_STYLES[path]=fg=081,underline #087
+ZSH_HIGHLIGHT_STYLES[path]=fg=4,underline #087
 ZSH_HIGHLIGHT_STYLES[globbing]=none
 ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=blue
 ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=fg=141
