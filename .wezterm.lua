@@ -7,8 +7,11 @@ local config = wezterm.config_builder()
 config.initial_rows = 50
 config.initial_cols = 200
 
-config.font = wezterm.font("JetBrainsMono Nerd Font Mono", { weight = "Medium" })
+config.font = wezterm.font_with_fallback({
+  { family = "JetBrainsMono Nerd Font Mono", weight = "Medium" },
+})
 config.font_size = 13
+config.harfbuzz_features = { 'calt=0' } -- disable ligatures
 
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
