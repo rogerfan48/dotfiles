@@ -87,3 +87,9 @@ function kb() {
         echo "Invalid input. Please enter 'y' or 'n'."
     fi
 }
+
+# To prevent using paging when many lines
+alias bat="bat --paging never"
+
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)

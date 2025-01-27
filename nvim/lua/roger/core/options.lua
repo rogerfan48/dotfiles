@@ -30,13 +30,22 @@ vim.o.termguicolors = true
 vim.o.background = "dark" -- colorschemes that can be light or dark will be made dark
 vim.o.signcolumn = "yes" -- show sign column so that text doesn't shift
 
-vim.o.backspace = "indent,eol,start"
+-- Permanent undofile history
+vim.o.undofile = true
+-- if directory not exist, create one.
+local undodir = vim.fn.stdpath("data") .. "/undo"
+if vim.fn.isdirectory(undodir) == 0 then
+  vim.fn.mkdir(undodir, "p")
+end
+vim.o.undodir = undodir
 
+vim.o.backspace = "indent,eol,start" -- enable backspace to delete ...
 vim.o.splitright = true -- split vertical window to the right
 vim.o.splitbelow = true -- split horizontal window to the bottom
-
 vim.o.swapfile = false
-vim.o.showmode = false
+vim.o.showmode = false -- whether to show mode in command line (close when use lualine)
+
+vim.opt.fillchars.eob = " " -- End of Buffer, default: "~"
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
