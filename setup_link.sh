@@ -5,6 +5,7 @@ echo "Detected OS: $OS"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 declare -A FILES_TO_LINK
+declare -A NEW_FILES_TO_LINK
 if [[ "$OS" == "Darwin" ]]; then # macOS
     FILES_TO_LINK=(
         [".zshrc"]="$HOME/.zshrc"
@@ -13,6 +14,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
+        [".stylua.toml"]="$HOME/.config/.stylua.toml"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
     FILES_TO_LINK=(
@@ -22,6 +24,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
+        [".stylua.toml"]="$HOME/.config/.stylua.toml"
     )
 else
     echo "Unsupported OS: $OS"
@@ -29,6 +32,7 @@ else
 fi
 
 OVERWRITE_LINKS=()
+NEW_LINKS=()
 echo "Checking existing links..."
 for file in "${!FILES_TO_LINK[@]}"; do
     target="${DOTFILES_DIR}/$file"
@@ -41,6 +45,9 @@ for file in "${!FILES_TO_LINK[@]}"; do
 
     if [[ -e "$link" || -L "$link" ]]; then
         OVERWRITE_LINKS+=("$link -> $target")
+    else
+        NEW_LINKS+=("$link -> $target")
+        NEW_FILES_TO_LINK+=( ["$file"]=${FILES_TO_LINK["$file"]} )
     fi
 done
 
@@ -55,8 +62,28 @@ else
     echo -n "Do you want to overwrite all these links? (y/n): "
     read -r answer
     if [[ "$answer" != "y" ]]; then
-        echo "No changes made."
-        exit 0
+        if [[ ${#NEW_LINKS[@]} -eq 0 ]]; then
+            echo "No new links need to be established."
+            echo "No change being made!"
+            exit 0
+        else
+            echo "The following are new links and will be added:"
+            for item in "${NEW_LINKS[@]}"; do
+                echo "  $item"
+            done
+
+            echo -n "Do you want to add all these links? (y/n): "
+            read -r ans
+            if [[ "$ans" != "y" ]]; then
+                echo "No change being made!"
+                exit 0
+            else
+                FILES_TO_LINK=()
+                for key in "${!NEW_FILES_TO_LINK[@]}"; do
+                    FILES_TO_LINK["$key"]="${NEW_FILES_TO_LINK["$key"]}"
+                done
+            fi
+        fi
     fi
 fi
 

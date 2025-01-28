@@ -6,28 +6,25 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/roger/.oh-my-zsh"
-
-# Set name of the theme to load
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# To make oh-my-zsh can load the plugins
+# It need `ln -s $(brew --prefix)/share/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
+#      or `ln -s /usr/share/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
+plugins=(git zsh-autosuggestions)
 
 HISTFILE=~/.zsh_history
 HIST_STAMPS="yyyy-mm-dd"
@@ -40,19 +37,8 @@ setopt hist_ignore_dups   # ignore consecutive duplicate commands
 setopt hist_reduce_blanks # don't record redundant space in the command history
 setopt hist_find_no_dups  # don't show duplicate when using Ctrl+R
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# To make oh-my-zsh can load the plugins
-# It need `ln -s $(brew --prefix)/share/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
-#      or `ln -s /usr/share/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
-plugins=(git zsh-autosuggestions)
-
 source $ZSH/oh-my-zsh.sh
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f $HOME/p10k.zsh ]] || source $HOME/.p10k.zsh
 
-# Source personal configuration
 source /Users/roger/.rogerrc
-alias vim=nvim

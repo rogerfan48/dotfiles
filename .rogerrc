@@ -1,3 +1,4 @@
+#!/bin/zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_STYLES[default]=none
 ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=1,bold #red,bold
@@ -23,31 +24,6 @@ ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=80
 ZSH_HIGHLIGHT_STYLES[redirection]=fg=80
 ZSH_HIGHLIGHT_STYLES[assign]=fg=80
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=242
-
-# ZSH_HIGHLIGHT_STYLES[default]=none
-# ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=160,bold #red,bold
-# ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=200 #207
-# ZSH_HIGHLIGHT_STYLES[alias]=fg=2 #083
-# ZSH_HIGHLIGHT_STYLES[builtin]=fg=2 #083
-# ZSH_HIGHLIGHT_STYLES[function]=fg=2 #083
-# ZSH_HIGHLIGHT_STYLES[command]=fg=2 #083
-# ZSH_HIGHLIGHT_STYLES[precommand]=fg=2,underline #083
-# ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=200 #207
-# ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=200 #207
-# ZSH_HIGHLIGHT_STYLES[path]=fg=081,underline #087
-# ZSH_HIGHLIGHT_STYLES[globbing]=none
-# ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=blue
-# ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=fg=141
-# ZSH_HIGHLIGHT_STYLES[double-hyphen-option]=fg=141
-# ZSH_HIGHLIGHT_STYLES[back-quoted-argument]=fg=141
-# ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=220 #228
-# ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=220 #228 
-# ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]=fg=44
-# ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=44
-# ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=44
-# ZSH_HIGHLIGHT_STYLES[redirection]=fg=44
-# ZSH_HIGHLIGHT_STYLES[assign]=fg=44
-
 
 bindkey '^[[OPT-RIGHT]' forward-word # Alt-Right
 bindkey '^[[OPT-LEFT]' backward-word # Alt-Left
@@ -87,6 +63,8 @@ function kb() {
         echo "Invalid input. Please enter 'y' or 'n'."
     fi
 }
+
+alias vim=nvim
 
 # To prevent using paging when many lines
 alias bat="bat --paging never"
