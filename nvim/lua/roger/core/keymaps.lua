@@ -282,8 +282,27 @@ M.lazygit = {
 }
 
 M.undotree = function()
-	local undotree = require("undotree")
-	vim.keymap.set("n", "<leader>u", undotree.toggle, { desc = "Open undo tree" })
+  local clearTheUndoTree = function()
+    local file_path = vim.fn.expand("%:p")
+    if file_path == "" then
+      vim.notify("No file associated with the current buffer.", vim.log.levels.WARN)
+      return
+    end
+
+    local to_be_delete_file = file_path:gsub("/", "%%")
+    local undodir = vim.fn.stdpath("data") .. "/undo"
+    local undo_file_path = undodir .. "/" .. to_be_delete_file
+
+    if vim.fn.filereadable(undo_file_path) == 1 then
+      vim.fn.delete(undo_file_path)
+      vim.notify("Undo file for " .. file_path .. " has been cleared.", vim.log.levels.INFO)
+    else
+      vim.notify("No undo file found for " .. file_path, vim.log.levels.WARN)
+    end
+  end
+  local undotree = require("undotree")
+  vim.keymap.set("n", "<leader>uu", undotree.toggle, { desc = "Open undo tree" })
+  vim.keymap.set("n", "<leader>uc", clearTheUndoTree, { desc = "Clear Undotree of current file" })
 end
 
 M.treesj = function()
