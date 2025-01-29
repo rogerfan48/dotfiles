@@ -1,7 +1,10 @@
 local M = {}
 
+-- "z=": check misspell correction options
+-- "zg": add the word into good word pool
+
 M.general = function()
-  -- using "jk" as <esc> in INSERT, VISUAL, COMMAND, TERMNIAL are configured in "better-escape" module
+  -- using "jk" as <ESC> in INSERT, VISUAL, COMMAND, TERMINAL are configured in "better-escape" module
   vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights", silent = true })
 
   vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) ", silent = true })
@@ -16,7 +19,7 @@ M.general = function()
 
   vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor pos" })
 
-  -- INFO: Need to set "option" key as "Meta" or "Esc+" key to function
+  -- INFO: Need to set "option" key as "Meta" or "ESC+" key to function
   -- Move current line/selection up or down
   vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down", silent = true })
   vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up", silent = true })
@@ -59,7 +62,7 @@ M.general = function()
   vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab", silent = true })
 
   -- from comment.lua
-  -- 'gc' + motion.   ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
+  -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 end
 
 M.lsp = function()

@@ -17,6 +17,11 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- Spelling check
+vim.o.spell = true
+vim.o.spelllang = "en,cjk"
+vim.o.spelloptions = "camel" -- recognizing camelCase naming
+
 -- Ensure 10 lines are visible above and below the cursor
 vim.o.scrolloff = 10
 
