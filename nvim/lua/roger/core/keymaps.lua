@@ -148,13 +148,59 @@ end
 
 M.telescope = function()
   local builtin = require("telescope.builtin")
-  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Fuzzy find files in cwd" })
+  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Fuzzy find files in cwd", silent = true })
   vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
   vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find string in cwd" })
   vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
   vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
   vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
-  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos" })
+  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos", silent = true })
+  vim.keymap.set("n", "<leader>fs", function()
+    local pickers, finders, conf, previewers, actions, action_state =
+    require("telescope.pickers"), require("telescope.finders"), require("telescope.config").values,
+    require("telescope.previewers"), require("telescope.actions"), require("telescope.actions.state")
+
+    local file_path = vim.fn.expand("%:p")
+    local handle = io.popen("rg --no-heading --line-number --column SEC: " .. file_path)
+    local results = {}
+
+    if handle then
+      for line in handle:lines() do
+        local lnum, col, text = line:match("(%d+):(%d+):(.*)")
+        if lnum and text then
+          table.insert(results, {
+            display = text,
+            ordinal = text,
+            filename = file_path,
+            lnum = tonumber(lnum),
+            col = tonumber(col)
+          })
+        end
+      end
+      handle:close()
+    end
+
+    table.sort(results, function(a, b) return a.lnum > b.lnum end)
+
+    pickers.new({}, {
+      prompt_title = "Sections in Current File",
+      finder = finders.new_table({
+        results = results,
+        entry_maker = function(entry) return entry end
+      }),
+      sorter = conf.generic_sorter({}),
+      previewer = previewers.vim_buffer_vimgrep.new({}),
+      attach_mappings = function(_, map)
+        map("i", "<CR>", function(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          actions.close(prompt_bufnr)
+          vim.cmd("edit " .. selection.filename)
+          vim.api.nvim_win_set_cursor(0, { selection.lnum, selection.col })
+        end)
+        return true
+      end,
+    }):find()
+  end, { desc = "Find Sections in current file" })
   vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Show keymaps" })
   vim.keymap.set("n", "<leader>/", function()
     builtin.current_buffer_fuzzy_find({
