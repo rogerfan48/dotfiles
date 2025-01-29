@@ -9,7 +9,6 @@ declare -A NEW_FILES_TO_LINK
 if [[ "$OS" == "Darwin" ]]; then # macOS
     FILES_TO_LINK=(
         [".zshrc"]="$HOME/.zshrc"
-        [".rogerrc"]="$HOME/.rogerrc"
         [".p10k.zsh"]="$HOME/.p10k.zsh"
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
@@ -19,7 +18,6 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
 elif [[ "$OS" == "Linux" ]]; then # Linux
     FILES_TO_LINK=(
         [".zshrc"]="$HOME/.zshrc"
-        [".rogerrc"]="$HOME/.rogerrc"
         [".p10k.zsh"]="$HOME/.p10k.zsh"
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"

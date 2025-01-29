@@ -1,8 +1,5 @@
 local M = {}
 
--- "z=": check misspell correction options
--- "zg": add the word into good word pool
-
 M.general = function()
   -- using "jk" as <ESC> in INSERT, VISUAL, COMMAND, TERMINAL are configured in "better-escape" module
   vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights", silent = true })
@@ -18,6 +15,11 @@ M.general = function()
   vim.keymap.set("n", "N", "Nzz", { remap = false, desc = "See previous search result" })
 
   vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor pos" })
+
+  -- Misspell correction
+  -- "z=": check misspell correction options
+  -- "zg": add the word into good word pool
+  vim.keymap.set("n", "z-", ":spellr<CR>", { desc = "Redo spell correction in current file", silent = true })
 
   -- INFO: Need to set "option" key as "Meta" or "ESC+" key to function
   -- Move current line/selection up or down
@@ -148,7 +150,12 @@ end
 
 M.telescope = function()
   local builtin = require("telescope.builtin")
-  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Fuzzy find files in cwd", silent = true })
+  vim.keymap.set(
+    "n",
+    "<leader>fj",
+    ":Telescope find_files hidden=true<CR>",
+    { desc = "Fuzzy find files in cwd", silent = true }
+  )
   vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
   vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find string in cwd" })
   vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
@@ -157,8 +164,12 @@ M.telescope = function()
   vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos", silent = true })
   vim.keymap.set("n", "<leader>fs", function()
     local pickers, finders, conf, previewers, actions, action_state =
-    require("telescope.pickers"), require("telescope.finders"), require("telescope.config").values,
-    require("telescope.previewers"), require("telescope.actions"), require("telescope.actions.state")
+      require("telescope.pickers"),
+      require("telescope.finders"),
+      require("telescope.config").values,
+      require("telescope.previewers"),
+      require("telescope.actions"),
+      require("telescope.actions.state")
 
     local file_path = vim.fn.expand("%:p")
     local handle = io.popen("rg --no-heading --line-number --column SEC: " .. file_path)
@@ -173,33 +184,39 @@ M.telescope = function()
             ordinal = text,
             filename = file_path,
             lnum = tonumber(lnum),
-            col = tonumber(col)
+            col = tonumber(col),
           })
         end
       end
       handle:close()
     end
 
-    table.sort(results, function(a, b) return a.lnum > b.lnum end)
+    table.sort(results, function(a, b)
+      return a.lnum > b.lnum
+    end)
 
-    pickers.new({}, {
-      prompt_title = "Sections in Current File",
-      finder = finders.new_table({
-        results = results,
-        entry_maker = function(entry) return entry end
-      }),
-      sorter = conf.generic_sorter({}),
-      previewer = previewers.vim_buffer_vimgrep.new({}),
-      attach_mappings = function(_, map)
-        map("i", "<CR>", function(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          actions.close(prompt_bufnr)
-          vim.cmd("edit " .. selection.filename)
-          vim.api.nvim_win_set_cursor(0, { selection.lnum, selection.col })
-        end)
-        return true
-      end,
-    }):find()
+    pickers
+      .new({}, {
+        prompt_title = "Sections in Current File",
+        finder = finders.new_table({
+          results = results,
+          entry_maker = function(entry)
+            return entry
+          end,
+        }),
+        sorter = conf.generic_sorter({}),
+        previewer = previewers.vim_buffer_vimgrep.new({}),
+        attach_mappings = function(_, map)
+          map("i", "<CR>", function(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            actions.close(prompt_bufnr)
+            vim.cmd("edit " .. selection.filename)
+            vim.api.nvim_win_set_cursor(0, { selection.lnum, selection.col })
+          end)
+          return true
+        end,
+      })
+      :find()
   end, { desc = "Find Sections in current file" })
   vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Show keymaps" })
   vim.keymap.set("n", "<leader>/", function()
@@ -242,6 +259,12 @@ M.todo_comments = function()
   vim.keymap.set("n", "[t", function()
     todo_comments.jump_prev()
   end, { desc = "Previous todo comment" })
+  vim.keymap.set("n", "]c", function()
+    todo_comments.jump_next({ keywords = { "SEC" } })
+  end, { desc = "Next Section" })
+  vim.keymap.set("n", "[c", function()
+    todo_comments.jump_prev({ keywords = { "SEC" } })
+  end, { desc = "Previous Section" })
 end
 
 M.substitute = function()
