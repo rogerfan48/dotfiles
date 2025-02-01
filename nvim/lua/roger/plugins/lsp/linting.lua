@@ -72,7 +72,7 @@ return {
 				name = "shellcheck",
 				cmd = "shellcheck",
 				args = { "--format=gcc", "--color=never" },
-				stream = "output", -- using "both" will appear twice
+				stream = "stdout", -- using "both" will appear twice
 				ignore_exitcode = true, -- shellcheck: "0": no problem occurred, "1": one or more problem(s) occurred, "2": command failed
 				parser = lp.from_pattern([[(%d+):(%d+): (%a+): (.+)]], { "lnum", "col", "severity", "message" }, {
 					["fatal error"] = vim.diagnostic.severity.ERROR,

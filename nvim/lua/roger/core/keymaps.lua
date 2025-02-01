@@ -54,6 +54,10 @@ M.general = function()
   vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })
   vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current split", silent = true })
   vim.keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>", { desc = "Max/min a split", silent = true })
+  vim.keymap.set("n", "<leader>s<RIGHT>", "2<C-w>>", { desc = "Increase split width" })
+  vim.keymap.set("n", "<leader>s<LEFT>", "2<C-w><", { desc = "Decrease split width" })
+  vim.keymap.set("n", "<leader>s<UP>", "4<C-w>+", { desc = "Increase split height" })
+  vim.keymap.set("n", "<leader>s<DOWN>", "4<C-w>-", { desc = "Decrease split height" })
 
   -- tab management
   vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "Open new tab", silent = true })
@@ -72,9 +76,9 @@ M.lsp = function()
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
       local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      if client then
-        vim.notify("LSP " .. client.name .. " attached to buffer " .. ev.buf, vim.log.levels.INFO)
-      end
+      -- if client then
+      --   vim.notify("LSP " .. client.name .. " attached to buffer " .. ev.buf, vim.log.levels.INFO)
+      -- end
 
       local bufopts = { noremap = true, silent = true, buffer = ev.buf }
       local function with_desc(desc)
@@ -376,6 +380,19 @@ end
 M.treesj = function()
   local treesj = require("treesj")
   vim.keymap.set("n", "<leader>m", treesj.toggle, { desc = "Split/Join blocks of code" })
+end
+
+M.noice = function()
+  -- Default command line keymaps:
+  -- <Tab><C-n>, <S-Tab><C-p> Navigate options
+  -- <C-e> Close completion panel
+  -- <C-u> Clear command now typing
+  -- <C-w> Delete a word
+  vim.keymap.set("n", "<leader>nn", ":Noice<CR>", { desc = "Open Noice UI" })
+  vim.keymap.set("n", "<leader>na", ":NoiceAll<CR>", { desc = "Open Noice UI (All)" })
+  vim.keymap.set("n", "<leader>nd", ":NoiceDismiss<CR>", { desc = "Dismiss Noice Notices" })
+  vim.keymap.set("n", "<leader>nl", ":NoiceLast<CR>", { desc = "Check Last Notice" })
+  vim.keymap.set("n", "<leader>nt", ":NoiceTelescope<CR>", { desc = "Open Noice Telescope" })
 end
 
 return M
