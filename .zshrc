@@ -71,6 +71,11 @@ ZSH_HIGHLIGHT_STYLES[assign]=fg=80
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=242
 
 # SEC: Extensions config
+
+# add Neovim Mason bin into $PATH
+MASON_BIN="$HOME/.local/share/nvim/mason/bin"
+echo "$PATH" | grep -q "$MASON_BIN" || export PATH="$MASON_BIN:$PATH"
+
 alias bat="bat --paging never" # To prevent using paging when many lines
 source <(fzf --zsh) # Set up fzf key bindings and fuzzy completion
 

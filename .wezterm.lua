@@ -4,8 +4,11 @@ local wezterm = require("wezterm")
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
+config.term = "wezterm"
+
 config.initial_rows = 50
 config.initial_cols = 200
+config.max_fps = 120
 
 config.font = wezterm.font_with_fallback({
   { family = "JetBrainsMono Nerd Font Mono", weight = "Medium" },

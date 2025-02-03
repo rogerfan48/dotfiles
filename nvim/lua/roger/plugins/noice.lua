@@ -202,21 +202,42 @@ return {
       },
       throttle = 1000 / 30, -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
       ---@type NoiceConfigViews
-      views = {}, ---@see section on views
+      views = {
+        split = {
+          size = "30%"
+        }
+      }, ---@see section on views
       ---@type NoiceRouteConfig[]
       routes = {
         {
-          filter = { event = "msg_show", kind = "", find = "written" },
-          view = "mini",
-        },
-        {
-          filter = { event = "msg_show", kind = "", find = "Pattern not found" },
-          view = "mini",
-        },
-        {
-          filter = { event = "msg_show", ["not"] = { find = "LSP" }, kind = "" },
+          filter = { event = "msg_show", find = "; before #" },
           opts = { skip = true },
         },
+        {
+          filter = { event = "msg_show", find = "; after #" },
+          opts = { skip = true },
+        },
+        {
+          filter = { event = "msg_show", kind = "" },
+          view = "mini",
+        },
+        -- {
+        --   filter = { event = "msg_show", kind = "", find = "written" },
+        --   view = "mini",
+        -- },
+        -- {
+        --   filter = { event = "msg_show", kind = "", find = "Pattern not found" },
+        --   view = "mini",
+        -- },
+        -- {
+        --   filter = { event = "msg_show", ["not"] = {
+        --     any = {
+        --       { find = "LSP", },
+        --       { find = "lua", }
+        --     },
+        --   }, kind = "" },
+        --   opts = { skip = true },
+        -- },
       }, --- @see section on routes
       ---@type table<string, NoiceFilter>
       status = {}, --- @see section on statusline components

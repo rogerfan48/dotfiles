@@ -46,8 +46,7 @@ return {
           layout_strategy = "vertical",
           layout_config = {
             vertical = {
-              preview_height = 0.7,
-              result_height = 0.3,
+              preview_height = 0.65,
             },
             height = 0.95,
           },

@@ -93,7 +93,7 @@ M.lsp = function()
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
       vim.keymap.set("n", "]d", vim.diagnostic.goto_next, with_desc("Go to next diagnostic"))
-      vim.keymap.set("n", "[d", vim.diagnostic.goto_next, with_desc("Go to previous diagnostic"))
+      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, with_desc("Go to previous diagnostic"))
       vim.keymap.set("n", "<leader>rs", ":LspRestart<CR>", with_desc("Restart LSP"))
     end,
   })

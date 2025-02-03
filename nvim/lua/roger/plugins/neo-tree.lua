@@ -91,6 +91,12 @@ return {
           ["<tab>"] = function(state)
             open_and_maybe_close(state, false)
           end,
+          ["y"] = {
+            function(state)
+              vim.fn.setreg("+", state.tree:get_node().path)
+            end,
+            desc = "copy path to clipboard",
+          },
         },
       },
       buffer = {
