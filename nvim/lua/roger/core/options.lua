@@ -10,7 +10,7 @@ vim.o.smartindent = true
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "c", "cpp", "python", "sh", "bash" },
+	pattern = { "c", "cpp", "python", "sh", "bash", "markdown" },
 	callback = function()
 		vim.opt_local.tabstop = 4
 		vim.opt_local.shiftwidth = 4
@@ -57,5 +57,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function ()
     vim.highlight.on_yank()
+  end,
+})
+
+-- vim.o.conceallevel = 2
+-- For obsidian.nvim
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.conceallevel = 2
   end,
 })

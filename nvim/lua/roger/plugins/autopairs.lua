@@ -5,6 +5,7 @@ return {
     "hrsh7th/nvim-cmp",
   },
   config = function()
+    local Rule = require('nvim-autopairs.rule')
     local autopairs = require("nvim-autopairs")
     autopairs.setup({
       check_ts = true,
@@ -14,6 +15,8 @@ return {
         java = false,     -- don't check treesitter on java
       }
     })
+
+    autopairs.add_rule(Rule("*", "*", "markdown"))
 
     local cmp_autopairs = require("nvim-autopairs.completion.cmp")
     local cmp = require("cmp")

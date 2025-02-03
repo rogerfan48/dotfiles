@@ -14,6 +14,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
         [".stylua.toml"]="$HOME/.config/.stylua.toml"
+        [".prettierrc"]="$HOME/.prettierrc"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
     FILES_TO_LINK=(
@@ -23,6 +24,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
         [".stylua.toml"]="$HOME/.config/.stylua.toml"
+        [".prettierrc"]="$HOME/.prettierrc"
     )
 else
     echo "Unsupported OS: $OS"

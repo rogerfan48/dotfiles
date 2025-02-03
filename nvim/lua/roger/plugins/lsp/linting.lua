@@ -53,8 +53,26 @@ return {
 			markdownlint = create_linter_config({
 				name = "markdownlint",
 				cmd = "markdownlint",
-				parser = lp.from_errorformat("%f:%l:%c: %m", { source = "markdownlint" }),
-			}),
+        ignore_exitcode = true,
+        parser = lp.from_pattern(
+          "(.+):(%d+) (.+)",
+          { "file", "lnum", "message" },
+          {},
+          { source = "markdownlint", severity = vim.diagnostic.severity.WARN }
+        ),
+      }),
+      jsonlint = create_linter_config({
+        name = "jsonlint",
+        cmd = "jsonlint",
+        args = { "--compact" },
+        ignore_exitcode = true,
+        parser = lp.from_pattern(
+          [[line (%d+), col (%d+), (.+)]],
+          { "lnum", "col", "message" },
+          {},
+          { source = "jsonlint", severity = vim.diagnostic.severity.WARN }
+        ),
+      }),
 			yamllint = create_linter_config({
 				name = "yamllint",
 				cmd = "yamllint",
@@ -121,5 +139,16 @@ return {
 				lint.try_lint()
 			end,
 		})
+
+    vim.api.nvim_create_user_command("LintInfo", function()
+      local filetype = vim.bo.filetype
+      local linters = require("lint").linters_by_ft[filetype]
+
+      if linters then
+        print("Linters for " .. filetype .. ": " .. table.concat(linters, ", "))
+      else
+        print("No linters configured for filetype: " .. filetype)
+      end
+    end, {})
 	end,
 }

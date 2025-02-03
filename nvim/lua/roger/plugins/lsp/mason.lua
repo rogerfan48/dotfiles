@@ -20,6 +20,7 @@ return {
 				"emmet_ls", -- aid: HTML, JSX
 				"pyright", -- python
 				"marksman", -- markdown
+        "jsonls", -- JSON
 				"texlab", -- latex
 				"ast_grep", -- dart
         "bashls", -- bash
