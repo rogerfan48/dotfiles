@@ -5,7 +5,6 @@ return {
     "hrsh7th/nvim-cmp",
   },
   config = function()
-    local Rule = require('nvim-autopairs.rule')
     local autopairs = require("nvim-autopairs")
     autopairs.setup({
       check_ts = true,
@@ -17,7 +16,9 @@ return {
       }
     })
 
-    autopairs.add_rule(Rule("*", "*", "markdown"))
+    local Rule = require('nvim-autopairs.rule')
+    local cond = require('nvim-autopairs.conds')
+    autopairs.add_rule(Rule("*", "*", "markdown"):with_pair(cond.not_after_regex("[%w%.]")))
 
     local cmp_autopairs = require("nvim-autopairs.completion.cmp")
     local cmp = require("cmp")
