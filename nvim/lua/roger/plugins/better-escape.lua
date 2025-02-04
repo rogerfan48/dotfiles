@@ -28,10 +28,16 @@ return {
         },
         v = { -- visual mode
           j = {
-            k = "<Esc>",
+            k = function()
+              vim.api.nvim_input("k")
+              vim.api.nvim_input("<Esc>")
+            end,
           },
           k = {
-            j = "<Esc>",
+            j = function()
+              vim.api.nvim_input("j")
+              vim.api.nvim_input("<Esc>")
+            end,
           },
         },
         s = { -- select mode

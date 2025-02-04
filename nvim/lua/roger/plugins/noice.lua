@@ -204,11 +204,15 @@ return {
       ---@type NoiceConfigViews
       views = {
         split = {
-          size = "30%"
-        }
+          size = "30%",
+        },
       }, ---@see section on views
       ---@type NoiceRouteConfig[]
       routes = {
+        {
+          filter = { event = "msg_showmode" }, -- "q" macro
+          view = "notify",
+        },
         {
           filter = { event = "msg_show", find = "; before #" },
           opts = { skip = true },
