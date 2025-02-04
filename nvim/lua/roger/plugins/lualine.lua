@@ -24,6 +24,13 @@ return {
         unnamed = "[No Name]", -- Text to show for unnamed buffers.
         newfile = "[New]", -- Text to show for newly created file before first write
       },
+      fmt = function(filepath)
+        local obsidian_prefix = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/"
+        if filepath:find(obsidian_prefix, 1, true) then
+          return "..." .. filepath:sub(#obsidian_prefix)
+        end
+        return filepath
+      end,
     }
 
     local function lsp_clients()
