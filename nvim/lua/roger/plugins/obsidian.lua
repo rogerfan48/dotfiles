@@ -15,13 +15,43 @@ return {
   },
   config = function()
     local obsidian = require("obsidian")
+
+    local function gf_link_in_line()
+      local line = vim.api.nvim_get_current_line()
+
+      -- try Wiki Link: [[...]]
+      local link_start, link_end = line:find("%[%[.-%]%]")
+      if link_start then
+        local target_col = link_start + 2
+        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
+        vim.cmd("ObsidianFollowLink")
+        return ""
+      end
+
+      -- try Markdown Link: [text](target)
+      local md_link_start, md_link_end = line:find("%[.-%]%((.-)%)")
+      if md_link_start then
+        local paren_index = line:find("%(", md_link_start) -- move cursor to '('
+        if paren_index then
+          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
+          vim.cmd("ObsidianFollowLink")
+          return ""
+        end
+      end
+
+      -- try angle bracket URL: <https://www.google.com>
+      local angle_start, angle_end = line:find("<https?://[^>]+>")
+      if angle_start then
+        local target_col = angle_start + 1
+        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
+        vim.cmd("ObsidianFollowLink")
+        return ""
+      end
+
+      return obsidian.util.gf_passthrough()
+    end
+
     obsidian.setup({
-      -- A list of workspace names, paths, and configuration overrides.
-      -- If you use the Obsidian app, the 'path' of a workspace should generally be
-      -- your vault root (where the `.obsidian` folder is located).
-      -- When obsidian.nvim is loaded by your plugin manager, it will automatically set
-      -- the workspace to the first workspace in the list whose `path` is a parent of the
-      -- current markdown file being edited.
       workspaces = {
         {
           name = "Workspace",
@@ -55,22 +85,24 @@ return {
       mappings = {
         -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
         ["gf"] = {
-          action = function()
-            return require("obsidian").util.gf_passthrough()
-          end,
+          action = gf_link_in_line,
           opts = { noremap = false, expr = true, buffer = true },
         },
+        ["<CR>"] = {
+          action = gf_link_in_line,
+          opts = { expr = true, buffer = true },
+        },
         -- Toggle check-boxes.
-        ["<leader>ch"] = {
+        ["<leader>oc"] = {
           action = function()
-            return require("obsidian").util.toggle_checkbox()
+            return obsidian.util.toggle_checkbox()
           end,
           opts = { buffer = true },
         },
         -- -- Smart action depending on context, either follow link or toggle checkbox.
         -- ["<cr>"] = {
         --   action = function()
-        --     return require("obsidian").util.smart_action()
+        --     return obsidian.util.smart_action()
         --   end,
         --   opts = { buffer = true, expr = true },
         -- },
@@ -168,10 +200,10 @@ return {
       ---@param url string
       follow_url_func = function(url)
         -- Open the URL in the default web browser.
-        vim.fn.jobstart({ "open", url }) -- Mac OS
+        -- vim.fn.jobstart({ "open", url }) -- Mac OS
         -- vim.fn.jobstart({"xdg-open", url})  -- linux
         -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
-        -- vim.ui.open(url) -- need Neovim 0.10.0+
+        vim.ui.open(url) -- need Neovim 0.10.0+
       end,
 
       -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
@@ -226,7 +258,7 @@ return {
 
       -- Optional, define your own callbacks to further customize behavior.
       callbacks = {
-        -- Runs at the end of `require("obsidian").setup()`.
+        -- Runs at the end of `obsidian.setup()`.
         ---@param client obsidian.Client
         post_setup = function(client) end,
 

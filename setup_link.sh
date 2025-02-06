@@ -13,7 +13,8 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
-        [".stylua.toml"]="$HOME/.config/.stylua.toml"
+        [".config/stylua.toml"]="$HOME/.config/stylua.toml"
+        [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
@@ -23,7 +24,8 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
-        [".stylua.toml"]="$HOME/.config/.stylua.toml"
+        [".config/stylua.toml"]="$HOME/.config/stylua.toml"
+        [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )
 else
@@ -95,6 +97,10 @@ for file in "${!FILES_TO_LINK[@]}"; do
     if [[ ! -e "$target" ]]; then
         continue
     fi
+
+    # Ensure the parent dir of "$link" exists
+    link_dir=$(dirname "$link")
+    mkdir -p "$link_dir"
 
     if [[ -d "$link" && ! -L "$link" ]]; then
         echo "Removing existing directory: $link"

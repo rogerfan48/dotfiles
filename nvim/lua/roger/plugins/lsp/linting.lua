@@ -87,7 +87,7 @@ return {
       markdownlint = create_linter_config({
         name = "markdownlint",
         cmd = "markdownlint",
-        args = { "--config", "~/.dotfiles/.markdownlint.json" },
+        args = { "--config", "~/.dotfiles/.markdownlint.jsonc" },
         ignore_exitcode = true,
         parser = combined_parser,
       }),
@@ -146,6 +146,7 @@ return {
       markdown = { "markdownlint" },
       -- latex = { "chktex" },
       json = { "jsonlint" },
+      jsonc = { "jsonlint" },
       yaml = { "yamllint" },
       sh = { "shellcheck" },
       bash = { "shellcheck" },

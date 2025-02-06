@@ -1,0 +1,17 @@
+{
+  "default": true,
+  // ul-indent : Unordered list indentation : https://github.com/DavidAnson/markdownlint/blob/v0.37.4/doc/md007.md
+  "MD007": {
+    "indent": 4
+  },
+  // line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.37.4/doc/md013.md
+  "MD013": false,
+  // blanks-around-fences : Fenced code blocks should be surrounded by blank lines : https://github.com/DavidAnson/markdownlint/blob/v0.37.4/doc/md031.md
+  "MD031": false,
+  // no-inline-html : Inline HTML : https://github.com/DavidAnson/markdownlint/blob/v0.37.4/doc/md033.md
+  "MD033": {
+    "allowed_elements": ["u"]
+  },
+  // first-line-h1 : First line in a file should be a top-level heading : https://github.com/DavidAnson/markdownlint/blob/v0.37.4/doc/md041.md
+  "MD041": false
+}

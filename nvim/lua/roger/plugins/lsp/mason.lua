@@ -24,6 +24,7 @@ return {
 				"texlab", -- latex
 				"ast_grep", -- dart
         "bashls", -- bash
+        "taplo", -- TOML
 			},
 			-- automatic_installed = true,
 		})
