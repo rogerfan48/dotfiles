@@ -77,6 +77,14 @@ return {
           filetypes = { "sh", "bash" },
         })
       end,
+      ["marksman"] = function()
+        lspconfig.marksman.setup({
+          on_init = function(client, _)
+            client.server_capabilities.semanticTokensProvider = nil
+          end,
+          capabilities = capabilities,
+        })
+      end,
       ["jsonls"] = function()
         lspconfig.jsonls.setup({
           capabilities = capabilities,

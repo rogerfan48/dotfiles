@@ -20,7 +20,7 @@ return {
 				typescriptreact = { "prettier" },
 				python = { "isort", "black" },
 				dart = { "ast_grep" },
-				markdown = { "prettier" },
+				markdown = {},
 				latex = { "latexindent" },
 				json = { "prettier" },
 				yaml = { "prettier" },
