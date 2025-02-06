@@ -169,6 +169,12 @@ return {
             replace = true,
             render = "plain",
             format = { "{message}" },
+            border = {
+              style = "double",
+              text = {
+                top = " Hover ",
+              },
+            },
             win_options = { concealcursor = "n", conceallevel = 3 },
           },
         },

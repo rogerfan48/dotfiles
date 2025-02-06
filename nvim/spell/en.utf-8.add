@@ -6,3 +6,7 @@ config
 Ctrl
 zsh
 keymaps
+src
+dest
+pipelining
+num

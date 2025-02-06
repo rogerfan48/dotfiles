@@ -33,6 +33,15 @@ return {
       end,
     }
 
+    local function spell_status()
+      if vim.wo.spell then
+        local langs = table.concat(vim.opt.spelllang:get(), ",")
+        return " " .. langs
+      else
+        return " OFF"
+      end
+    end
+
     local function lsp_clients()
       local clients = vim.lsp.get_clients({ bufnr = 0 })
       if not clients or #clients == 0 then
@@ -81,7 +90,7 @@ return {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { custom_filename },
-        lualine_x = { lsp_clients, active_linters, "filetype" }, -- "encoding", "fileformat"
+        lualine_x = { spell_status, lsp_clients, active_linters, "filetype" }, -- "encoding", "fileformat"
         lualine_y = { "progress" },
         lualine_z = { "location" },
       },

@@ -45,8 +45,10 @@ M.general = function()
   vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { silent = true })
 
   -- increment/decrement numbers
-  vim.keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
-  vim.keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
+  vim.keymap.set({ "n", "v" }, "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
+  vim.keymap.set({ "n", "v" }, "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
+  vim.keymap.set({ "n", "v" }, "g<leader>-", "g<C-x>", { desc = "Decrement all numbers" }) -- decrement
+  vim.keymap.set({ "n", "v" }, "g<leader>+", "g<C-a>", { desc = "Increment all numbers" }) -- increment
 
   -- window management
   vim.keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })
@@ -66,6 +68,24 @@ M.general = function()
   vim.keymap.set("n", "<leader>tj", ":tabp<CR>", { desc = "Go to previous tab", silent = true })
   vim.keymap.set("n", "<leader>tp", ":BufferLinePick<CR>", { desc = "Pick tab", silent = true })
   vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open current buffer in new tab", silent = true })
+
+  -- spell
+  vim.keymap.set("n", "<leader>ss", function()
+    vim.wo.spell = not vim.wo.spell
+    if vim.wo.spell then
+      vim.notify("Spell ON", vim.log.levels.INFO)
+    else
+      vim.notify("Spell OFF", vim.log.levels.INFO)
+    end
+  end, { desc = "Toggle spell checking" })
+
+  -- highlights from treesitter
+  vim.keymap.set(
+    "n",
+    "<leader>gh",
+    ":echo luaeval('vim.inspect(vim.treesitter.get_captures_at_cursor(0))')<CR>",
+    { desc = "Show highlight from TS", silent = true }
+  )
 
   -- from comment.lua
   -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
@@ -165,7 +185,8 @@ M.telescope = function()
   vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
   vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
   vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
-  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<cr>", { desc = "Find todos", silent = true })
+  vim.keymap.set("n", "<leader>fH", ":Telescope highlights<CR>", { desc = "Telescope highlights", silent = true })
+  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>", { desc = "Find todos", silent = true })
   vim.keymap.set("n", "<leader>fs", function()
     local pickers, finders, conf, previewers, actions, action_state =
       require("telescope.pickers"),

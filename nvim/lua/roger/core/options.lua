@@ -52,6 +52,13 @@ vim.o.showmode = false -- whether to show mode in command line (close when use l
 
 vim.opt.fillchars.eob = " " -- End of Buffer, default: "~"
 
+-- wrap
+vim.o.wrap = true
+vim.o.linebreak = true -- will not split a word
+vim.o.breakindent = true -- enable indentation for wrapped text
+-- vim.o.breakindentopt = "shift:2" -- 設定換行後的縮排大小 (2 spaces)
+vim.o.showbreak = "  " -- the beginning of the wrapped text
+
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
@@ -67,4 +74,10 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     vim.opt_local.conceallevel = 2
   end,
+})
+
+vim.diagnostic.config({
+  float = {
+    border = "rounded", -- Add border to "]d", "[d" panel
+  }
 })

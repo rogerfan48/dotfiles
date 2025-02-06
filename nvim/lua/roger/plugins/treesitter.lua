@@ -9,7 +9,7 @@ return {
     local keymaps = require("roger.core.keymaps")
     local configs = require("nvim-treesitter.configs")
     configs.setup({
-      ensure_installed = { "lua", "c", "cpp" },
+      ensure_installed = { "lua", "c", "cpp", "latex" },
       auto_install = true,
       sync_install = false,
       ignore_install = {},
