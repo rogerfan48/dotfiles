@@ -538,4 +538,64 @@ M.outline = function()
   vim.keymap.set("n", "<leader>k", ":Outline<CR>", { desc = "Toggle Outline", silent = true })
 end
 
+M.outline_table = {
+  show_help = "?",
+  close = { "<Esc>", "q" },
+  -- Jump to symbol under cursor.
+  -- It can auto close the outline window when triggered, see
+  -- 'auto_close' option above.
+  goto_location = "<Cr>",
+  -- Jump to symbol under cursor but keep focus on outline window.
+  peek_location = "o",
+  -- Visit location in code and close outline immediately
+  goto_and_close = "<S-Cr>",
+  -- Change cursor position of outline window to match current location in code.
+  -- 'Opposite' of goto/peek_location.
+  restore_location = "<C-g>",
+  -- Open LSP/provider-dependent symbol hover information
+  hover_symbol = "<C-space>",
+  -- Preview location code of the symbol under cursor
+  toggle_preview = "K",
+  rename_symbol = "r",
+  code_actions = "a",
+  -- These fold actions are collapsing tree nodes, not code folding
+  fold = "h",
+  unfold = "l",
+  fold_toggle = "<Tab>",
+  -- Toggle folds for all nodes.
+  -- If at least one node is folded, this action will fold all nodes.
+  -- If all nodes are folded, this action will unfold all nodes.
+  fold_toggle_all = "<S-Tab>",
+  fold_all = "W",
+  unfold_all = "E",
+  fold_reset = "R",
+  -- Move down/up by one line and peek_location immediately.
+  -- You can also use outline_window.auto_jump=true to do this for any
+  -- j/k/<down>/<up>.
+  down_and_jump = "<C-j>",
+  up_and_jump = "<C-k>",
+}
+
+M.table = { -- next and prev work in Normal and Insert mode. All other mappings work in Normal mode.
+  next = "<TAB>", -- Go to next cell.
+  prev = "<S-TAB>", -- Go to previous cell.
+  insert_row_up = "<A-k>", -- Insert a row above the current row.
+  insert_row_down = "<A-j>", -- Insert a row below the current row.
+  move_row_up = "<A-S-k>", -- Move the current row up.
+  move_row_down = "<A-S-j>", -- Move the current row down.
+  insert_column_left = "<A-h>", -- Insert a column to the left of current column.
+  insert_column_right = "<A-l>", -- Insert a column to the right of current column.
+  move_column_left = "<A-S-h>", -- Move the current column to the left.
+  move_column_right = "<A-S-l>", -- Move the current column to the right.
+  insert_table = "<A-t>", -- Insert a new table.
+  insert_table_alt = "<A-S-t>", -- Insert a new table that is not surrounded by pipes.
+  delete_column = "<A-d>", -- Delete the column under cursor.
+}
+
+M.markdown_preview = {
+  { "<leader>op", ":MarkdownPreview<CR>", desc = "Open Markdown Preview" },
+  { "<leader>os", ":MarkdownPreviewStop<CR>", desc = "Close Markdown Preview" },
+  { "<leader>ot", ":MarkdownPreviewToggle<CR>", desc = "Toggle Markdown Preview" },
+}
+
 return M

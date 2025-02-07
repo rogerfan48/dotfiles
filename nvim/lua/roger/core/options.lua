@@ -60,10 +60,14 @@ vim.o.breakindent = true -- enable indentation for wrapped text
 vim.o.showbreak = "  " -- the beginning of the wrapped text
 
 -- fold with treesitter
-vim.o.foldmethod = "expr"
-vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.foldtext = ""
-vim.o.foldlevel = 99
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.o.foldmethod = "expr"
+    vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+    vim.o.foldtext = ""
+    vim.o.foldlevel = 99
+  end
+})
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
