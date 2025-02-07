@@ -15,52 +15,7 @@ return {
   },
   config = function()
     local obsidian = require("obsidian")
-
-    local function gf_link_in_line()
-      -- INFO: If it's foldable, toggle fold. Else try toggle link.
-      local line = vim.fn.line(".") -- Get the current line number
-      local foldlevel = vim.fn.foldlevel(line) -- Get the fold level of the current line
-      if foldlevel > 0 then
-        vim.schedule(function() -- ∵ `normal!` cannot be used in `opts = { expr = true }`
-          vim.cmd("normal! za")
-          vim.cmd("normal! zz")
-        end)
-        return ""
-      end
-
-      local line_text = vim.api.nvim_get_current_line()
-
-      -- try Wiki Link: [[...]]
-      local link_start, link_end = line_text:find("%[%[.-%]%]")
-      if link_start then
-        local target_col = link_start + 2
-        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
-        vim.cmd("ObsidianFollowLink")
-        return ""
-      end
-
-      -- try Markdown Link: [text](target)
-      local md_link_start, md_link_end = line_text:find("%[.-%]%((.-)%)")
-      if md_link_start then
-        local paren_index = line_text:find("%(", md_link_start) -- move cursor to '('
-        if paren_index then
-          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
-          vim.cmd("ObsidianFollowLink")
-          return ""
-        end
-      end
-
-      -- try angle bracket URL: <https://www.google.com>
-      local angle_start, angle_end = line_text:find("<https?://[^>]+>")
-      if angle_start then
-        local target_col = angle_start + 1
-        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
-        vim.cmd("ObsidianFollowLink")
-        return ""
-      end
-
-      return obsidian.util.gf_passthrough()
-    end
+    local keymaps = require("roger.core.keymaps")
 
     obsidian.setup({
       workspaces = {
@@ -93,31 +48,7 @@ return {
 
       -- Optional, configure key mappings. These are the defaults. If you don't want to set any keymappings this
       -- way then set 'mappings = {}'.
-      mappings = {
-        -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
-        ["gf"] = {
-          action = gf_link_in_line,
-          opts = { noremap = false, expr = true, buffer = true },
-        },
-        ["<CR>"] = {
-          action = gf_link_in_line,
-          opts = { expr = true, buffer = true },
-        },
-        -- Toggle check-boxes.
-        ["<leader>oc"] = {
-          action = function()
-            return obsidian.util.toggle_checkbox()
-          end,
-          opts = { desc = "Toggle check-boxes", buffer = true },
-        },
-        -- -- Smart action depending on context, either follow link or toggle checkbox.
-        -- ["<cr>"] = {
-        --   action = function()
-        --     return obsidian.util.smart_action()
-        --   end,
-        --   opts = { buffer = true, expr = true },
-        -- },
-      },
+      mappings = keymaps.obsidian(),
 
       -- Where to put new notes. Valid options are
       notes_subdir = "",

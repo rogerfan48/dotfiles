@@ -60,12 +60,12 @@ vim.o.breakindent = true -- enable indentation for wrapped text
 vim.o.showbreak = "  " -- the beginning of the wrapped text
 
 -- fold with treesitter
-vim.api.nvim_create_autocmd("VimEnter", {
+vim.api.nvim_create_autocmd("BufWinEnter", {
   callback = function()
-    vim.o.foldmethod = "expr"
-    vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-    vim.o.foldtext = ""
-    vim.o.foldlevel = 99
+    vim.wo.foldmethod = "expr"
+    vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+    vim.wo.foldtext = ""
+    vim.wo.foldlevel = 99
   end
 })
 

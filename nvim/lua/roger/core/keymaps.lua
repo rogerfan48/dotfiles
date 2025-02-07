@@ -98,7 +98,7 @@ M.folding = function()
   vim.keymap.set({ "n", "v" }, "gk", function()
     -- `?` - Start a search backwards from the current cursor position.
     -- `^` - Match the beginning of a line.
-    -- `##` - Match 2 ## symbols
+    -- `#` - Match 1 # symbols
     -- `\\+` - Match one or more occurrences of prev element (#)
     -- `\\s` - Match exactly one whitespace character following the hashes
     -- `.*` - Match any characters (except newline) following the space
@@ -112,7 +112,7 @@ M.folding = function()
   vim.keymap.set({ "n", "v" }, "gj", function()
     -- `/` - Start a search forwards from the current cursor position.
     -- `^` - Match the beginning of a line.
-    -- `##` - Match 2 ## symbols
+    -- `#` - Match 1 # symbols
     -- `\\+` - Match one or more occurrences of prev element (#)
     -- `\\s` - Match exactly one whitespace character following the hashes
     -- `.*` - Match any characters (except newline) following the space
@@ -597,5 +597,71 @@ M.markdown_preview = {
   { "<leader>os", ":MarkdownPreviewStop<CR>", desc = "Close Markdown Preview" },
   { "<leader>ot", ":MarkdownPreviewToggle<CR>", desc = "Toggle Markdown Preview" },
 }
+
+M.obsidian = function()
+  local function gf_link_in_line(isGF)
+    -- INFO: If it's foldable, toggle fold. Else try toggle link.
+    local line = vim.api.nvim_get_current_line()
+    if not isGF and string.match(line, "^#+%s.*$") then
+      vim.schedule(function() -- ∵ `normal!` cannot be used in `opts = { expr = true }`
+        vim.cmd("normal! za")
+        vim.cmd("normal! zz")
+      end)
+      return ""
+    end
+
+    -- try Wiki Link: [[...]]
+    local link_start, link_end = line:find("%[%[.-%]%]")
+    if link_start then
+      local target_col = link_start + 2
+      vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
+      vim.cmd("ObsidianFollowLink")
+      return ""
+    end
+
+    -- try Markdown Link: [text](target)
+    local md_link_start, md_link_end = line:find("%[.-%]%((.-)%)")
+    if md_link_start then
+      local paren_index = line:find("%(", md_link_start) -- move cursor to '('
+      if paren_index then
+        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
+        vim.cmd("ObsidianFollowLink")
+        return ""
+      end
+    end
+
+    -- try angle bracket URL: <https://www.google.com>
+    local angle_start, angle_end = line:find("<https?://[^>]+>")
+    if angle_start then
+      local target_col = angle_start + 1
+      vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
+      vim.cmd("ObsidianFollowLink")
+      return ""
+    end
+
+    return obsidian.util.gf_passthrough()
+  end
+
+  return {
+    -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
+    ["gf"] = {
+      action = function() return gf_link_in_line(true) end,
+      opts = { noremap = false, expr = true, buffer = true },
+    },
+    ["<CR>"] = {
+      action = function() return gf_link_in_line(false) end,
+      opts = { expr = true, buffer = true },
+    },
+    ["<leader>oc"] = { -- Toggle check-boxes.
+      action = function() return obsidian.util.toggle_checkbox() end,
+      opts = { desc = "Toggle check-boxes", buffer = true },
+    },
+    -- -- Smart action depending on context, either follow link or toggle checkbox.
+    -- ["<cr>"] = {
+    --   action = function() return obsidian.util.smart_action() end,
+    --   opts = { buffer = true, expr = true },
+    -- },
+  }
+end
 
 return M
