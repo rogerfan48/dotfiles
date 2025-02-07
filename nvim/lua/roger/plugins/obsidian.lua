@@ -97,7 +97,7 @@ return {
           action = function()
             return obsidian.util.toggle_checkbox()
           end,
-          opts = { buffer = true },
+          opts = { desc = "Toggle check-boxes", buffer = true },
         },
         -- -- Smart action depending on context, either follow link or toggle checkbox.
         -- ["<cr>"] = {

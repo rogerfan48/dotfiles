@@ -416,4 +416,8 @@ M.noice = function()
   vim.keymap.set("n", "<leader>nt", ":NoiceTelescope<CR>", { desc = "Open Noice Telescope" })
 end
 
+M.outline = function()
+  vim.keymap.set("n", "<leader>k", ":Outline<CR>", { desc = "Toggle Outline", silent = true })
+end
+
 return M

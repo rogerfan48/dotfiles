@@ -44,5 +44,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
     hl = vim.api.nvim_get_hl(0, { name = "RenderMarkdownBullet", link = false })
     hl.fg = "#b0ccd4"
     vim.api.nvim_set_hl(0, "RenderMarkdownBullet", hl)
+
+    hl = vim.api.nvim_get_hl(0, { name = "OutlineCurrent", link = false })
+    hl.bg = "#265473"
+    vim.api.nvim_set_hl(0, "OutlineCurrent", hl)
   end
 })
