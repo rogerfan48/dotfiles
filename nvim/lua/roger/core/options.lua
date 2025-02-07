@@ -10,11 +10,11 @@ vim.o.smartindent = true
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "c", "cpp", "python", "sh", "bash", "markdown" },
-	callback = function()
-		vim.opt_local.tabstop = 4
-		vim.opt_local.shiftwidth = 4
-	end,
+  pattern = { "c", "cpp", "python", "sh", "bash", "markdown" },
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+  end,
 })
 
 -- Spelling check
@@ -59,10 +59,16 @@ vim.o.breakindent = true -- enable indentation for wrapped text
 -- vim.o.breakindentopt = "shift:2" -- 設定換行後的縮排大小 (2 spaces)
 vim.o.showbreak = "  " -- the beginning of the wrapped text
 
+-- fold with treesitter
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldtext = ""
+vim.o.foldlevel = 99
+
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
-  callback = function ()
+  callback = function()
     vim.highlight.on_yank()
   end,
 })
@@ -79,5 +85,5 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.diagnostic.config({
   float = {
     border = "rounded", -- Add border to "]d", "[d" panel
-  }
+  },
 })

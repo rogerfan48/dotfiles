@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 return {
   "nvim-treesitter/nvim-treesitter",
   event = { "BufReadPre", "BufNewFile" },
@@ -13,15 +14,10 @@ return {
       auto_install = true,
       sync_install = false,
       ignore_install = {},
-      highlight = {
-        enable = true,
-      },
-      indent = {
-        enable = true,
-      },
-      autotag = {
-        enable = true,
-      },
+      highlight = { enable = true },
+      indent = { enable = true },
+      fold = { enable = true },
+      autotag = { enable = true },
       incremental_selection = {
         enable = true,
         keymaps = keymaps.treesitter,

@@ -91,6 +91,124 @@ M.general = function()
   -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 end
 
+M.folding = function()
+  -- `normal`: executes the command and respects any mappings that might be defined.
+  -- `normal!`: executes the command in a "raw" mode, ignoring any mappings.
+
+  vim.keymap.set({ "n", "v" }, "gk", function()
+    -- `?` - Start a search backwards from the current cursor position.
+    -- `^` - Match the beginning of a line.
+    -- `##` - Match 2 ## symbols
+    -- `\\+` - Match one or more occurrences of prev element (#)
+    -- `\\s` - Match exactly one whitespace character following the hashes
+    -- `.*` - Match any characters (except newline) following the space
+    -- `$` - Match extends to end of line
+    -- vim.cmd("silent! ?^#\\+\\s.*$")
+    -- vim.cmd("nohlsearch") -- Clear the search highlight
+    vim.fn.search("^#\\+\\s.*$", "bW") -- "b": search back, "W": touch TOP will not go find END
+    vim.cmd("nohlsearch")
+  end, { desc = "Go to previous MD header" })
+
+  vim.keymap.set({ "n", "v" }, "gj", function()
+    -- `/` - Start a search forwards from the current cursor position.
+    -- `^` - Match the beginning of a line.
+    -- `##` - Match 2 ## symbols
+    -- `\\+` - Match one or more occurrences of prev element (#)
+    -- `\\s` - Match exactly one whitespace character following the hashes
+    -- `.*` - Match any characters (except newline) following the space
+    -- `$` - Match extends to end of line
+    -- vim.cmd("silent! /^#\\+\\s.*$")
+    -- vim.cmd("nohlsearch")
+    vim.fn.search("^#\\+\\s.*$", "W")
+    vim.cmd("nohlsearch")
+  end, { desc = "Go to next MD header" })
+
+  vim.keymap.set("n", "<CR>", function()
+    local line = vim.fn.line(".") -- Get the current line number
+    local foldlevel = vim.fn.foldlevel(line) -- Get the fold level of the current line
+    if foldlevel == 0 then
+      vim.notify("No fold found", vim.log.levels.INFO)
+    else
+      vim.cmd("normal! za")
+      vim.cmd("normal! zz") -- center the cursor line on screen
+    end
+  end, { desc = "Toggle fold" })
+
+  local function fold_headings_of_level(level)
+    vim.cmd("normal! gg")
+    local total_lines = vim.fn.line("$") -- get the total number of lines
+    for line = 1, total_lines do
+      local line_content = vim.fn.getline(line) -- Get the content of the current line
+      -- "^" -> Ensures the match is at the start of the line
+      -- string.rep("#", level) -> Creates a string with 'level' number of "#" characters
+      -- "%s" -> Matches any whitespace character after the "#" characters
+      -- So this will match `## `, `### `, `#### ` for example, which are markdown headings
+      if line_content:match("^" .. string.rep("#", level) .. "%s") then
+        vim.fn.cursor(line, 1) -- Move the cursor to the current line
+        -- Fold the heading if it matches the level
+        if vim.fn.foldclosed(line) == -1 then
+          vim.cmd("normal! za")
+        end
+      end
+    end
+  end
+
+  local function fold_markdown_headings(levels)
+    local saved_view = vim.fn.winsaveview() -- save the view now, in order to jump back
+    for _, level in ipairs(levels) do
+      fold_headings_of_level(level)
+    end
+    vim.cmd("nohlsearch")
+    vim.fn.winrestview(saved_view) -- Restore the view to jump to where I was
+  end
+
+  vim.keymap.set("n", "zu", function()
+    vim.cmd("silent update") -- save only if file being modified
+    vim.cmd("edit!") -- Reloads the file to reflect the changes
+    vim.cmd("normal! zR") -- Unfold everything
+    vim.cmd("normal! zz") -- center the cursor line on screen
+  end, { desc = "Unfold all" })
+
+  vim.keymap.set("n", "zi", function()
+    vim.cmd("silent update")
+    vim.cmd("normal gk")
+    vim.cmd("normal! za") -- fold the line under cursor
+    vim.cmd("normal! zz")
+  end, { desc = "Fold the header currently in" })
+
+  vim.keymap.set("n", "zj", function()
+    vim.cmd("silent update")
+    vim.cmd("edit!")
+    vim.cmd("normal! zR")
+    fold_markdown_headings({ 6, 5, 4, 3, 2, 1 })
+    vim.cmd("normal! zz")
+  end, { desc = "Fold all headers level 1↑" })
+
+  vim.keymap.set("n", "zk", function()
+    vim.cmd("silent update")
+    vim.cmd("edit!")
+    vim.cmd("normal! zR")
+    fold_markdown_headings({ 6, 5, 4, 3, 2 })
+    vim.cmd("normal! zz")
+  end, { desc = "Fold all headers level 2↑" })
+
+  vim.keymap.set("n", "zl", function()
+    vim.cmd("silent update")
+    vim.cmd("edit!")
+    vim.cmd("normal! zR")
+    fold_markdown_headings({ 6, 5, 4, 3 })
+    vim.cmd("normal! zz")
+  end, { desc = "Fold all headers level 3↑" })
+
+  vim.keymap.set("n", "z;", function()
+    vim.cmd("silent update")
+    vim.cmd("edit!")
+    vim.cmd("normal! zR")
+    fold_markdown_headings({ 6, 5, 4 })
+    vim.cmd("normal! zz")
+  end, { desc = "Fold all headers level 4↑" })
+end
+
 M.lsp = function()
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),

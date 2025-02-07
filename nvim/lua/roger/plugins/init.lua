@@ -1,3 +1,6 @@
-require("roger.core.keymaps").general()
+local keymaps = require("roger.core.keymaps")
+
+keymaps.general()
+keymaps.folding()
 
 return {}
