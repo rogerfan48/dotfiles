@@ -8,14 +8,13 @@ end
 return {
   "epwalsh/obsidian.nvim",
   version = "*",
-  lazy = true,
-  ft = "markdown",
   dependencies = {
     "nvim-lua/plenary.nvim",
   },
   config = function()
     local obsidian = require("obsidian")
     local keymaps = require("roger.core.keymaps")
+    keymaps.obsidian()
 
     obsidian.setup({
       workspaces = {
@@ -48,7 +47,7 @@ return {
 
       -- Optional, configure key mappings. These are the defaults. If you don't want to set any keymappings this
       -- way then set 'mappings = {}'.
-      mappings = keymaps.obsidian(),
+      mappings = keymaps.obsidian_table(),
 
       -- Where to put new notes. Valid options are
       notes_subdir = "",
@@ -148,14 +147,34 @@ return {
         vim.ui.open(url) -- need Neovim 0.10.0+
       end,
 
-      -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
-      -- file it will be ignored but you can customize this behavior here.
-      ---@param img string
       follow_img_func = function(img)
-        vim.fn.jobstart({ "qlmanage", "-p", img }) -- Mac OS quick look preview
-        -- vim.fn.jobstart({"xdg-open", url})  -- linux
-        -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
+        local current_dir = vim.fn.expand("%:p:h")
+        local img_abs_path = vim.fn.resolve(current_dir .. "/" .. img)
+
+        -- 用 qlmanage 開啟圖片（Quick Look）
+        vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
+
+        -- 延遲一段時間，讓 Quick Look 有足夠時間啟動，
+        -- 然後利用 osascript 強制把 Quick Look 的視窗置頂
+        vim.defer_fn(function()
+          vim.fn.jobstart({
+            "osascript",
+            "-e",
+            'tell application "System Events" to set frontmost of the first process whose name is "qlmanage" to true',
+          }, { detach = true })
+        end, 100) -- 延遲時間可依需求調整（單位：毫秒）
+
+        print("Opening image with Quick Look:", img_abs_path)
       end,
+
+      -- -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
+      -- -- file it will be ignored but you can customize this behavior here.
+      -- ---@param img string
+      -- follow_img_func = function(img)
+      --   vim.fn.jobstart({ "qlmanage", "-p", img }) -- Mac OS quick look preview
+      --   -- vim.fn.jobstart({"xdg-open", url})  -- linux
+      --   -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
+      -- end,
 
       -- Optional, set to true if you use the Obsidian Advanced URI plugin.
       -- https://github.com/Vinzent03/obsidian-advanced-uri
@@ -275,7 +294,7 @@ return {
         -- The default folder to place images in via `:ObsidianPasteImg`.
         -- If this is a relative path it will be interpreted as relative to the vault root.
         -- You can always override this per image by passing a full path to the command instead of just a filename.
-        img_folder = "assets/imgs", -- This is the default
+        -- img_folder = "assets/imgs", -- This is the default
 
         -- Optional, customize the default name or prefix when pasting images via `:ObsidianPasteImg`.
         ---@return string

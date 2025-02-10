@@ -87,6 +87,21 @@ M.general = function()
     { desc = "Show highlight from TS", silent = true }
   )
 
+  local open_in_file_manager = function(file_path)
+    local sysname = vim.loop.os_uname().sysname
+    if sysname == "Darwin" then -- MacOS: by Finder
+      vim.fn.jobstart({ "open", "-R", file_path }, { detach = true })
+    elseif sysname == "Linux" then -- Linux: by xdg-open
+      local folder = vim.fn.fnamemodify(file_path, ":h")
+      vim.fn.jobstart({ "xdg-open", folder }, { detach = true })
+    else
+      vim.notify([["Open in File Manager" is not supported in this OS: ]] .. sysname, vim.log.levels.WARN)
+    end
+  end
+  vim.keymap.set("n", "<leader>ff", function()
+    open_in_file_manager(vim.fn.expand("%:p"))
+  end, { desc = "Open file in Finder", noremap = true, silent = true })
+
   -- from comment.lua
   -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 end
@@ -292,15 +307,10 @@ end
 
 M.telescope = function()
   local builtin = require("telescope.builtin")
-  vim.keymap.set(
-    "n",
-    "<leader>fj",
-    ":Telescope find_files hidden=true<CR>",
-    { desc = "Fuzzy find files in cwd", silent = true }
-  )
-  vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
-  vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find string in cwd" })
-  vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
+  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Find files in cwd", silent = true })
+  vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Find recent files" })
+  vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Grep string in cwd" })
+  -- vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
   vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
   vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
   vim.keymap.set("n", "<leader>fH", ":Telescope highlights<CR>", { desc = "Telescope highlights", silent = true })
@@ -518,7 +528,7 @@ end
 
 M.treesj = function()
   local treesj = require("treesj")
-  vim.keymap.set("n", "<leader>m", treesj.toggle, { desc = "Split/Join blocks of code" })
+  vim.keymap.set("n", "<leader>mm", treesj.toggle, { desc = "Split/Join blocks of code" })
 end
 
 M.noice = function()
@@ -593,12 +603,22 @@ M.table = { -- next and prev work in Normal and Insert mode. All other mappings 
 }
 
 M.markdown_preview = {
-  { "<leader>op", ":MarkdownPreview<CR>", desc = "Open Markdown Preview" },
-  { "<leader>os", ":MarkdownPreviewStop<CR>", desc = "Close Markdown Preview" },
-  { "<leader>ot", ":MarkdownPreviewToggle<CR>", desc = "Toggle Markdown Preview" },
+  { "<leader>mp", ":MarkdownPreview<CR>", desc = "Open Markdown Preview" },
+  { "<leader>ms", ":MarkdownPreviewStop<CR>", desc = "Stop Markdown Preview" },
+  { "<leader>mt", ":MarkdownPreviewToggle<CR>", desc = "Toggle Markdown Preview" },
 }
 
 M.obsidian = function()
+  vim.keymap.set("n", "<leader>of", ":ObsidianQuickSwitch<CR>", { desc = "Find files in vault", silent = true })
+  vim.keymap.set("n", "<leader>og", ":ObsidianSearch<CR>", { desc = "Grep string in vault", silent = true })
+  vim.keymap.set("n", "<leader>oo", ":ObsidianOpen<CR>", { desc = "Open current file in Obsidian", silent = true })
+  vim.keymap.set("n", "<leader>on", ":ObsidianNew<CR>", { desc = "Create New Note (Obsidian)", silent = true })
+  vim.keymap.set("n", "<leader>ob", ":ObsidianBacklinks<CR>", { desc = "Check backlinks to this file", silent = true })
+  vim.keymap.set("n", "<leader>ot", ":ObsidianTemplate<CR>", { desc = "Insert a template", silent = true })
+end
+
+M.obsidian_table = function()
+  local obsidian = require("obsidian")
   local function gf_link_in_line(isGF)
     -- INFO: If it's foldable, toggle fold. Else try toggle link.
     local line = vim.api.nvim_get_current_line()
@@ -645,15 +665,21 @@ M.obsidian = function()
   return {
     -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
     ["gf"] = {
-      action = function() return gf_link_in_line(true) end,
+      action = function()
+        return gf_link_in_line(true)
+      end,
       opts = { noremap = false, expr = true, buffer = true },
     },
     ["<CR>"] = {
-      action = function() return gf_link_in_line(false) end,
+      action = function()
+        return gf_link_in_line(false)
+      end,
       opts = { expr = true, buffer = true },
     },
     ["<leader>oc"] = { -- Toggle check-boxes.
-      action = function() return obsidian.util.toggle_checkbox() end,
+      action = function()
+        return obsidian.util.toggle_checkbox()
+      end,
       opts = { desc = "Toggle check-boxes", buffer = true },
     },
     -- -- Smart action depending on context, either follow link or toggle checkbox.
