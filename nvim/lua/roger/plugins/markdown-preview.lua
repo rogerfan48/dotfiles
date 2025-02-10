@@ -25,7 +25,7 @@ return {
       content_editable = false, -- Disable content editing in preview
       disable_filename = 0, -- Show file name in preview
     }
-    vim.g.mkdp_markdown_css = "" -- Custom CSS for markdown preview
+    vim.g.mkdp_markdown_css = vim.fn.expand('~/.dotfiles/nvim/markdown.css') -- Custom CSS for markdown preview
     vim.g.mkdp_highlight_css = "" -- Custom syntax highlight CSS
     vim.g.mkdp_page_title = "「${name}」" -- Set the title of the preview page
   end,

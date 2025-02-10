@@ -81,7 +81,7 @@ return {
       window = {
         width = 42,
         mappings = {
-          ["C"] = "close_node",
+          ["h"] = "close_node",
           ["Z"] = "close_all_nodes",
           ["z"] = "expand_all_nodes",
           -- ["b"] = "rename_basename",
