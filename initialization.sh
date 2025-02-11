@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v git >/dev/null 2>&1; then
+    echo "Error: git is not installed. Please install git (e.g., via Homebrew on macOS or apt on Linux) and re-run this script."
+    exit 1
+fi
+
 read -r -p "This script will install various tools and configure your environment. Do you wish to continue? (y/n): " proceed
 if [[ "$proceed" != "y" ]]; then
     echo "Installation aborted."
@@ -13,31 +18,17 @@ echo "Detected OS: $OS"
 # Setup for macOS
 # =======================
 if [[ "$OS" == "Darwin" ]]; then
-    echo "Setting up environment for macOS..."
-
-    # Check and install Homebrew if it is not installed
     if ! command -v brew >/dev/null 2>&1; then
-        read -r -p "Homebrew is not installed. Would you like to install Homebrew? (y/n): " install_brew
-        if [[ "$install_brew" == "y" ]]; then
-            echo "Installing Homebrew..."
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            cat <<"EOF" >>~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-EOF
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        else
-            echo "Homebrew is required. Exiting."
-            exit 1
-        fi
-    else
-        echo "Homebrew is already installed."
+        echo "Error: Homebrew is not installed. Please install Homebrew and re-run this script."
+        exit 1
     fi
+    echo "Setting up environment for macOS..."
 
     echo "Updating Homebrew..."
     brew update
 
-    echo "Installing basic tools: bash and git..."
-    brew install bash git
+    echo "Installing basic tools: bash"
+    brew install bash
 
     echo "Installing WezTerm..."
     if brew info --cask wezterm >/dev/null 2>&1; then
