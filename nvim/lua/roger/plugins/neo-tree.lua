@@ -85,12 +85,27 @@ return {
           ["Z"] = "close_all_nodes",
           ["z"] = "expand_all_nodes",
           -- ["b"] = "rename_basename",
-          ["<cr>"] = function(state)
-            open_and_maybe_close(state, true)
-          end,
-          ["<tab>"] = function(state)
-            open_and_maybe_close(state, false)
-          end,
+          ["<cr>"] = {
+            function(state)
+              open_and_maybe_close(state, true)
+            end,
+            desc = "Open and close Neotree",
+          },
+          ["<tab>"] = {
+            function(state)
+              open_and_maybe_close(state, false)
+            end,
+            desc = "Open but keep Neotree open",
+          },
+          ["t"] = {
+            function(state)
+              local node = state.tree:get_node()
+              if node and node.path then
+                vim.cmd("tabedit " .. vim.fn.fnameescape(node.path))
+              end
+            end,
+            desc = "Open in new tab",
+          },
           ["y"] = {
             function(state)
               vim.fn.setreg("+", state.tree:get_node().path)
