@@ -81,7 +81,7 @@ return {
     filetypes = {
       markdown = {
         url_encode_path = true, ---@type boolean | fun(): boolean
-        template = "![$CURSOR]($FILE_PATH)", ---@type string | fun(context: table): string
+        template = "![$FILE_NAME]($FILE_PATH)", ---@type string | fun(context: table): string
         download_images = false, ---@type boolean | fun(): boolean
       },
 

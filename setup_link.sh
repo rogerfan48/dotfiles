@@ -12,6 +12,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".p10k.zsh"]="$HOME/.p10k.zsh"
         [".tmux.conf"]="$HOME/.tmux.conf"
         [".wezterm.lua"]="$HOME/.wezterm.lua"
+        [".hammerspoon"]="$HOME/.hammerspoon"
         ["nvim"]="$HOME/.config/nvim"
         [".config/stylua.toml"]="$HOME/.config/stylua.toml"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
