@@ -19,7 +19,7 @@ install_jetbrainsmono_font() {
         echo "Installing JetBrainsMono Nerd Font to Linux fonts directory..."
         mkdir -p "$HOME/.local/share/fonts"
         find "$temp_dir" -type f -iname "*.ttf" -exec cp {} "$HOME/.local/share/fonts/" \;
-        fc-cache -f -v
+        fc-cache -f >/dev/null 2>&1
     else
         echo "Font installation not supported for OS: $OS"
     fi
@@ -41,7 +41,7 @@ install_jf_openhuninn_font() {
         echo "Installing jf-openhuninn-2.0 font to Linux fonts directory..."
         mkdir -p "$HOME/.local/share/fonts"
         cp "$temp_file" "$HOME/.local/share/fonts/"
-        fc-cache -f -v
+        fc-cache -f >/dev/null 2>&1
     else
         echo "Font installation not supported for OS: $OS"
     fi
@@ -213,22 +213,33 @@ elif [[ "$OS" == "Linux" ]]; then
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
         sudo ln -s /usr/share/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-        mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
+        sudo mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
         echo "Created symbolic link for zsh-autosuggestions."
     fi
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
         sudo ln -s /usr/share/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-        mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
+        sudo mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
 
     echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep..."
-    sudo apt-get install -y neovim bat cppcheck fzf nodejs lazygit ripgrep tmux
+    sudo apt-get install -y neovim bat cppcheck fzf nodejs ripgrep tmux
 
     # For bat: create symlink if necessary
     if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
         sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
         echo "### Created symlink for bat."
+    fi
+
+    if ! command -v lazygit >/dev/null 2>&1; then
+        echo "### Installing lazygit from GitHub binary..."
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name":' | cut -d '"' -f 4)
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        tar xf lazygit.tar.gz lazygit
+        sudo install lazygit -D -t /usr/local/bin/
+        rm lazygit.tar.gz lazygit
+    else
+        echo "lazygit is already installed."
     fi
 
 else
