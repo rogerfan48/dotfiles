@@ -1,5 +1,6 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
+local home = os.getenv("HOME")
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
@@ -12,6 +13,8 @@ config.max_fps = 120
 
 config.font = wezterm.font_with_fallback({
   { family = "JetBrainsMono Nerd Font Mono", weight = "Medium" },
+  { family = "jf-openhuninn-2.0" },
+  { family = "LXGW WenKai Mono TC", weight = "Bold" },
 })
 config.font_size = 13
 config.harfbuzz_features = { "calt=0" } -- disable ligatures
@@ -22,7 +25,7 @@ config.window_close_confirmation = "NeverPrompt"
 
 config.background = {
   {
-    source = { File = "/Users/roger/.dotfiles/bg_image/Sonoma.jpeg" },
+    source = { File = home .. "/.dotfiles/bg_image/Sonoma.jpeg" },
     width = "Cover",
     height = "Cover",
   },
