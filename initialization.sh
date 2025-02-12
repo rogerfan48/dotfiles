@@ -222,7 +222,7 @@ elif [[ "$OS" == "Linux" ]]; then
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
 
-    echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep..."
+    echo "### Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, ripgrep..."
     sudo apt-get install -y neovim bat cppcheck fzf nodejs ripgrep tmux
 
     # For bat: create symlink if necessary
@@ -232,9 +232,11 @@ elif [[ "$OS" == "Linux" ]]; then
     fi
 
     if ! command -v lazygit >/dev/null 2>&1; then
-        echo "### Installing lazygit from GitHub binary..."
-        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name":' | cut -d '"' -f 4)
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        echo "Installing lazygit from GitHub binary..."
+        LAZYGIT_TAG=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name":' | cut -d '"' -f 4)
+        LAZYGIT_VERSION=${LAZYGIT_TAG#v}
+        echo "Detected lazygit version: ${LAZYGIT_TAG}"
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_TAG}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
         tar xf lazygit.tar.gz lazygit
         sudo install lazygit -D -t /usr/local/bin/
         rm lazygit.tar.gz lazygit
