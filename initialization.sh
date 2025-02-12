@@ -53,6 +53,7 @@ set_zsh_default() {
     if [[ "$set_zsh" == "y" ]]; then
         if command -v zsh >/dev/null 2>&1; then
             echo "Setting zsh as the default shell..."
+            sudo sh -c "echo $(which zsh) >> /etc/shells" # because `chsh` only accepts shells in /etc/shells
             chsh -s "$(command -v zsh)"
         else
             echo "zsh is not installed. Please install zsh first."
@@ -131,12 +132,15 @@ if [[ "$OS" == "Darwin" ]]; then
     echo "Installing zsh plugins: zsh-autosuggestions and zsh-syntax-highlighting..."
     brew install zsh-autosuggestions zsh-syntax-highlighting
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+    # !!! Be sure to link and rename plugins' shell script !!!
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
         ln -s "$(brew --prefix)/share/zsh-autosuggestions" "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+        mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
         echo "Created symbolic link for zsh-autosuggestions."
     fi
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
         ln -s "$(brew --prefix)/share/zsh-syntax-highlighting" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+        mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
 
@@ -209,10 +213,12 @@ elif [[ "$OS" == "Linux" ]]; then
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
         sudo ln -s /usr/share/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+        mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
         echo "Created symbolic link for zsh-autosuggestions."
     fi
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
         sudo ln -s /usr/share/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+        mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
 
