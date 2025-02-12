@@ -53,7 +53,7 @@ set_zsh_default() {
     if [[ "$set_zsh" == "y" ]]; then
         if command -v zsh >/dev/null 2>&1; then
             echo "Setting zsh as the default shell..."
-            sudo sh -c "echo $(which zsh) >> /etc/shells" # because `chsh` only accepts shells in /etc/shells
+            sudo bash -c "echo $(which zsh) >> /etc/shells" # because `chsh` only accepts shells in /etc/shells
             chsh -s "$(command -v zsh)"
         else
             echo "zsh is not installed. Please install zsh first."
@@ -117,7 +117,7 @@ if [[ "$OS" == "Darwin" ]]; then
     echo "### Installing zsh and oh-my-zsh..."
     brew install zsh
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     else
         echo "oh-my-zsh is already installed."
     fi
@@ -196,7 +196,7 @@ elif [[ "$OS" == "Linux" ]]; then
 
     echo "### Installing oh-my-zsh..."
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     else
         echo "oh-my-zsh is already installed."
     fi
@@ -231,15 +231,12 @@ elif [[ "$OS" == "Linux" ]]; then
         echo "### Created symlink for bat."
     fi
 
+    echo "### Installing lazygit from GitHub binary..."
     if ! command -v lazygit >/dev/null 2>&1; then
-        echo "Installing lazygit from GitHub binary..."
-        LAZYGIT_TAG=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name":' | cut -d '"' -f 4)
-        LAZYGIT_VERSION=${LAZYGIT_TAG#v}
-        echo "Detected lazygit version: ${LAZYGIT_TAG}"
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_TAG}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
         tar xf lazygit.tar.gz lazygit
         sudo install lazygit -D -t /usr/local/bin/
-        rm lazygit.tar.gz lazygit
     else
         echo "lazygit is already installed."
     fi
