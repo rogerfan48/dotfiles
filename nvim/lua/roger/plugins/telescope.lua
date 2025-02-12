@@ -52,6 +52,7 @@ return {
           },
           file_ignore_patterns = {
             "^.git/", -- don't show .git/ in all Telescope utilities
+            "^node_modules/",
           },
           path_display = { "smart" },
           mappings = {
@@ -69,6 +70,16 @@ return {
               ["<Esc>"] = actions.close,
             },
           },
+        },
+        pickers = {
+          live_grep = {
+            additional_args = function(_)
+              return { "--hidden" }
+            end
+          },
+          find_files = {
+            hidden = true,
+          }
         },
         extensions = {
           fzf = {
