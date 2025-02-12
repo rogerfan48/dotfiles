@@ -225,6 +225,13 @@ elif [[ "$OS" == "Linux" ]]; then
     echo "### Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, ripgrep..."
     sudo apt-get install -y neovim bat cppcheck fzf nodejs ripgrep tmux
 
+    echo "### Installing TPM (Tmux Plugin Manager)..."
+    if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
+        git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+    else
+        echo "TPM is already installed."
+    fi
+
     # For bat: create symlink if necessary
     if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
         sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
