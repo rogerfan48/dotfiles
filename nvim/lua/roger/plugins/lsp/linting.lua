@@ -84,6 +84,12 @@ return {
           {}
         ),
       }),
+      pylint = create_linter_config({
+        name = "pylint",
+        cmd = "pylint",
+        ignore_exitcode = true,
+        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "pylint" })
+      }),
       markdownlint = create_linter_config({
         name = "markdownlint",
         cmd = "markdownlint",

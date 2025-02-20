@@ -15,6 +15,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".hammerspoon"]="$HOME/.hammerspoon"
         ["nvim"]="$HOME/.config/nvim"
         [".config/stylua.toml"]="$HOME/.config/stylua.toml"
+        [".config/pylintrc"]="$HOME/.config/pylintrc"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )
@@ -26,6 +27,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".wezterm.lua"]="$HOME/.wezterm.lua"
         ["nvim"]="$HOME/.config/nvim"
         [".config/stylua.toml"]="$HOME/.config/stylua.toml"
+        [".config/pylintrc"]="$HOME/.config/pylintrc"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )

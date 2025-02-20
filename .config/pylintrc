@@ -1,0 +1,18 @@
+[MASTER]
+py-version=3.13
+
+[MESSAGES CONTROL]
+disable=
+  missing-docstring,  # 忽略缺少 docstring 的警告
+  ; line-too-long,  # 忽略行長度過長警告
+  invalid-name,  # 忽略變數、函數名稱不符合命名規範
+  too-few-public-methods  # 忽略 class 方法太少的警告
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+ignore=tests,venv,.git,__pycache__
+
+[DESIGN]
+min-public-methods=1
