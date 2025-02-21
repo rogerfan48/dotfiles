@@ -22,7 +22,6 @@ return {
 				"marksman", -- markdown
         "jsonls", -- JSON
 				"texlab", -- latex
-				"ast_grep", -- dart
         "bashls", -- bash
         "taplo", -- TOML
 			},
@@ -37,7 +36,6 @@ return {
 				"prettier", -- HTML, CSS, SCSS, JS/TS
 				"isort", -- Python
 				"black", -- Python
-				"ast_grep", -- Dart
 				"latexindent", -- LaTeX
         "shfmt", -- Bash
 

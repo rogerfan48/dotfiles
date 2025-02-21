@@ -48,5 +48,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     hl = vim.api.nvim_get_hl(0, { name = "OutlineCurrent", link = false })
     hl.bg = "#265473"
     vim.api.nvim_set_hl(0, "OutlineCurrent", hl)
+
+    vim.api.nvim_set_hl(0, "FlutterClosingTag", { fg = "#484848" })
   end
 })

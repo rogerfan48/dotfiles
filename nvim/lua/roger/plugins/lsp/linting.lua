@@ -88,7 +88,7 @@ return {
         name = "pylint",
         cmd = "pylint",
         ignore_exitcode = true,
-        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "pylint" })
+        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "pylint" }),
       }),
       markdownlint = create_linter_config({
         name = "markdownlint",
@@ -115,13 +115,13 @@ return {
         args = { "--format=parsable" },
         parser = lp.from_errorformat("%f:%l:%c: %m", { source = "yamllint" }),
       }),
-      dartanalyzer = create_linter_config({
-        name = "dartanalyzer",
-        cmd = "dart",
-        args = { "analyze", "--format", "machine" },
-        append_fname = false,
-        parser = lp.from_errorformat("%f|%l|%c|%t|%m", { source = "dartanalyzer" }),
-      }),
+      -- dartanalyzer = create_linter_config({
+      --   name = "dartanalyzer",
+      --   cmd = "dart",
+      --   args = { "analyze", "--format", "machine" },
+      --   append_fname = false,
+      --   parser = lp.from_errorformat("%f|%l|%c|%t|%m", { source = "dartanalyzer" }),
+      -- }),
       shellcheck = create_linter_config({
         name = "shellcheck",
         cmd = "shellcheck",
@@ -148,7 +148,7 @@ return {
       javascriptreact = { "eslint_d" },
       typescriptreact = { "eslint_d" },
       python = { "pylint" },
-      dart = { "dartanalyzer" },
+      dart = {},
       markdown = { "markdownlint" },
       -- latex = { "chktex" },
       json = { "jsonlint" },

@@ -690,4 +690,8 @@ M.obsidian_table = function()
   }
 end
 
+M.flutter = function()
+  vim.keymap.set("n", "<leader>fF", ":Telescope flutter commands<CR>", { desc = "Flutter tools commands", silent = true })
+end
+
 return M
