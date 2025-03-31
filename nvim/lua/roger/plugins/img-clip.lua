@@ -145,6 +145,6 @@ return {
     custom = {}, ---@type table | fun(): table
   },
   keys = {
-    { "<leader>p", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+    { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
   },
 }

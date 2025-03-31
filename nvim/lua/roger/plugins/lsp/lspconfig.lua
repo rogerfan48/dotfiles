@@ -56,6 +56,9 @@ return {
           },
         })
       end,
+      ["eslint"] = function()
+        -- 不設定它，避免自動 attach
+      end,
       ["lua_ls"] = function()
         lspconfig["lua_ls"].setup({
           capabilities = capabilities,

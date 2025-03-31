@@ -135,6 +135,25 @@ return {
           ["note"] = vim.diagnostic.severity.HINT,
         }, { source = "shellcheck" }, {}),
       }),
+      eslint_d = {
+        name = "eslint_d",
+        cmd = "eslint_d",
+        stdin = false,
+        args = {
+          "--format",
+          "unix",
+          "--stdin-filename",
+          function()
+            return vim.api.nvim_buf_get_name(0)
+          end,
+        },
+        stream = "both",
+        ignore_exitcode = true,
+        parser = require("lint.parser").from_errorformat(
+          "%f:%l:%c: %m",
+          { source = "eslint_d", severity = vim.diagnostic.severity.WARN }
+        ),
+      },
     }
     lint.linters_by_ft = {
       -- lua = {},

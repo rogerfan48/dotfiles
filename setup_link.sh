@@ -16,6 +16,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         ["nvim"]="$HOME/.config/nvim"
         [".config/stylua.toml"]="$HOME/.config/stylua.toml"
         [".config/pylintrc"]="$HOME/.config/pylintrc"
+        [".config/black/pyproject.toml"]="$HOME/.config/black/pyproject.toml"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )
@@ -28,6 +29,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         ["nvim"]="$HOME/.config/nvim"
         [".config/stylua.toml"]="$HOME/.config/stylua.toml"
         [".config/pylintrc"]="$HOME/.config/pylintrc"
+        [".config/black/pyproject.toml"]="$HOME/.config/black/pyproject.toml"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".prettierrc"]="$HOME/.prettierrc"
     )

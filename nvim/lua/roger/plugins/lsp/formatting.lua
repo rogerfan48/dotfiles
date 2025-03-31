@@ -18,7 +18,7 @@ return {
         typescript = { "prettier" },
         javascriptreact = { "prettier" },
         typescriptreact = { "prettier" },
-        python = { "isort", "black" },
+        python = { "isort", "black_global" },
         dart = { "dart_format" },
         markdown = {},
         latex = { "latexindent" },
@@ -33,6 +33,15 @@ return {
           args = { "format", "$FILENAME" },
           stdin = false,
           tempfile = "file",
+        },
+        black_global = {
+          command = "black",
+          args = {
+            "--config",
+            vim.fn.expand("~/.config/black/pyproject.toml"),
+            "-",
+          },
+          stdin = true,
         },
       },
       -- format_on_save = {
