@@ -80,6 +80,12 @@ alias bat="bat --paging never" # To prevent using paging when many lines
 source <(fzf --zsh) # Set up fzf key bindings and fuzzy completion
 
 # SEC: Custom functions
+function path_prepend() {
+  if [[ ":$PATH:" != *":$1:"* ]]; then
+    export PATH="$1:$PATH"
+  fi
+}
+
 function mysass() {
     # if only 1 argu: compile ${1}/scss/style.scss to ${1}/css/style.min.css in compressed mode
     # if have 2 augu: just compile ${1} to ${2} in compressed mode
@@ -110,6 +116,42 @@ function kb() {
         echo "Invalid input. Please enter 'y' or 'n'."
     fi
 }
+
+# SEC: RUBY
+if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
+  path_prepend "/opt/homebrew/opt/ruby/bin"
+  path_prepend "`gem environment gemdir`/bin"
+fi
+
+# SEC: Google Cloud SDK
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
+# SEC: Flutter pub global
+path_prepend "$HOME/.pub-cache/bin"
+
+# SEC: NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# SEC: CONDA
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh # NOTE: Stay at the bottom of .zshrc
