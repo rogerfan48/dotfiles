@@ -43,6 +43,8 @@ M.general = function()
   vim.keymap.set({ "n", "v" }, "<leader>Y", '"+Y', { silent = true })
   vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { silent = true })
   vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { silent = true })
+  vim.keymap.set({ "n", "v" }, "<leader>d", '"+d', { silent = true })
+  vim.keymap.set({ "n", "v" }, "<leader>D", '"+D', { silent = true })
   vim.keymap.set({ "v" }, "/", '"vy/<C-r>v', { noremap = true })
 
   -- increment/decrement numbers
