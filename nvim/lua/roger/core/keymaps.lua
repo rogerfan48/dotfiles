@@ -274,7 +274,27 @@ M.linting = function()
 end
 
 M.neo_tree = function()
-  local function custom_toggle_neo_tree()
+  vim.g.neo_tree_is_open = false
+
+  local function open_neo_tree()
+    vim.cmd("silent Neotree reveal")
+    vim.g.neo_tree_is_open = true
+  end
+
+  local function close_neo_tree()
+    vim.cmd("silent Neotree close")
+    vim.g.neo_tree_is_open = false
+  end
+
+  local function toggle_neo_tree()
+    if vim.g.neo_tree_is_open then
+      close_neo_tree()
+    else
+      open_neo_tree()
+    end
+  end
+
+  local function switch_neo_tree()
     -- 獲取當前的 Tab 頁索引
     local current_tab = vim.api.nvim_get_current_tabpage()
 
@@ -296,16 +316,61 @@ M.neo_tree = function()
       -- Neo-tree 在當前 Tab 中已打開，切換到該窗口或關閉
       local current_win = vim.api.nvim_get_current_win()
       if neo_tree_win == current_win then
-        vim.cmd("silent Neotree close")
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype ~= "neo-tree" then
+            vim.api.nvim_set_current_win(win) -- 切過去
+            return
+          end
+        end
       else
         vim.api.nvim_set_current_win(neo_tree_win)
       end
     else
-      vim.cmd("silent Neotree toggle")
+      open_neo_tree()
     end
   end
 
-  vim.keymap.set("n", "<leader>j", custom_toggle_neo_tree, { desc = "Toggle Neo-tree" })
+  vim.keymap.set("n", "<leader>j", switch_neo_tree, { desc = "Switch between file and Neo-tree" })
+  vim.keymap.set("n", "<leader>J", toggle_neo_tree, { desc = "Toggle Neo-tree" })
+
+  vim.api.nvim_create_autocmd({ "TabEnter", "TabNewEntered" }, {
+    callback = function()
+      -- 檢查目前 tab 是否已經有 Neo-tree 視窗
+      local has_neo = false
+      for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        if vim.api.nvim_buf_get_name(buf):match("neo%-tree filesystem") then
+          has_neo = true
+          break
+        end
+      end
+
+      if vim.g.neo_tree_is_open and not has_neo then
+        vim.cmd("silent Neotree show left")
+      elseif not vim.g.neo_tree_is_open and has_neo then
+        vim.cmd("silent Neotree close")
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("TabLeave", {
+    callback = function()
+      -- 若當前視窗的 filetype 是 neo-tree，就換視窗
+      if vim.bo.filetype == "neo-tree" then
+        -- 1. 在此 tab 內找第一個非 neo-tree 視窗
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype ~= "neo-tree" then
+            vim.api.nvim_set_current_win(win) -- 切過去
+            return
+          end
+        end
+        -- 2. 如果整個 tab 都只剩側欄，就新開一個空白 buffer
+        vim.cmd("enew | wincmd p")
+      end
+    end,
+  })
 end
 
 M.telescope = function()
