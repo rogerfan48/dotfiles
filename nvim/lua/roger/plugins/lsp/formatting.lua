@@ -30,7 +30,7 @@ return {
       formatters = {
         dart_format = {
           command = "dart",
-          args = { "format", "$FILENAME" },
+          args = { "format", "$FILENAME", "--line-length", "100" },
           stdin = false,
           tempfile = "file",
         },
