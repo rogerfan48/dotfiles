@@ -87,9 +87,15 @@ return {
       pylint = create_linter_config({
         name = "pylint",
         cmd = "pylint",
+        args = {
+          "--msg-template={abspath}:{line}:{column}:{msg_id}: {msg}",
+          "--reports=n",
+          "--score=n",
+        },
         ignore_exitcode = true,
-        parser = lp.from_errorformat("%f:%l:%c: %m", { source = "pylint" }),
+        parser = lp.from_errorformat("%f:%l:%c:%m", { source = "pylint", severity = vim.diagnostic.severity.WARN }),
       }),
+
       markdownlint = create_linter_config({
         name = "markdownlint",
         cmd = "markdownlint",
