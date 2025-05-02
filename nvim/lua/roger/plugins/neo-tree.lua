@@ -35,12 +35,12 @@ return {
             display_name = " 󰉓 File ", -- string | nil
           },
           {
-            source = "buffers", -- string
-            display_name = " 󰈚 Buffer ", -- string | nil
-          },
-          {
             source = "git_status", -- string
             display_name = " 󰊢 Git ", -- string | nil
+          },
+          {
+            source = "buffers", -- string
+            display_name = " 󰈚 Buffer ", -- string | nil
           },
         },
         content_layout = "center", -- string
@@ -112,6 +112,10 @@ return {
             end,
             desc = "copy path to clipboard",
           },
+          ["A"] = "git_add_all",
+          ["gu"] = "git_unstage_file",
+          ["ga"] = "git_add_file",
+          ["gr"] = "git_revert_file",
         },
       },
       buffer = {
@@ -128,11 +132,35 @@ return {
           end,
         },
       },
+      default_component_configs = {
+        git_status = {
+          symbols = {
+            -- Change type
+            added = "", -- "",
+            deleted = "", -- "",
+            modified = "", -- "",
+            renamed = "", -- "",
+            -- Status type
+            untracked = "󰄗",
+            ignored = "",
+            unstaged = "󰄱",
+            staged = "󰄵",
+            conflict = "",
+          },
+        },
+      },
     })
 
     vim.api.nvim_set_hl(0, "FileExplorerHL", { fg = "#dddddd", bg = "#313457", bold = true })
     vim.api.nvim_set_hl(0, "NeoTreeTabActive", { fg = "#dddddd", bg = "#487385", bold = true })
     vim.api.nvim_set_hl(0, "NeoTreeTabInactive", { bg = "#32435e" })
+
+    -- NeoTreeGitAdded
+    -- NeoTreeGitConflict
+    -- NeoTreeGitDeleted
+    -- NeoTreeGitIgnored
+    -- NeoTreeGitModified
+    -- NeoTreeGitUntracked
 
     vim.cmd("silent Neotree reveal")
   end,

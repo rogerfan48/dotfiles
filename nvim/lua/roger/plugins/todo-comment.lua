@@ -17,7 +17,7 @@ return {
         -- INFO: Here are some information
         -- NOTE: Here are some notes
         -- SEC: Section information
-        FIX =  { icon = " ", color = "error", alt = { "BUG", "!!!" } },
+        FIX =  { icon = " ", color = "error", alt = { "FIXME", "BUG", "!!!" } },
         WARN = { icon = " ", color = "warning", alt = {  } },
         HACK = { icon = " ", color = "warning" },
         TODO = { icon = "󰄱 ", color = "todo" },
