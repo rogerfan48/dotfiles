@@ -5,6 +5,9 @@ return {
     local keymaps = require("roger.core.keymaps")
     keymaps.linting()
 
+    local conda = vim.env.CONDA_PREFIX or ""
+    local python_cmd = (conda ~= "" and (conda .. "/bin/python")) or vim.fn.exepath("python3")
+
     local lint = require("lint")
     local lp = require("lint.parser")
     local function create_linter_config(config)
@@ -86,16 +89,54 @@ return {
       }),
       pylint = create_linter_config({
         name = "pylint",
-        cmd = "pylint",
+        cmd = python_cmd,
         args = {
+          "-m",
+          "pylint",
+          "--output-format=text",
           "--msg-template={abspath}:{line}:{column}:{msg_id}: {msg}",
           "--reports=n",
           "--score=n",
         },
         ignore_exitcode = true,
-        parser = lp.from_errorformat("%f:%l:%c:%m", { source = "pylint", severity = vim.diagnostic.severity.WARN }),
-      }),
+        parser = function(output, bufnr)
+          -- Normalize output into a table of lines:
+          local lines
+          if type(output) == "string" then
+            lines = vim.split(output, "\r?\n", { trimempty = true })
+          elseif type(output) == "table" then
+            lines = output
+          else
+            return {}
+          end
 
+          local severity_map = {
+            E = vim.diagnostic.severity.ERROR,
+            F = vim.diagnostic.severity.ERROR,
+            W = vim.diagnostic.severity.WARN,
+            C = vim.diagnostic.severity.INFO,
+            R = vim.diagnostic.severity.HINT,
+            I = vim.diagnostic.severity.INFO,
+          }
+
+          -- Parse each line:
+          local diagnostics = {}
+          for _, line in ipairs(lines) do
+            local path, lnum, col, msg_id, msg = line:match("^(.-):(%d+):(%d+):([^:]+):%s*(.*)$")
+            if path then
+              table.insert(diagnostics, {
+                lnum = tonumber(lnum) - 1,
+                col = tonumber(col) - 1,
+                message = msg_id .. ": " .. msg,
+                severity = severity_map[msg_id:sub(1, 1)] or vim.diagnostic.severity.WARN,
+                source = "pylint",
+              })
+            end
+          end
+
+          return diagnostics
+        end,
+      }),
       markdownlint = create_linter_config({
         name = "markdownlint",
         cmd = "markdownlint",
@@ -119,6 +160,7 @@ return {
         name = "yamllint",
         cmd = "yamllint",
         args = { "--format=parsable" },
+        ignore_exitcode = true,
         parser = lp.from_errorformat("%f:%l:%c: %m", { source = "yamllint" }),
       }),
       -- dartanalyzer = create_linter_config({
