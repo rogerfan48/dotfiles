@@ -25,9 +25,18 @@ return {
       content_editable = false, -- Disable content editing in preview
       disable_filename = 0, -- Show file name in preview
     }
-    vim.g.mkdp_markdown_css = vim.fn.expand('~/.dotfiles/nvim/markdown.css') -- Custom CSS for markdown preview
+    vim.g.mkdp_markdown_css = vim.fn.expand("~/.dotfiles/nvim/markdown.css") -- Custom CSS for markdown preview
     vim.g.mkdp_highlight_css = "" -- Custom syntax highlight CSS
     vim.g.mkdp_page_title = "「${name}」" -- Set the title of the preview page
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "markdown",
+      callback = function()
+        -- expand("%:p:h") 會回傳當前 buffer 完整檔案路徑（不含檔名）的目錄
+        local md_dir = vim.fn.expand("%:p:h")
+        vim.g.mkdp_images_path = md_dir .. "/assets"
+      end,
+    })
   end,
   keys = keymaps.markdown_preview,
 }
