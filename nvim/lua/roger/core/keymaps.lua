@@ -7,6 +7,7 @@ M.general = function()
   vim.keymap.set("n", "<leader>ww", ":w<CR>", { desc = "Save file (:w) ", silent = true })
   vim.keymap.set("n", "<leader>q<space>", ":q<CR>", { desc = "Quit current Nvim window (:q)", silent = true })
   vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit all Nvim windows (:qa)", silent = true })
+  vim.keymap.set("n", "<leader>e", ":e<CR>", { desc = "Edit the file (Refresh)", silent = true })
 
   -- centered vertical movement
   vim.keymap.set("n", "<C-u>", "<C-u>zz", { remap = false, desc = "Scoll up half page" })
