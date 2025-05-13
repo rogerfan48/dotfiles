@@ -53,7 +53,7 @@ return {
       notes_subdir = "",
       --  * "current_dir" - put new notes in same directory as the current buffer.
       --  * "notes_subdir" - put new notes in the default notes subdirectory.
-      new_notes_location = "notes_subdir",
+      new_notes_location = "current_dir",
 
       -- Optional, customize how note IDs are generated given an optional title.
       ---@param title string|?
@@ -65,7 +65,7 @@ return {
         local suffix = ""
         if title ~= nil then
           -- If title is given, transform it into valid file name.
-          suffix = title:gsub(" ", "_"):gsub("[^A-Za-z0-9_-]", "")
+          suffix = title:gsub(" ", "-"):gsub("[^A-Za-z0-9_-]", "")
         else
           -- If title is nil, just add 4 random uppercase letters to the suffix.
           for _ = 1, 4 do
@@ -128,13 +128,13 @@ return {
       end,
 
       -- Optional, for templates (see below).
-      -- templates = {
-      --   folder = "templates",
-      --   date_format = "%Y-%m-%d",
-      --   time_format = "%H:%M",
-      --   -- A map for custom variables, the key should be the variable and the value a function
-      --   substitutions = {},
-      -- },
+      templates = {
+        folder = "900_Others/templates",
+        date_format = "%Y-%m-%d",
+        time_format = "%H:%M",
+        -- A map for custom variables, the key should be the variable and the value a function
+        substitutions = {},
+      },
 
       -- Optional, by default when you use `:ObsidianFollowLink` on a link to an external
       -- URL it will be ignored but you can customize this behavior here.
@@ -149,7 +149,7 @@ return {
 
       follow_img_func = function(img)
         local current_dir = vim.fn.expand("%:p:h")
-        local img_abs_path = vim.fn.resolve(current_dir .. "/" .. img)
+        local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img)
 
         -- 用 qlmanage 開啟圖片（Quick Look）
         vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
@@ -234,9 +234,31 @@ return {
         leave_note = function(client, note) end,
 
         -- Runs right before writing the buffer for a note.
+        -- NOTE: Delete space at the EOL, Delete blank lines at the EOF
         ---@param client obsidian.Client
         ---@param note obsidian.Note
-        pre_write_note = function(client, note) end,
+        pre_write_note = function(client, note)
+          local bufnr = vim.api.nvim_get_current_buf()
+          -- 1) 取出全部行
+          local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+          -- 2) 刪除每行末尾多餘的空白
+          for i, line in ipairs(lines) do
+            lines[i] = line:gsub("%s+$", "")
+          end
+          vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+
+          -- 3) 刪除尾端多餘的空行
+          local total = #lines
+          local last = total
+          while last > 0 and lines[last]:match("^%s*$") do
+            last = last - 1
+          end
+          if last < total then
+            -- 從第 last (0-based) 行開始，一口氣刪到檔尾
+            vim.api.nvim_buf_set_lines(bufnr, last, total, false, {})
+          end
+        end,
 
         -- Runs anytime the workspace is set/changed.
         ---@param client obsidian.Client
@@ -314,6 +336,21 @@ return {
           return string.format("![%s](%s)", path.name, path)
         end,
       },
+    })
+
+    -- NOTE: Create `:ObsidianRenameID` to make 'renaming' apply `note_id_func`
+    local client = obsidian.get_client()
+    vim.api.nvim_create_user_command("ObsidianRenameID", function()
+      local title = vim.fn.input("[Obsidian Rename] New File Name: ")
+      if title == "" then
+        print("Rename cancelled.")
+        return
+      end
+      local new_id = client.opts.note_id_func(title)
+      client:command("ObsidianRename", { args = new_id })
+    end, {
+      nargs = 0,
+      desc = "Interactive rename current note with note_id_func",
     })
   end,
 }

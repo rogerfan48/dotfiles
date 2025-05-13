@@ -681,9 +681,10 @@ M.obsidian = function()
   vim.keymap.set("n", "<leader>of", ":ObsidianQuickSwitch<CR>", { desc = "Find files in vault", silent = true })
   vim.keymap.set("n", "<leader>og", ":ObsidianSearch<CR>", { desc = "Grep string in vault", silent = true })
   vim.keymap.set("n", "<leader>oo", ":ObsidianOpen<CR>", { desc = "Open current file in Obsidian", silent = true })
-  vim.keymap.set("n", "<leader>on", ":ObsidianNew<CR>", { desc = "Create New Note (Obsidian)", silent = true })
+  vim.keymap.set("n", "<leader>on", ":ObsidianNewFromTemplate<CR>", { desc = "Create New Note (Obsidian)", silent = true })
   vim.keymap.set("n", "<leader>ob", ":ObsidianBacklinks<CR>", { desc = "Check backlinks to this file", silent = true })
   vim.keymap.set("n", "<leader>ot", ":ObsidianTemplate<CR>", { desc = "Insert a template", silent = true })
+  vim.keymap.set("n", "<leader>or", ":ObsidianRenameID<CR>", { desc = "Rename Obsidian Note", silent = true })
 end
 
 M.obsidian_table = function()
@@ -762,5 +763,9 @@ end
 M.flutter = function()
   vim.keymap.set("n", "<leader>fF", ":Telescope flutter commands<CR>", { desc = "Flutter tools commands", silent = true })
 end
+
+M.img_clip = {
+    { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+  }
 
 return M
