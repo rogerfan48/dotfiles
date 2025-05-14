@@ -46,7 +46,28 @@ M.general = function()
   vim.keymap.set({ "n", "v" }, "<leader>P", '"+P', { silent = true })
   vim.keymap.set({ "n", "v" }, "<leader>d", '"+d', { silent = true })
   vim.keymap.set({ "n", "v" }, "<leader>D", '"+D', { silent = true })
-  vim.keymap.set({ "v" }, "/", '"vy/<C-r>v', { noremap = true })
+
+  -- search and replace
+  vim.keymap.set({ "v" }, "/", '"vy/<C-r>v', { desc = "search for selected part", noremap = true })
+  vim.keymap.set("v", "<leader>rg", function()
+    vim.cmd('silent! normal! "zy') -- yank visual to register z
+    local pattern = vim.fn.escape(vim.fn.getreg("z"), "\\/") -- take string out and escape needed words
+    -- prompt user to input what to change to
+    vim.fn.inputsave()
+    local repl = vim.fn.input("Replace with: ")
+    vim.fn.inputrestore()
+    local cmd = string.format("%%s/\\V%s/%s/g", pattern, vim.fn.escape(repl, "\\/"))
+    vim.cmd(cmd)
+  end, { desc = "Replace ALL occurrences of visual selection" })
+  vim.keymap.set("v", "<leader>rc", function()
+    vim.cmd('silent! normal! "zy')
+    local pattern = vim.fn.escape(vim.fn.getreg("z"), "\\/")
+    vim.fn.inputsave()
+    local repl = vim.fn.input("Replace with: ")
+    vim.fn.inputrestore()
+    local cmd = string.format("%%s/\\V%s/%s/gc", pattern, vim.fn.escape(repl, "\\/"))
+    vim.cmd(cmd)
+  end, { desc = "Replace (confirm) occurrences of visual selection" })
 
   -- increment/decrement numbers
   vim.keymap.set({ "n", "v" }, "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
@@ -765,7 +786,7 @@ M.flutter = function()
 end
 
 M.img_clip = {
-    { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
-  }
+  { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+}
 
 return M
