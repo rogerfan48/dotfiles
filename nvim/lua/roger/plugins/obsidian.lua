@@ -6,7 +6,8 @@ if computer_name ~= roger_config.computer_name_ob then
 end
 
 return {
-  "epwalsh/obsidian.nvim",
+  -- "epwalsh/obsidian.nvim",
+  "obsidian-nvim/obsidian.nvim",
   version = "*",
   dependencies = {
     "nvim-lua/plenary.nvim",
