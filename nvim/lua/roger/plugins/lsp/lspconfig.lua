@@ -8,114 +8,97 @@ return {
     "b0o/schemastore.nvim", -- JSON Schema for jsonls
   },
   config = function()
-    local lspconfig = require("lspconfig")
-    local mason_lspconfig = require("mason-lspconfig")
-
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
     local keymaps = require("roger.core.keymaps")
     keymaps.lsp()
 
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    -- (not in youtube nvim video)
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
+    local lspcfg = vim.lsp.config
 
-    mason_lspconfig.setup_handlers({
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
-      end,
-      ["clangd"] = function()
-        lspconfig.clangd.setup({
-          capabilities = capabilities,
-          cmd = {
-            "clangd",
-            "--clang-tidy=false", -- 禁用 clang-tidy
-            "--header-insertion=never", -- 可選，避免自動插入頭文件
-          },
-        })
-      end,
-      ["emmet_ls"] = function()
-        lspconfig["emmet_ls"].setup({
-          capabilities = capabilities,
-          filetypes = {
-            "html",
-            "typescriptreact",
-            "javascriptreact",
-            "css",
-            "sass",
-            "scss",
-            "less",
-            "svelte",
-          },
-        })
-      end,
-      ["eslint"] = function()
-        -- 不設定它，避免自動 attach
-      end,
-      ["lua_ls"] = function()
-        lspconfig["lua_ls"].setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" },
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
-          },
-        })
-      end,
-      ["bashls"] = function()
-        lspconfig.bashls.setup({
-          capabilities = capabilities,
-          filetypes = { "sh", "bash" },
-        })
-      end,
-      ["marksman"] = function()
-        lspconfig.marksman.setup({
-          capabilities = capabilities,
-          on_init = function(client, _)
-            client.server_capabilities.semanticTokensProvider = nil
-          end,
-        })
-      end,
-      ["taplo"] = function()
-        require("lspconfig").taplo.setup({
-          capabilities = capabilities,
-          settings = {
-            taplo = {
-              configuration = {
-                evenBetterErrors = true,
-                schema = { enabled = true },
-              },
-            },
-          },
-        })
-      end,
-      ["jsonls"] = function()
-        lspconfig.jsonls.setup({
-          capabilities = capabilities,
-          settings = {
-            json = {
-              schemas = require("schemastore").json.schemas(),
-              validate = { enable = true },
-            },
-          },
-          init_options = {
-            provideFormatter = false, -- ∵ using prettier
-          },
-        })
+    lspcfg("*", {
+      capabilities = capabilities,
+    })
+
+    lspcfg("clangd", {
+      cmd = {
+        "clangd",
+        "--clang-tidy=false", -- 禁用 clang-tidy
+        "--header-insertion=never", -- 可選，避免自動插入頭文件
+      },
+    })
+
+    lspcfg("emmet_ls", {
+      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+    })
+
+    lspcfg("lua_ls", {
+      settings = {
+        Lua = {
+          diagnostics = { globals = { "vim" } },
+          completion = { callSnippet = "Replace" },
+        },
+      },
+    })
+
+    lspcfg("bashls", {
+      filetypes = { "sh", "bash" },
+    })
+
+    lspcfg("marksman", {
+      on_init = function(client)
+        client.server_capabilities.semanticTokensProvider = nil
       end,
     })
+
+    lspcfg("taplo", {
+      settings = {
+        taplo = {
+          configuration = {
+            evenBetterErrors = true,
+            schema = { enabled = true },
+          },
+        },
+      },
+    })
+
+    lspcfg("jsonls", {
+      settings = {
+        json = {
+          schemas = require("schemastore").json.schemas(),
+          validate = { enable = true },
+        },
+      },
+    })
+
+    vim.diagnostic.config({
+      virtual_text = {
+        spacing = 4,
+        current_line = true,
+        source = "if_many", -- 只在多來源時顯示來源
+      },
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = "",
+          [vim.diagnostic.severity.WARN] = "",
+          [vim.diagnostic.severity.INFO] = "",
+          [vim.diagnostic.severity.HINT] = "󰠠",
+        },
+      },
+      underline = true,
+      update_in_insert = false,
+      severity_sort = true,
+    })
+
+    -- -- SEC: A temp solution to solve dartls error, which be solved by designating `cmd` in flutter-tools.nvim
+    -- require("lspconfig").dartls.setup({
+    --   on_new_config = function(cfg, _)
+    --     local dart = vim.fn.exepath("dart")
+    --     if dart ~= "" then
+    --       cfg.cmd[1] = dart
+    --     end -- 把 ./bin/dart 改掉
+    --   end,
+    -- })
 
     -- Don't show "Ambiguous link" from marksman
     vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)

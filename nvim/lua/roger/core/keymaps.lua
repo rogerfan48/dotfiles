@@ -398,6 +398,7 @@ end
 M.telescope = function()
   local builtin = require("telescope.builtin")
   vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Find files in cwd", silent = true })
+  vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Find diagnostics" })
   vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Find recent files" })
   vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Grep string in cwd" })
   -- vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })

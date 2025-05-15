@@ -31,6 +31,7 @@ return {
         auto_open_browser = true, -- Automatically opens devtools in the browser
       },
       lsp = {
+        cmd = { vim.fn.exepath("dart"), "language-server", "--protocol=lsp" },
         settings = {
           showtodos = true,
           completefunctioncalls = true,
