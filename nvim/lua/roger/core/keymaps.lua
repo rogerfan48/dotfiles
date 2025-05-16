@@ -711,52 +711,47 @@ end
 
 M.obsidian_table = function()
   local obsidian = require("obsidian")
-  local function gf_link_in_line(isGF)
-    -- INFO: If it's foldable, toggle fold. Else try toggle link.
+
+  local function fold_heading()
     local line = vim.api.nvim_get_current_line()
-    if not isGF and string.match(line, "^#+%s.*$") then
+    if string.match(line, "^#+%s.*$") then
       vim.schedule(function() -- ∵ `normal!` cannot be used in `opts = { expr = true }`
         vim.cmd("normal! za")
         vim.cmd("normal! zz")
       end)
-      return ""
+      return true
     end
+    return false
+  end
+
+  local function gf_link_in_line()
+    local line = vim.api.nvim_get_current_line()
 
     -- try Wiki Link: [[...]]
-    -- local link_start, _ = line:find("%[%[.-%]%]") -- _ = link_end
-    -- if link_start then
-    --   local target_col = link_start + 2
-    --   vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
-    --   vim.cmd("ObsidianFollowLink")
-    --   return ""
-    -- end
-
-    do
-      local s, e = line:find("%[%[.-%]%]")
-      if s then
-        local link_text = line:sub(s + 2, e - 2)
-        local note_id = link_text:match("([^|]+)") -- only take before the pipeline `|`
-        if not note_id:match("%.md$") then
-          note_id = note_id .. ".md" -- add '.md'
-        end
-
-        local vault_root = tostring(obsidian.get_client():vault_root())
-        local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
-
-        if #matches > 0 then
-          vim.schedule(function()
-            vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), s + 1 }) -- column: 0-indexed
-            vim.cmd("ObsidianFollowLink")
-          end)
-        else
-          local title = note_id:gsub("%.md$", "") -- remove '.md'
-          vim.schedule(function()
-            vim.cmd(string.format("ObsidianNewFromTemplate %s", title))
-          end)
-        end
-
-        return ""
+    local link_start, link_end = line:find("%[%[.-%]%]")
+    if link_start then
+      local link_text = line:sub(link_start + 2, link_end - 2)
+      local note_id = link_text:match("([^|]+)") -- only take before the pipeline `|`
+      if not note_id:match("%.md$") then
+        note_id = note_id .. ".md" -- add '.md'
       end
+
+      local vault_root = tostring(obsidian.get_client():vault_root())
+      local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
+
+      if #matches > 0 then
+        vim.schedule(function()
+          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), link_start + 1 }) -- column: 0-indexed
+          vim.cmd("ObsidianFollowLink")
+        end)
+      else
+        local title = note_id:gsub("%.md$", "") -- remove '.md'
+        vim.schedule(function()
+          vim.cmd(string.format("ObsidianNewFromTemplate %s", title))
+        end)
+      end
+
+      return ""
     end
 
     -- try Markdown Link: [text](target)
@@ -779,6 +774,11 @@ M.obsidian_table = function()
       return ""
     end
 
+    -- NOTE: If no link detected, try fold heading
+    if fold_heading() then
+      return ""
+    end
+
     return obsidian.util.gf_passthrough()
   end
 
@@ -786,14 +786,18 @@ M.obsidian_table = function()
     -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
     ["gf"] = {
       action = function()
-        return gf_link_in_line(true)
+        return gf_link_in_line()
       end,
       opts = { noremap = false, expr = true, buffer = true },
     },
     ["<CR>"] = {
       action = function()
-        return gf_link_in_line(false)
+        return gf_link_in_line()
       end,
+      opts = { expr = true, buffer = true },
+    },
+    ["<leader><CR>"] = {
+      action = fold_heading,
       opts = { expr = true, buffer = true },
     },
     ["<leader>oc"] = { -- Toggle check-boxes.
