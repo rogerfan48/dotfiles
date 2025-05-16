@@ -14,7 +14,6 @@ return {
         enabled = true, -- enables the Noice cmdline UI
         view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
         opts = {}, -- global options for the cmdline. See section on views
-        ---@type table<string, CmdlineFormat>
         format = {
           -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
           -- view: (default is cmdline view)
@@ -43,15 +42,12 @@ return {
       },
       popupmenu = {
         enabled = true, -- enables the Noice popupmenu UI
-        ---@type 'nui'|'cmp'
         backend = "nui", -- backend to use to show regular cmdline completions
-        ---@type NoicePopupmenuItemKind|false
         -- Icons for completion item kinds (see defaults at noice.config.icons.kinds)
         kind_icons = {}, -- set to `false` to disable icons
       },
       -- default options for require('noice').redirect
       -- see the section on Command Redirection
-      ---@type NoiceRouteConfig
       redirect = {
         view = "popup",
         filter = {
@@ -60,7 +56,6 @@ return {
         },
       },
       -- You can add any custom commands below that will be available with `:Noice command`
-      ---@type table<string, NoiceCommand>
       commands = {
         history = {
           -- options for the message history that you get with `:Noice`
@@ -120,9 +115,7 @@ return {
           enabled = true,
           -- Lsp Progress is formatted using the builtins for lsp_progress. See config.format.builtin
           -- See the section on formatting for more details on how to customize.
-          --- @type NoiceFormat|string
           format = "lsp_progress",
-          --- @type NoiceFormat|string
           format_done = "lsp_progress_done",
           throttle = 1000 / 30, -- frequency to update lsp progress message
           view = "mini",
@@ -139,7 +132,6 @@ return {
           enabled = true,
           silent = false, -- set to true to not show a message if hover is not available
           view = nil, -- when nil, use defaults from documentation
-          ---@type NoiceViewOptions
           opts = {}, -- merged with defaults from documentation
         },
         signature = {
@@ -151,7 +143,6 @@ return {
             throttle = 50, -- Debounce lsp signature help request by 50ms
           },
           view = nil, -- when nil, use defaults from documentation
-          ---@type NoiceViewOptions
           opts = {}, -- merged with defaults from documentation
         },
         message = {
@@ -163,7 +154,6 @@ return {
         -- defaults for hover and signature help
         documentation = {
           view = "hover",
-          ---@type NoiceViewOptions
           opts = {
             lang = "markdown",
             replace = true,
@@ -196,7 +186,6 @@ return {
       health = {
         checker = true, -- Disable if you don't want health checks to run
       },
-      ---@type NoicePresets
       presets = {
         -- you can enable a preset by setting it to true, or a table that will override the preset config
         -- you can also add custom presets that you can enable/disable with enabled=true
@@ -207,13 +196,11 @@ return {
         lsp_doc_border = true, -- add a border to hover docs and signature help
       },
       throttle = 1000 / 30, -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
-      ---@type NoiceConfigViews
       views = {
         split = {
           size = "30%",
         },
       }, ---@see section on views
-      ---@type NoiceRouteConfig[]
       routes = {
         {
           filter = { event = "msg_showmode" }, -- "q" macro
@@ -249,9 +236,7 @@ return {
         --   opts = { skip = true },
         -- },
       }, --- @see section on routes
-      ---@type table<string, NoiceFilter>
       status = {}, --- @see section on statusline components
-      ---@type NoiceFormatOptions
       format = {}, --- @see section on formatting
     })
     require("notify").setup({

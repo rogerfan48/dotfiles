@@ -253,7 +253,7 @@ M.lsp = function()
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
-      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+      -- local client = vim.lsp.get_client_by_id(ev.data.client_id)
       -- if client then
       --   vim.notify("LSP " .. client.name .. " attached to buffer " .. ev.buf, vim.log.levels.INFO)
       -- end
@@ -723,7 +723,7 @@ M.obsidian_table = function()
     end
 
     -- try Wiki Link: [[...]]
-    local link_start, link_end = line:find("%[%[.-%]%]")
+    local link_start, _ = line:find("%[%[.-%]%]") -- _ = link_end
     if link_start then
       local target_col = link_start + 2
       vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
@@ -732,7 +732,7 @@ M.obsidian_table = function()
     end
 
     -- try Markdown Link: [text](target)
-    local md_link_start, md_link_end = line:find("%[.-%]%((.-)%)")
+    local md_link_start, _ = line:find("%[.-%]%((.-)%)") -- _ = md_link_end
     if md_link_start then
       local paren_index = line:find("%(", md_link_start) -- move cursor to '('
       if paren_index then
@@ -743,7 +743,7 @@ M.obsidian_table = function()
     end
 
     -- try angle bracket URL: <https://www.google.com>
-    local angle_start, angle_end = line:find("<https?://[^>]+>")
+    local angle_start, _ = line:find("<https?://[^>]+>") --  _ = angle_end
     if angle_start then
       local target_col = angle_start + 1
       vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })

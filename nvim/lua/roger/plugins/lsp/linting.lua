@@ -219,7 +219,7 @@ return {
       markdown = { "markdownlint" },
       -- latex = { "chktex" },
       json = { "jsonlint" },
-      jsonc = { "jsonlint" },
+      jsonc = {},
       yaml = { "yamllint" },
       sh = { "shellcheck" },
       bash = { "shellcheck" },

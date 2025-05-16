@@ -1,4 +1,3 @@
-
 -- 定義熱鍵組合
 local hyper = {"alt"}
 local toggleKey = "space"

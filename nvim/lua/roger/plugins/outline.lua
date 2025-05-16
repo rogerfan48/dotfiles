@@ -1,5 +1,3 @@
-local keymaps = require("roger.core.keymaps")
-
 return {
   "hedyhli/outline.nvim",
   config = function()
@@ -195,11 +193,6 @@ return {
         -- You can use a custom function that returns the icon for each symbol kind.
         -- This function takes a kind (string) as parameter and should return an
         -- icon as string.
-        ---@param kind string Key of the icons table below
-        ---@param bufnr integer Code buffer
-        ---@param symbol outline.Symbol The current symbol object
-        ---@returns string|boolean The icon string to display, such as "f", or `false`
-        ---                        to fallback to `icon_source`.
         icon_fetcher = nil,
         -- 3rd party source for fetching icons. This is used as a fallback if
         -- icon_fetcher returned an empty string.

@@ -1,4 +1,4 @@
----@diagnostic disable: missing-fields
+---@diagnostic disable: missing-fields, unused-local
 local computer_name = vim.fn.system("scutil --get ComputerName | tr -d '\n'")
 local roger_config = require("roger.core.config")
 if computer_name ~= roger_config.computer_name_ob then
@@ -57,8 +57,6 @@ return {
       new_notes_location = "current_dir",
 
       -- Optional, customize how note IDs are generated given an optional title.
-      ---@param title string|?
-      ---@return string
       note_id_func = function(title)
         -- Create note IDs in a Zettelkasten format with a timestamp and a suffix.
         -- In this case a note with the title 'My new note' will be given an ID that looks
@@ -77,8 +75,6 @@ return {
       end,
 
       -- Optional, customize how note file names are generated given the ID, target directory, and title.
-      ---@param spec { id: string, dir: obsidian.Path, title: string|? }
-      ---@return string|obsidian.Path The full path to the new note.
       note_path_func = function(spec)
         -- This is equivalent to the default behavior.
         local path = spec.dir / tostring(spec.id)
@@ -108,7 +104,6 @@ return {
       disable_frontmatter = true,
 
       -- Optional, alternatively you can customize the frontmatter data.
-      ---@return table
       note_frontmatter_func = function(note)
         -- Add the title of the note as an alias.
         if note.title then
@@ -139,7 +134,6 @@ return {
 
       -- Optional, by default when you use `:ObsidianFollowLink` on a link to an external
       -- URL it will be ignored but you can customize this behavior here.
-      ---@param url string
       follow_url_func = function(url)
         -- Open the URL in the default web browser.
         -- vim.fn.jobstart({ "open", url }) -- Mac OS
@@ -170,7 +164,6 @@ return {
 
       -- -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
       -- -- file it will be ignored but you can customize this behavior here.
-      -- ---@param img string
       -- follow_img_func = function(img)
       --   vim.fn.jobstart({ "qlmanage", "-p", img }) -- Mac OS quick look preview
       --   -- vim.fn.jobstart({"xdg-open", url})  -- linux
@@ -221,23 +214,16 @@ return {
       -- Optional, define your own callbacks to further customize behavior.
       callbacks = {
         -- Runs at the end of `obsidian.setup()`.
-        ---@param client obsidian.Client
         post_setup = function(client) end,
 
         -- Runs anytime you enter the buffer for a note.
-        ---@param client obsidian.Client
-        ---@param note obsidian.Note
         enter_note = function(client, note) end,
 
         -- Runs anytime you leave the buffer for a note.
-        ---@param client obsidian.Client
-        ---@param note obsidian.Note
         leave_note = function(client, note) end,
 
         -- Runs right before writing the buffer for a note.
         -- NOTE: Delete space at the EOL, Delete blank lines at the EOF
-        ---@param client obsidian.Client
-        ---@param note obsidian.Note
         pre_write_note = function(client, note)
           local bufnr = vim.api.nvim_get_current_buf()
           -- 1) 取出全部行
@@ -262,8 +248,6 @@ return {
         end,
 
         -- Runs anytime the workspace is set/changed.
-        ---@param client obsidian.Client
-        ---@param workspace obsidian.Workspace
         post_set_workspace = function(client, workspace) end,
       },
 
@@ -320,7 +304,6 @@ return {
         -- img_folder = "assets/imgs", -- This is the default
 
         -- Optional, customize the default name or prefix when pasting images via `:ObsidianPasteImg`.
-        ---@return string
         img_name_func = function()
           -- Prefix image names with timestamp.
           return string.format("%s-", os.time())
@@ -329,9 +312,6 @@ return {
         -- A function that determines the text to insert in the note when pasting an image.
         -- It takes two arguments, the `obsidian.Client` and an `obsidian.Path` to the image file.
         -- This is the default implementation.
-        ---@param client obsidian.Client
-        ---@param path obsidian.Path the absolute path to the image file
-        ---@return string
         img_text_func = function(client, path)
           path = client:vault_relative_path(path) or path
           return string.format("![%s](%s)", path.name, path)
