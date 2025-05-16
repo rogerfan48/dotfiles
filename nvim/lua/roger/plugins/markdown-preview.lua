@@ -2,9 +2,15 @@ local keymaps = require("roger.core.keymaps")
 
 return {
   "iamcco/markdown-preview.nvim",
-  build = "cd app && npm install", -- Install dependencies
   ft = { "markdown" }, -- Load only for markdown files
   cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle" },
+  -- build = "cd app && npm install", -- Install dependencies
+  build = function()
+    -- Call official install function directly, fetching and installing prebuilt
+    -- 1) :Lazy load markdown-preview.nvim
+    -- 2) :Lazy build markdown-preview.nvim
+    vim.fn["mkdp#util#install"]()
+  end,
   init = function()
     vim.g.mkdp_auto_start = 0 -- Do not auto-start the preview
     vim.g.mkdp_auto_close = 1 -- Automatically close preview when switching buffers

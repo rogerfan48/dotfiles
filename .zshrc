@@ -130,6 +130,7 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # SEC: Flutter pub global
+path_prepend "$HOME/development/flutter/bin"
 path_prepend "$HOME/.pub-cache/bin"
 
 # SEC: NVM
