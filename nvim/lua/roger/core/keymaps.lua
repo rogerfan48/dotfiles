@@ -723,12 +723,40 @@ M.obsidian_table = function()
     end
 
     -- try Wiki Link: [[...]]
-    local link_start, _ = line:find("%[%[.-%]%]") -- _ = link_end
-    if link_start then
-      local target_col = link_start + 2
-      vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
-      vim.cmd("ObsidianFollowLink")
-      return ""
+    -- local link_start, _ = line:find("%[%[.-%]%]") -- _ = link_end
+    -- if link_start then
+    --   local target_col = link_start + 2
+    --   vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 }) -- column: 0-indexed
+    --   vim.cmd("ObsidianFollowLink")
+    --   return ""
+    -- end
+
+    do
+      local s, e = line:find("%[%[.-%]%]")
+      if s then
+        local link_text = line:sub(s + 2, e - 2)
+        local note_id = link_text:match("([^|]+)") -- only take before the pipeline `|`
+        if not note_id:match("%.md$") then
+          note_id = note_id .. ".md" -- add '.md'
+        end
+
+        local vault_root = tostring(obsidian.get_client():vault_root())
+        local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
+
+        if #matches > 0 then
+          vim.schedule(function()
+            vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), s + 1 }) -- column: 0-indexed
+            vim.cmd("ObsidianFollowLink")
+          end)
+        else
+          local title = note_id:gsub("%.md$", "") -- remove '.md'
+          vim.schedule(function()
+            vim.cmd(string.format("ObsidianNewFromTemplate %s", title))
+          end)
+        end
+
+        return ""
+      end
     end
 
     -- try Markdown Link: [text](target)

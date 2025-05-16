@@ -129,7 +129,26 @@ return {
         date_format = "%Y-%m-%d",
         time_format = "%H:%M",
         -- A map for custom variables, the key should be the variable and the value a function
-        substitutions = {},
+        substitutions = {
+          parent_file = function()
+            local buf_path = vim.api.nvim_buf_get_name(0) -- get buffer full name
+            if buf_path == "" then
+              return ""
+            end
+
+            local dir_path = vim.fn.fnamemodify(buf_path, ":p:h") -- e.g. .../320_Account
+            local dir_name = vim.fn.fnamemodify(buf_path, ":p:h:t") -- e.g. 320_Account
+
+            local parent_basename = dir_name:gsub("_", "-", 1)
+            local parent_fullpath = dir_path .. "/" .. parent_basename .. ".md"
+
+            if vim.uv.fs_stat(parent_fullpath) then
+              return parent_basename
+            else
+              return ""
+            end
+          end,
+        },
       },
 
       -- Optional, by default when you use `:ObsidianFollowLink` on a link to an external
