@@ -6,7 +6,7 @@
   </a>
 
   <a href="https://github.com/neovim/neovim/releases/latest">
-    <img alt="Latest Neovim" src="https://img.shields.io/github/v/release/neovim/neovim?style=for-the-badge&logo=neovim&logoColor=D9E0EE&label=Neovim&labelColor=302D41&color=99d6ff&sort=semver">
+    <img alt="Neovim v0.11.1" src="https://img.shields.io/badge/Neovim-v0.11.1-99d6ff?style=for-the-badge&logo=neovim&logoColor=D9E0EE&label=Neovim&labelColor=302D41&color=99d6ff&sort=semver">
   </a>
 
   <a href="http://www.lua.org/">
