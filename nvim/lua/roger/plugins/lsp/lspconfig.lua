@@ -14,25 +14,11 @@ return {
     local keymaps = require("roger.core.keymaps")
     keymaps.lsp()
 
-    local lspcfg = vim.lsp.config
-
-    lspcfg("*", {
+    vim.lsp.config("*", {
       capabilities = capabilities,
     })
 
-    lspcfg("clangd", {
-      cmd = {
-        "clangd",
-        "--clang-tidy=false", -- 禁用 clang-tidy
-        "--header-insertion=never", -- 可選，避免自動插入頭文件
-      },
-    })
-
-    lspcfg("emmet_ls", {
-      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-    })
-
-    lspcfg("lua_ls", {
+    vim.lsp.config("lua_ls", {
       settings = {
         Lua = {
           diagnostics = { globals = { "vim" } },
@@ -41,32 +27,73 @@ return {
       },
     })
 
-    lspcfg("bashls", {
-      filetypes = { "sh", "bash" },
+    vim.lsp.config("clangd", {
+      cmd = {
+        "clangd",
+        "--clang-tidy=false", -- 禁用 clang-tidy
+        "--header-insertion=never", -- 可選，避免自動插入頭文件
+      },
     })
 
-    lspcfg("marksman", {
+    -- vim.lsp.config("htmlls", {
+    --   cmd = { "vscode-html-language-server", "--stdio" },
+    --   filetypes = { "html" },
+    --   root_markers = { "package.json", ".git" },
+    --
+    --   init_options = {
+    --     configurationSection = { "html", "css", "javascript" },
+    --     embeddedLanguages = {
+    --       css = true,
+    --       javascript = true,
+    --     },
+    --     provideFormatter = false,
+    --   },
+    -- })
+    -- vim.lsp.config("cssls", {
+    --   cmd = { "vscode-css-language-server", "--stdio" },
+    --   filetypes = { "css", "scss" },
+    --   root_markers = { "package.json", ".git" },
+    --   init_options = {
+    --     provideFormatter = true,
+    --   },
+    -- })
+    vim.lsp.config("ts_ls", {
+      filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+      root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+      init_options = {
+        hostInfo = "neovim",
+      },
+    })
+    -- vim.lsp.enable({ "html", "cssls", "ts_ls" })
+
+    vim.lsp.config("pyright", {})
+
+    vim.lsp.config("marksman", {
       on_init = function(client)
         client.server_capabilities.semanticTokensProvider = nil
       end,
     })
 
-    lspcfg("taplo", {
+    vim.lsp.config("jsonls", {
+      settings = {
+        json = {
+          schemas = require("schemastore").json.schemas(),
+          validate = { enable = true },
+        },
+      },
+    })
+
+    vim.lsp.config("bashls", {
+      filetypes = { "sh", "bash" },
+    })
+
+    vim.lsp.config("taplo", {
       settings = {
         taplo = {
           configuration = {
             evenBetterErrors = true,
             schema = { enabled = true },
           },
-        },
-      },
-    })
-
-    lspcfg("jsonls", {
-      settings = {
-        json = {
-          schemas = require("schemastore").json.schemas(),
-          validate = { enable = true },
         },
       },
     })

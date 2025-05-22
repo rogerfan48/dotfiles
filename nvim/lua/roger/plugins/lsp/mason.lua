@@ -17,7 +17,7 @@ return {
         "html", -- html
         "cssls", -- css/scss
         "ts_ls", -- js/ts
-        "emmet_ls", -- aid: HTML, JSX
+        -- "emmet_ls", -- aid: HTML, JSX
         "pyright", -- python
         "marksman", -- markdown
         "jsonls", -- JSON
@@ -25,11 +25,11 @@ return {
         "bashls", -- bash
         "taplo", -- TOML
       },
-      -- automatic_enable = true, -- default setting
+      automatic_enable = true, -- default setting
       -- automatic_enable = { "lua_ls", "vimls" }, -- only enable certain servers to be auto enabled
-      automatic_enable = { -- exclude certain servers from being auto enabled
-        exclude = { "eslint" },
-      },
+      -- automatic_enable = { -- exclude certain servers from being auto enabled
+      --   exclude = { "eslint" },
+      -- },
     })
 
     mason_tool_installer.setup({

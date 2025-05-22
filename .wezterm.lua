@@ -12,7 +12,7 @@ config.initial_cols = 200
 config.max_fps = 120
 
 config.font = wezterm.font_with_fallback({
-  { family = "JetBrainsMono Nerd Font Mono", weight = "Medium" },
+  { family = "JetBrainsMono Nerd Font", weight = "Medium" },
   { family = "jf-openhuninn-2.0" },
   { family = "LXGW WenKai Mono TC", weight = "Bold" },
 })

@@ -347,7 +347,7 @@ return {
         return
       end
       local new_id = client.opts.note_id_func(title)
-      client:command("ObsidianRename", { args = new_id })
+      client:command("rename", { args = new_id })
     end, {
       nargs = 0,
       desc = "Interactive rename current note with note_id_func",
