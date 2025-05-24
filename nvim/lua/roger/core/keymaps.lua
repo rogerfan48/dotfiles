@@ -700,13 +700,16 @@ M.markdown_preview = {
 }
 
 M.obsidian = function()
-  vim.keymap.set("n", "<leader>of", ":ObsidianQuickSwitch<CR>", { desc = "Find files in vault", silent = true })
-  vim.keymap.set("n", "<leader>og", ":ObsidianSearch<CR>", { desc = "Grep string in vault", silent = true })
-  vim.keymap.set("n", "<leader>oo", ":ObsidianOpen<CR>", { desc = "Open current file in Obsidian", silent = true })
-  vim.keymap.set("n", "<leader>on", ":ObsidianNewFromTemplate<CR>", { desc = "Create New Note (Obsidian)", silent = true })
-  vim.keymap.set("n", "<leader>ob", ":ObsidianBacklinks<CR>", { desc = "Check backlinks to this file", silent = true })
-  vim.keymap.set("n", "<leader>ot", ":ObsidianTemplate<CR>", { desc = "Insert a template", silent = true })
-  vim.keymap.set("n", "<leader>or", ":ObsidianRenameID<CR>", { desc = "Rename Obsidian Note", silent = true })
+  vim.keymap.set("n", "<leader>of", ":Obsidian quick_switch<CR>", { desc = "[OB] Switch to note", silent = true })
+  vim.keymap.set("n", "<leader>oh", ":Obsidian quick_switch 000<CR>", { desc = "[OB] Switch to Homepage", silent = true })
+  vim.keymap.set("n", "<leader>os", ":ObsidianCustomSwitch<CR>", { desc = "[OB] Switch to note by ID", silent = true })
+  vim.keymap.set("n", "<leader>ov", ":Obsidian workspace<CR>", { desc = "[OB] Switch Obsidian vault", silent = true })
+  vim.keymap.set("n", "<leader>og", ":Obsidian search<CR>", { desc = "[OB] Grep string", silent = true })
+  vim.keymap.set("n", "<leader>oo", ":Obsidian open<CR>", { desc = "[OB] Open current file in OB", silent = true })
+  vim.keymap.set("n", "<leader>on", ":Obsidian new_from_template<CR>", { desc = "[OB] Create new note", silent = true })
+  vim.keymap.set("n", "<leader>ob", ":Obsidian backlinks<CR>", { desc = "[OB] Check backlinks", silent = true })
+  vim.keymap.set("n", "<leader>ot", ":Obsidian template<CR>", { desc = "[OB] Insert a template", silent = true })
+  vim.keymap.set("n", "<leader>or", ":ObsidianCustomRename<CR>", { desc = "[OB] Rename Note", silent = true })
 end
 
 M.obsidian_table = function()

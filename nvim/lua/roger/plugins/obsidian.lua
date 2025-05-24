@@ -23,6 +23,10 @@ return {
           name = "Workspace",
           path = "/Users/roger/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace",
         },
+        {
+          name = "Workspace-Archive",
+          path = "/Users/roger/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace-Archive",
+        },
       },
 
       log_level = vim.log.levels.INFO, -- set the log level for obsidian.nvim.
@@ -163,7 +167,8 @@ return {
 
       follow_img_func = function(img)
         local current_dir = vim.fn.expand("%:p:h")
-        local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img)
+        local img_name = vim.fn.fnamemodify(img, ":t")
+        local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img_name)
 
         -- 用 qlmanage 開啟圖片（Quick Look）
         vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
@@ -340,10 +345,9 @@ return {
 
     -- NOTE: Create `:ObsidianRenameID` to make 'renaming' apply `note_id_func`
     local client = obsidian.get_client()
-    vim.api.nvim_create_user_command("ObsidianRenameID", function()
+    vim.api.nvim_create_user_command("ObsidianCustomRename", function()
       local title = vim.fn.input("[Obsidian Rename] New File Name: ")
       if title == "" then
-        print("Rename cancelled.")
         return
       end
       local new_id = client.opts.note_id_func(title)
@@ -351,6 +355,16 @@ return {
     end, {
       nargs = 0,
       desc = "Interactive rename current note with note_id_func",
+    })
+    vim.api.nvim_create_user_command("ObsidianCustomSwitch", function()
+      local title = vim.fn.input("[Obsidian Switch] Note ID: ")
+      if title == "" then
+        return
+      end
+      client:command("quick_switch", { args = title })
+    end, {
+      nargs = 0,
+      desc = "Switch note by ID",
     })
   end,
 }
