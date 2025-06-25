@@ -36,6 +36,7 @@
 - **File Explorer**: Navigate your project tree with [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim).  
 - **Fuzzy Finding**: Lightning-fast file & symbol search using [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) + [telescope-fzf-native](https://github.com/nvim-telescope/telescope-fzf-native.nvim) and [telescope-ui-select](https://github.com/nvim-telescope/telescope-ui-select.nvim).  
 - **Autocompletion & Snippets**: Smart completion powered by [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) (+ [cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp)) and snippets from [LuaSnip](https://github.com/L3MON4D3/LuaSnip) with [friendly-snippets](https://github.com/rafamadriz/friendly-snippets).  
+- **Copilot Integration**: Seamless AI coding with [copilot.vim](https://github.com/github/copilot.vim).
 - **Language Server & Tools**: LSP features via [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) with automatic installation from [mason.nvim](https://github.com/mason-org/mason.nvim) + [mason-lspconfig](https://github.com/mason-org/mason-lspconfig).  
 - **Formatting**: Keep code pristine with [conform.nvim](https://github.com/stevearc/conform.nvim).  
 - **Linting**: On-the-fly diagnostics through [nvim-lint](https://github.com/mfussenegger/nvim-lint).  

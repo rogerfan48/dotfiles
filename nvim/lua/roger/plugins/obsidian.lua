@@ -183,7 +183,7 @@ return {
           }, { detach = true })
         end, 100) -- 延遲時間可依需求調整（單位：毫秒）
 
-        print("Opening image with Quick Look:", img_abs_path)
+        -- print("Opening image with Quick Look:", img_abs_path)
       end,
 
       -- -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
