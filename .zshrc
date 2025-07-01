@@ -41,6 +41,10 @@ bindkey '^[[CMD-BACKSPACE]' backward-kill-line
 
 export LANG=en_US.UTF-8 # !!! zh_TW.UTF-8
 
+OS=$(uname -s)
+if [[ "$OS" == "Linux" ]]; then
+    alias nvim="/usr/local/squashfs-root/usr/bin/nvim"
+fi
 alias vim=nvim
 
 # SEC: Plugins config
@@ -77,7 +81,11 @@ MASON_BIN="$HOME/.local/share/nvim/mason/bin"
 echo "$PATH" | grep -q "$MASON_BIN" || export PATH="$MASON_BIN:$PATH"
 
 alias bat="bat --paging never" # To prevent using paging when many lines
-source <(fzf --zsh) # Set up fzf key bindings and fuzzy completion
+if [[ "$OS" == "Darwin" ]]; then
+    source <(fzf --zsh) # Set up fzf key bindings and fuzzy completion
+elif [[ "$OS" == "Linux" ]]; then
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fi
 
 # SEC: Custom functions
 function path_prepend() {

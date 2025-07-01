@@ -248,6 +248,31 @@ elif [[ "$OS" == "Linux" ]]; then
         echo "lazygit is already installed."
     fi
 
+    echo "### Installing npm"
+    sudo apt update
+    sudo apt install nodejs npm
+
+    echo "### Installing and upgrading nodejs"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    nvm install --lts
+    nvm use --lts
+    nvm alias default 'lts/*'
+
+    echo "### Installing python"
+    sudo apt install python3 python3-pip python3-venv
+
+    echo "### Installing Treesitter CLI"
+    npm install -g tree-sitter-cli
+
+    echo "### Installing zoxide"
+    curl -fsSL https://apt.cli.rs/pubkey.asc | sudo tee -a /usr/share/keyrings/rust-tools.asc
+    curl -fsSL https://apt.cli.rs/rust-tools.list | sudo tee /etc/apt/sources.list.d/rust-tools.list
+    sudo apt update
+    sudo apt install zoxide
+
+    echo "### Installing tools required for \`image.nvim\`"
+    sudo apt install liblua5.1-0-dev luarocks unzip
+
 else
     echo "Unsupported operating system: $OS"
     exit 1
