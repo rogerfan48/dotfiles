@@ -169,10 +169,20 @@ elif [[ "$OS" == "Linux" ]]; then
 
     sudo apt-get update
 
-    echo "### Installing basic tools: bash, zsh"
-    sudo apt-get install -y bash zsh
+    echo "### Installing basic tools and dependencies..."
+    sudo apt-get install -y bash zsh curl wget git fontconfig \
+        unzip python3 python3-pip python3-venv \
+        neovim bat cppcheck fzf ripgrep tmux \
+        zsh-autosuggestions zsh-syntax-highlighting \
+        liblua5.1-0-dev luarocks
 
-    # Check for WezTerm; if not found, prompt user to install manually
+    # For bat: create symlink if necessary on Ubuntu
+    if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+        # build the symlink in a user-accessible path
+        sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
+        echo "### Created symlink for bat."
+    fi
+
     echo "### Checking for WezTerm..."
     if ! command -v wezterm >/dev/null 2>&1; then
         echo "### !!! NOTICE: WezTerm is not detected. Please install it from https://wezfurlong.org/wezterm/."
@@ -208,22 +218,18 @@ elif [[ "$OS" == "Linux" ]]; then
         echo "powerlevel10k theme is already installed."
     fi
 
-    echo "### Installing zsh plugins: zsh-autosuggestions and zsh-syntax-highlighting..."
-    sudo apt-get install -y zsh-autosuggestions zsh-syntax-highlighting
+    echo "### Linking zsh plugins..."
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
-        sudo ln -s /usr/share/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-        sudo mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
+        ln -s /usr/share/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+        mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
         echo "Created symbolic link for zsh-autosuggestions."
     fi
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
-        sudo ln -s /usr/share/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-        sudo mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
+        ln -s /usr/share/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+        mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
-
-    echo "### Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, ripgrep..."
-    sudo apt-get install -y neovim bat cppcheck fzf nodejs ripgrep tmux
 
     echo "### Installing TPM (Tmux Plugin Manager)..."
     if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
@@ -232,46 +238,37 @@ elif [[ "$OS" == "Linux" ]]; then
         echo "TPM is already installed."
     fi
 
-    # For bat: create symlink if necessary
-    if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
-        sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
-        echo "### Created symlink for bat."
+    echo "### Installing Node.js via nvm..."
+    if ! command -v nvm >/dev/null 2>&1; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+        # make nvm available in the current shell session
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
-
-    echo "### Installing lazygit from GitHub binary..."
-    if ! command -v lazygit >/dev/null 2>&1; then
-        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-        tar xf lazygit.tar.gz lazygit
-        sudo install lazygit -D -t /usr/local/bin/
-    else
-        echo "lazygit is already installed."
-    fi
-
-    echo "### Installing npm"
-    sudo apt update
-    sudo apt install nodejs npm
-
-    echo "### Installing and upgrading nodejs"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
     nvm install --lts
     nvm use --lts
     nvm alias default 'lts/*'
 
-    echo "### Installing python"
-    sudo apt install python3 python3-pip python3-venv
-
-    echo "### Installing Treesitter CLI"
+    echo "### Installing Treesitter CLI..."
     npm install -g tree-sitter-cli
 
-    echo "### Installing zoxide"
-    curl -fsSL https://apt.cli.rs/pubkey.asc | sudo tee -a /usr/share/keyrings/rust-tools.asc
-    curl -fsSL https://apt.cli.rs/rust-tools.list | sudo tee /etc/apt/sources.list.d/rust-tools.list
-    sudo apt update
-    sudo apt install zoxide
+    echo "### Installing lazygit from binary..."
+    if ! command -v lazygit >/dev/null 2>&1; then
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        tar xf lazygit.tar.gz lazygit
+        sudo install lazygit /usr/local/bin
+        rm lazygit.tar.gz lazygit
+    else
+        echo "lazygit is already installed."
+    fi
 
-    echo "### Installing tools required for \`image.nvim\`"
-    sudo apt install liblua5.1-0-dev luarocks unzip
+    echo "### Installing zoxide..."
+    if ! command -v zoxide >/dev/null 2>&1; then
+        curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+    else
+        echo "zoxide is already installed."
+    fi
 
 else
     echo "Unsupported operating system: $OS"
