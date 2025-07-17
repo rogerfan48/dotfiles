@@ -825,4 +825,11 @@ M.img_clip = {
   { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
 }
 
+M.copilot = function()
+  vim.keymap.set("i", "<M-BS>", '<Plug>(copilot-dismiss)', { desc = "Dismiss Copilot suggestion" })
+  vim.keymap.set("i", "<M-l>", '<Plug>(copilot-accept-word)', { desc = "Accept Copilot word suggestion" })
+  vim.keymap.set("i", "<M-;>", '<Plug>(copilot-accept-line)', { desc = "Accept Copilot line suggestion" })
+  vim.keymap.set("i", "<M-'>", 'copilot#Accept("")', { desc = "Accept Copilot whole suggestion", expr = true, replace_keycodes = false })
+end
+
 return M
