@@ -2,8 +2,43 @@ return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
-    local custom_dracula = require("lualine.themes.dracula")
-    custom_dracula.insert.a.bg = "#7bc864"
+    local colors = {
+      rosewater = "#f5e0dc",
+      flamingo = "#f2cdcd",
+      pink = "#f5c2e7",
+      mauve = "#cba6f7",
+      red = "#f38ba8",
+      maroon = "#eba0ac",
+      peach = "#fab387",
+      yellow = "#f9e2af",
+      green = "#a6e3a1",
+      teal = "#94e2d5",
+      sky = "#89dceb",
+      sapphire = "#74c7ec",
+      blue = "#89b4fa",
+      lavender = "#b4befe",
+      text = "#cdd6f4",
+      subtext1 = "#bac2de",
+      subtext0 = "#a6adc8",
+      overlay2 = "#9399b2",
+      overlay1 = "#7f849c",
+      overlay0 = "#6c7086",
+      surface2 = "#585b70",
+      surface1 = "#45475a",
+      surface0 = "#313244",
+      base = "#1e1e2e",
+      mantle = "#181825",
+      crust = "#11111b",
+    }
+
+    local custom_theme = require "catppuccin.utils.lualine" "mocha"
+    custom_theme.normal.c.fg = colors.overlay0
+    custom_theme.visual.a.bg = colors.yellow
+
+    custom_theme.normal.b.fg = colors.text
+    custom_theme.insert.b.fg = colors.text
+    custom_theme.visual.b.fg = colors.text
+    custom_theme.replace.b.fg = colors.text
 
     local custom_filename = {
       "filename",
@@ -19,8 +54,8 @@ return {
       shorting_target = 24, -- Shortens path to leave 40 spaces in the window
       -- for other components. (terrible name, any suggestions?)
       symbols = {
-        modified = "[+]", -- Text to show when the file is modified.
-        readonly = "[-]", -- Text to show when the file is non-modifiable or readonly.
+        modified = " ●", -- Text to show when the file is modified.
+        readonly = " 󰈡", -- Text to show when the file is non-modifiable or readonly.
         unnamed = "[No Name]", -- Text to show for unnamed buffers.
         newfile = "[New]", -- Text to show for newly created file before first write
       },
@@ -50,6 +85,9 @@ return {
 
       local names = {}
       for _, client in ipairs(clients) do
+        if client.name == "GitHub Copilot" then
+          client.name = "Copilot"
+        end
         table.insert(names, client.name)
       end
       return " " .. table.concat(names, ", ")
@@ -69,11 +107,12 @@ return {
     require("lualine").setup({
       options = {
         icons_enabled = true,
-        theme = custom_dracula,
-        component_separators = { left = "", right = "" },
-        section_separators = { left = "", right = "" },
+        theme = custom_theme,
+        component_separators = { left = "", right = "" },
+        section_separators = { left = "", right = "" },
+        -- // ', right = ''
         disabled_filetypes = {
-          statusline = {},
+          statusline = { "neo-tree" },
           winbar = {},
         },
         ignore_focus = {},
@@ -98,14 +137,24 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = { custom_filename },
-        lualine_x = { "location" },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = {},
       },
       tabline = {},
       winbar = {},
       inactive_winbar = {},
-      extensions = {},
+      extensions = {
+        "neo-tree",
+        "quickfix",
+        "trouble",
+        "mason",
+        "lazy",
+        "fzf",
+      },
     })
+
+    -- Make NeoTree inactive statusline's strange black background disappear
+    vim.api.nvim_set_hl(0, "NeoTreeStatusLineNC", { link = "StatusLine" })
   end,
 }

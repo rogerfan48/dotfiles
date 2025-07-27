@@ -12,7 +12,7 @@ config.initial_cols = 200
 config.max_fps = 120
 
 config.font = wezterm.font_with_fallback({
-  { family = "JetBrainsMono Nerd Font", weight = "Medium" },
+  { family = "JetBrainsMono Nerd Font", weight = "DemiBold" },
   { family = "jf-openhuninn-2.0" },
   { family = "LXGW WenKai Mono TC", weight = "Bold" },
 })
@@ -25,7 +25,8 @@ config.window_close_confirmation = "NeverPrompt"
 
 config.background = {
   {
-    source = { File = home .. "/.dotfiles/bg_image/Sonoma.jpeg" },
+    -- source = { File = home .. "/.dotfiles/bg_image/Sonoma.jpeg" },
+    source = { File = home .. "/.dotfiles/bg_image/chrome-lake.jpeg" },
     width = "Cover",
     height = "Cover",
   },
