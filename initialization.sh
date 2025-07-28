@@ -63,6 +63,83 @@ set_zsh_default() {
     fi
 }
 
+install_neovim() {
+    echo "### Installing Neovim on Linux... (~/.nvim/)"
+
+    # Check if wget is installed
+    if ! command -v wget >/dev/null 2>&1; then
+        echo "Error: wget is required. Installing wget..."
+        sudo apt-get install -y wget
+        if [[ $? -ne 0 ]]; then
+            echo "Error: Failed to install wget."
+            return 1
+        fi
+    fi
+
+    # Check if Neovim is already installed
+    if command -v nvim >/dev/null 2>&1; then
+        echo "Neovim is already installed. Checking version..."
+        if [[ "$(nvim --version | head -n 1)" != *"NVIM v0.11.3"* ]]; then
+            echo "Warning: A different Neovim version is installed. Consider removing it with 'sudo apt-get remove neovim'."
+        fi
+        return
+    fi
+
+    # Define variables
+    NVIM_VERSION="v0.11.3"
+    APPIMAGE_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage"
+    APPIMAGE_FILE="nvim-linux-x86_64.appimage"
+    INSTALL_DIR="$HOME/.nvim"
+    BIN_DIR="$HOME/.local/bin"
+
+    mkdir -p "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
+
+    if [[ ! -f "$APPIMAGE_FILE" ]]; then
+        echo "Downloading Neovim AppImage..."
+        wget -q "$APPIMAGE_URL" -O "$APPIMAGE_FILE"
+        if [[ $? -ne 0 ]]; then
+            echo "Error: Failed to download AppImage."
+            return 1
+        fi
+    else
+        echo "AppImage already downloaded."
+    fi
+    chmod u+x "$APPIMAGE_FILE"
+
+    if [[ ! -d "squashfs-root" ]]; then
+        echo "Extracting AppImage..."
+        ./"$APPIMAGE_FILE" --appimage-extract >/dev/null
+        if [[ $? -ne 0 ]]; then
+            echo "Error: Failed to extract AppImage."
+            rm -f "$APPIMAGE_FILE"
+            return 1
+        fi
+    else
+        echo "AppImage already extracted."
+    fi
+
+    echo "Cleaning up temporary AppImage file..."
+    rm -f "$APPIMAGE_FILE"
+
+    # Create symlink
+    mkdir -p "$BIN_DIR"
+    ln -sf "$INSTALL_DIR/squashfs-root/usr/bin/nvim" "$BIN_DIR/nvim"
+
+    # Verify installation
+    if command -v nvim >/dev/null 2>&1; then
+        echo "Neovim installed successfully! Run 'nvim --version' to check."
+    else
+        echo "Installation completed, but nvim not found in PATH."
+    fi
+
+    # TODO: Install optional dependencies for Neovim plugins
+    # echo "### Installing optional Neovim dependencies..."
+    # sudo apt-get install -y imagemagick xclip pandoc
+
+    echo "Neovim installation complete."
+}
+
 if ! command -v git >/dev/null 2>&1; then
     echo "Error: git is not installed. Please install git (e.g., via Homebrew on macOS or apt on Linux) and re-run this script."
     exit 1
@@ -172,7 +249,7 @@ elif [[ "$OS" == "Linux" ]]; then
     echo "### Installing basic tools and dependencies..."
     sudo apt-get install -y bash zsh curl wget git fontconfig \
         unzip python3 python3-pip python3-venv \
-        neovim bat cppcheck fzf ripgrep tmux \
+        bat cppcheck fzf ripgrep tmux \
         zsh-autosuggestions zsh-syntax-highlighting \
         liblua5.1-0-dev luarocks
 
@@ -182,6 +259,8 @@ elif [[ "$OS" == "Linux" ]]; then
         sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
         echo "### Created symlink for bat."
     fi
+
+    install_neovim
 
     echo "### Checking for WezTerm..."
     if ! command -v wezterm >/dev/null 2>&1; then
@@ -222,12 +301,12 @@ elif [[ "$OS" == "Linux" ]]; then
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
         ln -s /usr/share/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-        mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
+        sudo mv "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh"
         echo "Created symbolic link for zsh-autosuggestions."
     fi
     if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
         ln -s /usr/share/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-        mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
+        sudo mv "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh"
         echo "Created symbolic link for zsh-syntax-highlighting."
     fi
 

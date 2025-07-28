@@ -125,6 +125,8 @@ function kb() {
     fi
 }
 
+path_prepend "$HOME/.local/bin"
+
 # SEC: RUBY
 if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
   path_prepend "/opt/homebrew/opt/ruby/bin"
