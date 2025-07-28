@@ -43,7 +43,7 @@ export LANG=en_US.UTF-8 # !!! zh_TW.UTF-8
 
 OS=$(uname -s)
 if [[ "$OS" == "Linux" ]]; then
-    alias nvim="/usr/local/squashfs-root/usr/bin/nvim"
+    alias nvim="$HOME/.local/bin/nvim"
 fi
 alias vim=nvim
 

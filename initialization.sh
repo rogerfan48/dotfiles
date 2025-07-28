@@ -331,6 +331,10 @@ elif [[ "$OS" == "Linux" ]]; then
     echo "### Installing Treesitter CLI..."
     npm install -g tree-sitter-cli
 
+    echo "### Handling problem of telescope-fzf-native with Mason"
+    echo "### Installing build-essential for compiling native extensions..."
+    sudo apt install build-essential
+
     echo "### Installing lazygit from binary..."
     if ! command -v lazygit >/dev/null 2>&1; then
         LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
