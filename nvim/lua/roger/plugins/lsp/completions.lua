@@ -16,6 +16,7 @@ return {
     require("luasnip.loaders.from_vscode").lazy_load()
 
     cmp.setup({
+      enabled = not _G.IS_LEETCODE_SESSION,
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body) -- using LuaSnip to expand Snippets
@@ -68,5 +69,4 @@ return {
       }),
     })
   end,
-
 }

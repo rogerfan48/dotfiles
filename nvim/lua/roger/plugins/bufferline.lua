@@ -2,6 +2,7 @@ return {
   "akinsho/bufferline.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   version = "*",
+  enabled = not _G.IS_LEETCODE_SESSION,
   config = function()
     local bufferline = require("bufferline")
     bufferline.setup({

@@ -240,6 +240,10 @@ return {
     vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
       group = lint_augroup,
       callback = function()
+        if _G.IS_LEETCODE_SESSION then
+          return
+        end
+
         lint.try_lint()
       end,
     })

@@ -289,10 +289,10 @@ M.formatting = function()
 end
 
 M.linting = function()
-  local lint = require("lint")
-  vim.keymap.set("n", "<leader>ll", function()
-    lint.try_lint()
-  end, { desc = "Trigger linting for current file" })
+  -- local lint = require("lint")
+  -- vim.keymap.set("n", "<leader>ll", function()
+  --   lint.try_lint()
+  -- end, { desc = "Trigger linting for current file" })
 end
 
 M.neo_tree = function()
@@ -830,6 +830,20 @@ M.copilot = function()
   vim.keymap.set("i", "<M-l>", '<Plug>(copilot-accept-word)', { desc = "Accept Copilot word suggestion" })
   vim.keymap.set("i", "<M-;>", '<Plug>(copilot-accept-line)', { desc = "Accept Copilot line suggestion" })
   vim.keymap.set("i", "<M-'>", 'copilot#Accept("")', { desc = "Accept Copilot whole suggestion", expr = true, replace_keycodes = false })
+end
+
+M.leetcode = function()
+  vim.keymap.set("n", "<leader>lm", ":Leet menu<CR>", { desc = "[LC] Goto Leetcode Menu" })
+  vim.keymap.set("n", "<leader>lz", ":Leet lang<CR>", { desc = "[LC] Change language" })
+  vim.keymap.set("n", "<leader>li", ":Leet info<CR>", { desc = "[LC] Open question's info" })
+  vim.keymap.set("n", "<leader>ll", ":Leet list<CR>", { desc = "[LC] List all question" })
+  vim.keymap.set("n", "<leader>lt", ":Leet tabs<CR>", { desc = "[LC] Browse all opened tabs" })
+  vim.keymap.set("n", "<leader>lo", ":Leet open<CR>", { desc = "[LC] Open in browser" })
+  vim.keymap.set("n", "<leader>lr", ":Leet reset<CR>", { desc = "[LC] Reset code section" })
+  vim.keymap.set("n", "<leader>lR", ":Leet last_submit<CR>", { desc = "[LC] latest submitted code" })
+  vim.keymap.set("n", "<leader>lc", ":Leet console<CR>", { desc = "[LC] Open console" })
+  vim.keymap.set("n", "<leader>ls", ":Leet run<CR>", { desc = "[LC] Run code" })
+  vim.keymap.set("n", "<leader>lS", ":Leet submit<CR>", { desc = "[LC] Submit code" })
 end
 
 return M

@@ -31,7 +31,7 @@ return {
       crust = "#11111b",
     }
 
-    local custom_theme = require "catppuccin.utils.lualine" "mocha"
+    local custom_theme = require("catppuccin.utils.lualine")("mocha")
     custom_theme.normal.c.fg = colors.overlay0
     custom_theme.visual.a.bg = colors.yellow
 
@@ -73,14 +73,14 @@ return {
         local langs = table.concat(vim.opt.spelllang:get(), ",")
         return " " .. langs
       else
-        return " OFF"
+        return " "
       end
     end
 
     local function lsp_clients()
       local clients = vim.lsp.get_clients({ bufnr = 0 })
-      if not clients or #clients == 0 then
-        return " None"
+      if not clients or #clients == 0 or _G.is_leetcode_buffer() then
+        return " "
       end
 
       local names = {}
@@ -98,8 +98,8 @@ return {
       local buf_ft = vim.bo.filetype
       local linters = lint.linters_by_ft[buf_ft] or {}
 
-      if #linters == 0 then
-        return "󱪙 None"
+      if #linters == 0 or _G.is_leetcode_buffer() then
+        return "󱪙 "
       end
       return "󱪙 " .. table.concat(linters, ", ")
     end

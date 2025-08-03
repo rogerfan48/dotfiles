@@ -8,6 +8,7 @@ return {
     "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
   },
   lazy = false,
+  enabled = not _G.IS_LEETCODE_SESSION,
   config = function()
     local keymaps = require("roger.core.keymaps")
     keymaps.neo_tree()
