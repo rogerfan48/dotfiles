@@ -46,6 +46,11 @@
 - **UI Enhancements**: Modern command-line, pop-ups and notifications courtesy of [noice.nvim](https://github.com/folke/noice.nvim), [dressing.nvim](https://github.com/stevearc/dressing.nvim) and [nui.nvim](https://github.com/MunifTanjim/nui.nvim).  
 - **Editing Productivity**: Faster editing with [Comment.nvim](https://github.com/numToStr/Comment.nvim), [better-escape.nvim](https://github.com/max397574/better-escape.nvim), [nvim-surround](https://github.com/kylechui/nvim-surround), [nvim-autopairs](https://github.com/windwp/nvim-autopairs), [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) and [substitute.nvim](https://github.com/gbprod/substitute.nvim).  
 - **Syntax Highlighting**: Advanced parsing & rainbow parentheses via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim).  
+- **Leetcode**: Solve problems directly in Neovim with [leetcode.nvim](https://github.com/kawre/leetcode.nvim).
+
+## Usage
+
+- use `nvimleet` in the terminal to use `leetcode.nvim`
 
 ## Extra
 

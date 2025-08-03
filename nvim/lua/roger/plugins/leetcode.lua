@@ -43,7 +43,7 @@ return {
       pattern = '*',
       desc = 'Create a distraction-free environment for LeetCode',
       callback = function()
-        if not is_leetcode_buffer() then
+        if not _G.IS_LEETCODE_SESSION then
           return
         end
 

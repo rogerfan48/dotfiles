@@ -46,6 +46,7 @@ if [[ "$OS" == "Linux" ]]; then
     alias nvim="$HOME/.local/bin/nvim"
 fi
 alias vim=nvim
+alias nvimleet='LEETCODE_SESSION=1 nvim -c "Leet"'
 
 # SEC: Plugins config
 ZSH_HIGHLIGHT_STYLES[default]=none
