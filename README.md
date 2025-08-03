@@ -20,7 +20,9 @@
 
 <hr>
 
-![dotfiles_demo](https://github.com/user-attachments/assets/06ec6058-c8d5-4912-80a2-f26a99832c4d)
+![dotfiles_demo1](https://github.com/user-attachments/assets/7c620fba-7111-4fd8-ac74-33c220661897)
+![dotfiles_demo2](https://github.com/user-attachments/assets/a43c74e8-5fa8-44d3-90e2-ecd323c8c43f)
+![dotfiles_demo3](https://github.com/user-attachments/assets/72528f64-0e96-4d25-8838-c66b56c80e43)
 
 <hr>
 
