@@ -511,14 +511,6 @@ M.todo_comments = function()
   end, { desc = "Previous Section" })
 end
 
-M.substitute = function()
-  local substitute = require("substitute")
-  vim.keymap.set("n", "s", substitute.operator, { desc = "Substitute with motion" })
-  vim.keymap.set("n", "ss", substitute.line, { desc = "Substitute line" })
-  vim.keymap.set("n", "S", substitute.eol, { desc = "Substitute to end of line" })
-  vim.keymap.set("x", "s", substitute.visual, { desc = "Substitute in visual mode" })
-end
-
 M.surround = {
   insert = "<C-g>s",
   insert_line = "<C-g>S",
@@ -845,5 +837,14 @@ M.leetcode = function()
   vim.keymap.set("n", "<leader>ls", ":Leet run<CR>", { desc = "[LC] Run code" })
   vim.keymap.set("n", "<leader>lS", ":Leet submit<CR>", { desc = "[LC] Submit code" })
 end
+
+M.flash = {
+  { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+  { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+  -- in `S`, can use `;` to expand and `,` to shrink the selection
+  { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+  { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+  { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+}
 
 return M
