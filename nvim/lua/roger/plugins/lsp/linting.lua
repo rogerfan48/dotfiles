@@ -51,7 +51,7 @@ return {
       return diagnostics
     end
     lint.debug = true
-    lint.linters = {
+    vim.tbl_extend("force", lint.linters, {
       cppcheck = create_linter_config({
         name = "cppcheck",
         cmd = "cppcheck",
@@ -202,7 +202,7 @@ return {
           { source = "eslint_d", severity = vim.diagnostic.severity.WARN }
         ),
       },
-    }
+    })
     lint.linters_by_ft = {
       -- lua = {},
       c = { "cppcheck" },

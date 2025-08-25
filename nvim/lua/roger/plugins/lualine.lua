@@ -79,7 +79,7 @@ return {
 
     local function lsp_clients()
       local clients = vim.lsp.get_clients({ bufnr = 0 })
-      if not clients or #clients == 0 or _G.is_leetcode_buffer() then
+      if not clients or #clients == 0 or _G.IS_LEETCODE_SESSION then
         return " "
       end
 
@@ -98,7 +98,7 @@ return {
       local buf_ft = vim.bo.filetype
       local linters = lint.linters_by_ft[buf_ft] or {}
 
-      if #linters == 0 or _G.is_leetcode_buffer() then
+      if #linters == 0 or _G.IS_LEETCODE_SESSION then
         return "󱪙 "
       end
       return "󱪙 " .. table.concat(linters, ", ")
