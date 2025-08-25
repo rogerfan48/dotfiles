@@ -49,7 +49,6 @@ return {
         "pylint", -- Python
         -- "dartanalyzer", -- Dart
         "markdownlint", -- Markdown
-        -- "chktex", -- LaTeX
         "jsonlint",
         "yamllint",
         "shellcheck", -- Bash
