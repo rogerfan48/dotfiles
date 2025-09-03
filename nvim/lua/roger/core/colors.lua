@@ -50,5 +50,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.api.nvim_set_hl(0, "OutlineCurrent", hl)
 
     vim.api.nvim_set_hl(0, "FlutterClosingTag", { fg = "#484848" })
+
+    -- `K` and Leetcode.nvim bg recovery
+    vim.api.nvim_set_hl(0, "NormalFloat",  { bg = "NONE" })
   end
 })
