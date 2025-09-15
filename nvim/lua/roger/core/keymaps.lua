@@ -718,111 +718,91 @@ M.obsidian = function()
   vim.keymap.set("n", "<leader>ob", ":Obsidian backlinks<CR>", { desc = "[OB] Check backlinks", silent = true })
   vim.keymap.set("n", "<leader>ot", ":Obsidian template<CR>", { desc = "[OB] Insert a template", silent = true })
   vim.keymap.set("n", "<leader>or", ":ObsidianCustomRename<CR>", { desc = "[OB] Rename Note", silent = true })
-end
+  vim.keymap.set("n", "<leader>oc", ":Obsidian toggle_checkbox<CR>", { desc = "[OB] Toggle checkbox", silent = true })
 
-M.obsidian_table = function()
-  local obsidian = require("obsidian")
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "ObsidianNoteEnter",
+    callback = function(ev)
+      vim.keymap.del("n", "<CR>", { buffer = ev.buf })
 
-  local function fold_heading()
-    local line = vim.api.nvim_get_current_line()
-    if string.match(line, "^#+%s.*$") then
-      vim.schedule(function() -- ∵ `normal!` cannot be used in `opts = { expr = true }`
-        vim.cmd("normal! za")
-        vim.cmd("normal! zz")
-      end)
-      return true
-    end
-    return false
-  end
-
-  local function gf_link_in_line()
-    local line = vim.api.nvim_get_current_line()
-
-    -- try Wiki Link: [[...]]
-    local link_start, link_end = line:find("%[%[.-%]%]")
-    if link_start then
-      local link_text = line:sub(link_start + 2, link_end - 2)
-      local note_id = link_text:match("([^|]+)") -- only take before the pipeline `|`
-      if not note_id:match("%.md$") then
-        note_id = note_id .. ".md" -- add '.md'
+      local function fold_heading()
+        local line = vim.api.nvim_get_current_line()
+        if string.match(line, "^#+%s.*$") then
+          vim.schedule(function() -- ∵ `normal!` cannot be used in `opts = { expr = true }`
+            vim.cmd("normal! za")
+            vim.cmd("normal! zz")
+          end)
+          return true
+        end
+        return false
       end
 
-      local vault_root = tostring(obsidian.get_client():vault_root())
-      local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
+      local function gf_link_in_line()
+        local line = vim.api.nvim_get_current_line()
 
-      if #matches > 0 then
-        vim.schedule(function()
-          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), link_start + 1 }) -- column: 0-indexed
-          vim.cmd("ObsidianFollowLink")
-        end)
-      else
-        local title = note_id:gsub("%.md$", "") -- remove '.md'
-        vim.schedule(function()
-          vim.cmd(string.format("ObsidianNewFromTemplate %s", title))
-        end)
-      end
+        -- try Wiki Link: [[...]]
+        local link_start, link_end = line:find("%[%[.-%]%]")
+        if link_start then
+          local link_text = line:sub(link_start + 2, link_end - 2)
+          local note_id = link_text:match("([^|]+)") -- only take before the pipeline `|`
+          if not note_id:match("%.md$") then
+            note_id = note_id .. ".md" -- add '.md'
+          end
 
-      return ""
-    end
+          local vault_root = tostring(Obsidian.dir)
+          local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
 
-    -- try Markdown Link: [text](target)
-    local md_link_start, _ = line:find("%[.-%]%((.-)%)") -- _ = md_link_end
-    if md_link_start then
-      local paren_index = line:find("%(", md_link_start) -- move cursor to '('
-      if paren_index then
-        vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
-        vim.cmd("ObsidianFollowLink")
+          if #matches > 0 then
+            vim.schedule(function()
+              vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), link_start + 1 }) -- column: 0-indexed
+              vim.cmd("Obsidian follow_link")
+            end)
+          else
+            local title = note_id:gsub("%.md$", "") -- remove '.md'
+            vim.schedule(function()
+              vim.cmd(("Obsidian new_from_template %s general-template"):format(title))
+            end)
+          end
+
+          return ""
+        end
+
+        -- try Markdown Link: [text](target)
+        local md_link_start, _ = line:find("%[.-%]%((.-)%)") -- _ = md_link_end
+        if md_link_start then
+          local paren_index = line:find("%(", md_link_start) -- move cursor to '('
+          if paren_index then
+            vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
+            vim.cmd("Obsidian follow_link")
+            return ""
+          end
+        end
+
+        -- try angle bracket URL: <https://www.google.com>
+        local angle_start, _ = line:find("<https?://[^>]+>") --  _ = angle_end
+        if angle_start then
+          local target_col = angle_start + 1
+          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
+          vim.cmd("Obsidian follow_link")
+          return ""
+        end
+
+        -- NOTE: If no link detected, try fold heading
+        if fold_heading() then
+          return ""
+        end
+
+				-- pass through to default `gf` behavior
+        -- return vim.api.nvim_replace_termcodes("gf", true, false, true)
         return ""
       end
-    end
 
-    -- try angle bracket URL: <https://www.google.com>
-    local angle_start, _ = line:find("<https?://[^>]+>") --  _ = angle_end
-    if angle_start then
-      local target_col = angle_start + 1
-      vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
-      vim.cmd("ObsidianFollowLink")
-      return ""
-    end
-
-    -- NOTE: If no link detected, try fold heading
-    if fold_heading() then
-      return ""
-    end
-
-    return obsidian.util.gf_passthrough()
-  end
-
-  return {
-    -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
-    ["gf"] = {
-      action = function()
-        return gf_link_in_line()
-      end,
-      opts = { noremap = false, expr = true, buffer = true },
-    },
-    ["<CR>"] = {
-      action = function()
-        return gf_link_in_line()
-      end,
-      opts = { expr = true, buffer = true },
-    },
-    ["<leader><CR>"] = {
-      action = fold_heading,
-      opts = { expr = true, buffer = true },
-    },
-    ["<leader>oc"] = { -- Toggle check-boxes.
-      action = function()
-        return obsidian.util.toggle_checkbox()
-      end,
-      opts = { desc = "Toggle check-boxes", buffer = true },
-    },
-    -- -- Smart action depending on context, either follow link or toggle checkbox.
-    -- ["<cr>"] = {
-    --   action = function() return obsidian.util.smart_action() end,
-    --   opts = { buffer = true, expr = true },
-    -- },
-  }
+      -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
+      vim.keymap.set("n", "gf", gf_link_in_line, { noremap = false, expr = true, buffer = ev.buf })
+      vim.keymap.set("n", "<CR>", gf_link_in_line, { noremap = false, expr = true, buffer = ev.buf })
+      vim.keymap.set("n", "<leader><CR>", fold_heading, { noremap = true, buffer = ev.buf })
+    end,
+  })
 end
 
 M.flutter = function()

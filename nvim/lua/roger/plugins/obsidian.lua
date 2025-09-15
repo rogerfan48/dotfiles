@@ -9,15 +9,14 @@ return {
   -- "epwalsh/obsidian.nvim",
   "obsidian-nvim/obsidian.nvim",
   version = "*",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-  },
+  dependencies = {},
   config = function()
     local obsidian = require("obsidian")
     local keymaps = require("roger.core.keymaps")
     keymaps.obsidian()
 
     obsidian.setup({
+      legacy_commands = false,
       workspaces = {
         {
           name = "Workspace",
@@ -28,6 +27,9 @@ return {
           path = "/Users/roger/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace-Archive",
         },
       },
+
+      -- Optional, if you keep notes in a specific subdirectory of your vault.
+      notes_subdir = "",
 
       log_level = vim.log.levels.INFO, -- set the log level for obsidian.nvim.
 
@@ -42,6 +44,8 @@ return {
       --   default_tags = { "daily-notes" },
       --   -- Optional, if you want to automatically insert a template from your template directory like 'daily.md'
       --   template = nil,
+      --   -- Optional, if you want `Obsidian yesterday` to return the last work day or `Obsidian tomorrow` to return the next work day.
+      --   workdays_only = true,
       -- },
 
       -- completion of wiki links, local markdown links, and tags using nvim-cmp.
@@ -50,14 +54,9 @@ return {
         min_chars = 2, -- Trigger completion at 2 chars.
       },
 
-      -- Optional, configure key mappings. These are the defaults. If you don't want to set any keymappings this
-      -- way then set 'mappings = {}'.
-      mappings = keymaps.obsidian_table(),
-
       -- Where to put new notes. Valid options are
-      notes_subdir = "",
-      --  * "current_dir" - put new notes in same directory as the current buffer.
-      --  * "notes_subdir" - put new notes in the default notes subdirectory.
+      -- _ "current_dir" - put new notes in same directory as the current buffer.
+      -- _ "notes_subdir" - put new notes in the default notes subdirectory.
       new_notes_location = "current_dir",
 
       -- Optional, customize how note IDs are generated given an optional title.
@@ -155,51 +154,41 @@ return {
         },
       },
 
-      -- Optional, by default when you use `:ObsidianFollowLink` on a link to an external
-      -- URL it will be ignored but you can customize this behavior here.
+      -- Sets how you follow URLs
       follow_url_func = function(url)
-        -- Open the URL in the default web browser.
-        -- vim.fn.jobstart({ "open", url }) -- Mac OS
-        -- vim.fn.jobstart({"xdg-open", url})  -- linux
-        -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
         vim.ui.open(url) -- need Neovim 0.10.0+
       end,
 
+      -- Sets how you follow images
       follow_img_func = function(img)
         local current_dir = vim.fn.expand("%:p:h")
         local img_name = vim.fn.fnamemodify(img, ":t")
         local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img_name)
-
-        -- 用 qlmanage 開啟圖片（Quick Look）
-        vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
-
-        -- 延遲一段時間，讓 Quick Look 有足夠時間啟動，
-        -- 然後利用 osascript 強制把 Quick Look 的視窗置頂
-        vim.defer_fn(function()
-          vim.fn.jobstart({
-            "osascript",
-            "-e",
-            'tell application "System Events" to set frontmost of the first process whose name is "qlmanage" to true',
-          }, { detach = true })
-        end, 100) -- 延遲時間可依需求調整（單位：毫秒）
+        vim.ui.open(img_abs_path)
+        -- local current_dir = vim.fn.expand("%:p:h")
+        -- local img_name = vim.fn.fnamemodify(img, ":t")
+        -- local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img_name)
+        --
+        -- -- 用 qlmanage 開啟圖片（Quick Look）
+        -- vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
+        --
+        -- -- 延遲一段時間，讓 Quick Look 有足夠時間啟動，
+        -- -- 然後利用 osascript 強制把 Quick Look 的視窗置頂
+        -- vim.defer_fn(function()
+        --   vim.fn.jobstart({
+        --     "osascript",
+        --     "-e",
+        --     'tell application "System Events" to set frontmost of the first process whose name is "qlmanage" to true',
+        --   }, { detach = true })
+        -- end, 100) -- 延遲時間可依需求調整（單位：毫秒）
 
         -- print("Opening image with Quick Look:", img_abs_path)
       end,
 
-      -- -- Optional, by default when you use `:ObsidianFollowLink` on a link to an image
-      -- -- file it will be ignored but you can customize this behavior here.
-      -- follow_img_func = function(img)
-      --   vim.fn.jobstart({ "qlmanage", "-p", img }) -- Mac OS quick look preview
-      --   -- vim.fn.jobstart({"xdg-open", url})  -- linux
-      --   -- vim.cmd(':silent exec "!start ' .. url .. '"') -- Windows
-      -- end,
-
-      -- Optional, set to true if you use the Obsidian Advanced URI plugin.
-      -- https://github.com/Vinzent03/obsidian-advanced-uri
-      use_advanced_uri = false,
-
-      -- Optional, set to true to force ':ObsidianOpen' to bring the app to the foreground.
-      open_app_foreground = true,
+      open = {
+        use_advanced_uri = false,
+        func = vim.ui.open,
+      },
 
       picker = {
         -- Set your preferred picker. Can be one of 'telescope.nvim', 'fzf-lua', or 'mini.pick'.
@@ -231,8 +220,10 @@ return {
 
       -- Optional, determines how certain commands open notes. The valid options are:
       -- 1. "current" (the default) - to always open in the current window
-      -- 2. "vsplit" - to open in a vertical split if there's not already a vertical split
-      -- 3. "hsplit" - to open in a horizontal split if there's not already a horizontal split
+      -- 2. "vsplit" - only open in a vertical split if a vsplit does not exist.
+      -- 3. "hsplit" - only open in a horizontal split if a hsplit does not exist.
+      -- 4. "vsplit_force" - always open a new vertical split if the file is not in the adjacent vsplit.
+      -- 5. "hsplit_force" - always open a new horizontal split if the file is not in the adjacent
       open_notes_in = "current",
 
       -- Optional, define your own callbacks to further customize behavior.
@@ -278,46 +269,7 @@ return {
       -- Optional, configure additional syntax highlighting / extmarks.
       -- This requires you have `conceallevel` set to 1 or 2. See `:help conceallevel` for more details.
       ui = {
-        enable = false, -- set to false to disable all additional syntax features
-        update_debounce = 200, -- update delay after a text change (in milliseconds)
-        max_file_length = 5000, -- disable UI features for files with more than this many lines
-        -- Define how various check-boxes are displayed
-        checkboxes = {
-          -- NOTE: the 'char' value has to be a single character, and the highlight groups are defined below.
-          [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
-          ["x"] = { char = "", hl_group = "ObsidianDone" },
-          [">"] = { char = "", hl_group = "ObsidianRightArrow" },
-          ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
-          ["!"] = { char = "", hl_group = "ObsidianImportant" },
-          -- Replace the above with this if you don't have a patched font:
-          -- [" "] = { char = "☐", hl_group = "ObsidianTodo" },
-          -- ["x"] = { char = "✔", hl_group = "ObsidianDone" },
-
-          -- You can also add more custom ones...
-        },
-        -- Use bullet marks for non-checkbox lists.
-        bullets = { char = "•", hl_group = "ObsidianBullet" },
-        external_link_icon = { char = "", hl_group = "ObsidianExtLinkIcon" },
-        -- Replace the above with this if you don't have a patched font:
-        -- external_link_icon = { char = "", hl_group = "ObsidianExtLinkIcon" },
-        reference_text = { hl_group = "ObsidianRefText" },
-        highlight_text = { hl_group = "ObsidianHighlightText" },
-        tags = { hl_group = "ObsidianTag" },
-        block_ids = { hl_group = "ObsidianBlockID" },
-        hl_groups = {
-          -- The options are passed directly to `vim.api.nvim_set_hl()`. See `:help nvim_set_hl`.
-          ObsidianTodo = { bold = true, fg = "#f78c6c" },
-          ObsidianDone = { bold = true, fg = "#89ddff" },
-          ObsidianRightArrow = { bold = true, fg = "#f78c6c" },
-          ObsidianTilde = { bold = true, fg = "#ff5370" },
-          ObsidianImportant = { bold = true, fg = "#d73128" },
-          ObsidianBullet = { bold = true, fg = "#89ddff" },
-          ObsidianRefText = { underline = true, fg = "#c792ea" },
-          ObsidianExtLinkIcon = { fg = "#c792ea" },
-          ObsidianTag = { italic = true, fg = "#89ddff" },
-          ObsidianBlockID = { italic = true, fg = "#89ddff" },
-          ObsidianHighlightText = { bg = "#75662e" },
-        },
+        enable = false,
       },
 
       -- Specify how to handle attachments.
@@ -325,7 +277,7 @@ return {
         -- The default folder to place images in via `:ObsidianPasteImg`.
         -- If this is a relative path it will be interpreted as relative to the vault root.
         -- You can always override this per image by passing a full path to the command instead of just a filename.
-        -- img_folder = "assets/imgs", -- This is the default
+        img_folder = "./assets", -- This is the default
 
         -- Optional, customize the default name or prefix when pasting images via `:ObsidianPasteImg`.
         img_name_func = function()
@@ -336,35 +288,30 @@ return {
         -- A function that determines the text to insert in the note when pasting an image.
         -- It takes two arguments, the `obsidian.Client` and an `obsidian.Path` to the image file.
         -- This is the default implementation.
-        img_text_func = function(client, path)
-          path = client:vault_relative_path(path) or path
+        img_text_func = function(path)
           return string.format("![%s](%s)", path.name, path)
         end,
+      },
+
+      footer = {
+        enabled = true,
+        format = ": {{backlinks}} backlinks  {{words}} words  {{chars}} chars :",
+        hl_group = "Comment",
+        separator = false, -- string.rep("-", 80),
       },
     })
 
     -- NOTE: Create `:ObsidianRenameID` to make 'renaming' apply `note_id_func`
-    local client = obsidian.get_client()
     vim.api.nvim_create_user_command("ObsidianCustomRename", function()
-      local title = vim.fn.input("[Obsidian Rename] New File Name: ")
-      if title == "" then
-        return
+      local newname = vim.fn.input("[Obsidian Rename] New File Name: ")
+      if newname ~= "" then
+        vim.cmd(("Obsidian rename %s"):format(newname))
       end
-      local new_id = client.opts.note_id_func(title)
-      client:command("rename", { args = new_id })
-    end, {
-      nargs = 0,
-      desc = "Interactive rename current note with note_id_func",
-    })
+    end, { desc = "Rename current note" })
+
     vim.api.nvim_create_user_command("ObsidianCustomSwitch", function()
-      local title = vim.fn.input("[Obsidian Switch] Note ID: ")
-      if title == "" then
-        return
-      end
-      client:command("quick_switch", { args = title })
-    end, {
-      nargs = 0,
-      desc = "Switch note by ID",
-    })
+      local q = vim.fn.input("[Obsidian Switch] Query: ")
+      vim.cmd("Obsidian quick_switch " .. q)
+    end, { desc = "Quick switch / open" })
   end,
 }
