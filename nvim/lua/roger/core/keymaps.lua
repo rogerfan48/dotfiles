@@ -792,7 +792,7 @@ M.obsidian = function()
           return ""
         end
 
-				-- pass through to default `gf` behavior
+        -- pass through to default `gf` behavior
         -- return vim.api.nvim_replace_termcodes("gf", true, false, true)
         return ""
       end
@@ -858,22 +858,6 @@ M.flash = {
   },
   -- in `S`, can use `;` to expand and `,` to shrink the selection
   {
-    "r",
-    mode = "o",
-    function()
-      require("flash").remote()
-    end,
-    desc = "Remote Flash",
-  },
-  {
-    "R",
-    mode = { "o", "x" },
-    function()
-      require("flash").treesitter_search()
-    end,
-    desc = "Treesitter Search",
-  },
-  {
     "<c-s>",
     mode = { "c" },
     function()
@@ -882,5 +866,15 @@ M.flash = {
     desc = "Toggle Flash Search",
   },
 }
+
+M.vimtex = function()
+  vim.keymap.set({ "o", "x" }, "im", "<Plug>(vimtex-i$)", { desc = "Select inside math environment" })
+  vim.keymap.set({ "o", "x" }, "am", "<Plug>(vimtex-a$)", { desc = "Select around math environment" })
+  vim.keymap.set("n", "tsm", "<Plug>(vimtex-env-toggle-math)", { desc = "Toggle math environment" })
+  vim.keymap.set("n", "csm", "<Plug>(vimtex-env-change-math)", { desc = "Change math environment" })
+  vim.keymap.set("n", "dsm", "<Plug>(vimtex-env-delete-math)", { desc = "Delete math environment" })
+  vim.keymap.set({ "o", "x" }, "ii", "<Plug>(vimtex-im)", { desc = "Select inside itemize environment" })
+  vim.keymap.set({ "o", "x" }, "ai", "<Plug>(vimtex-am)", { desc = "Select around itemize environment" })
+end
 
 return M

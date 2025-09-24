@@ -14,8 +14,8 @@ return {
       auto_install = true,
       sync_install = false,
       ignore_install = {},
-      highlight = { enable = true },
-      indent = { enable = true },
+      highlight = { enable = true, additional_vim_regex_highlighting = { "latex" } },
+      indent = { enable = true, disable = { "python", "latex" } },
       fold = { enable = true },
       autotag = { enable = true },
       incremental_selection = {
@@ -23,5 +23,5 @@ return {
         keymaps = keymaps.treesitter,
       },
     })
-  end
+  end,
 }
