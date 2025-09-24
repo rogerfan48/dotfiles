@@ -12,7 +12,7 @@ return {
     -- latexmk is the default compiler for vimtex, which is powerful
     vim.g.vimtex_compiler_latexmk = {
       engine = "xelatex",
-      out_dir = "build",
+      aux_dir = "build",
     }
 
     -- Disable the log file generation to avoid cluttering the directory
@@ -21,5 +21,14 @@ return {
   config = function()
     local keymaps = require("roger.core.keymaps")
     keymaps.vimtex()
+
+    vim.api.nvim_create_autocmd("User", {
+      pattern = { "VimtexEventQuit", "VimtexEventCompileStopped" },
+      callback = function(ev)
+        vim.api.nvim_buf_call(ev.buf, function()
+          vim.cmd("VimtexClean")
+        end)
+      end,
+    })
   end,
 }
