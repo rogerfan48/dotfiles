@@ -49,6 +49,7 @@
 - **Editing Productivity**: Faster editing with [Comment.nvim](https://github.com/numToStr/Comment.nvim), [better-escape.nvim](https://github.com/max397574/better-escape.nvim), [nvim-surround](https://github.com/kylechui/nvim-surround), [nvim-autopairs](https://github.com/windwp/nvim-autopairs), [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) and [substitute.nvim](https://github.com/gbprod/substitute.nvim).  
 - **Syntax Highlighting**: Advanced parsing & rainbow parentheses via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim).  
 - **Leetcode**: Solve problems directly in Neovim with [leetcode.nvim](https://github.com/kawre/leetcode.nvim).
+- **vimtex**: Comprehensive LaTeX support using [vimtex](https://github.com//lervag/vimtex) - see vimtex keymaps notes here -> [latex-keymaps](./latex-keymaps.md).
 
 ## Usage
 

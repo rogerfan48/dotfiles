@@ -27,6 +27,10 @@ return {
       },
     })
 
+    vim.lsp.config("stylua", {
+      cmd = { "" },
+    })
+
     vim.lsp.config("clangd", {
       cmd = {
         "clangd",
@@ -93,6 +97,24 @@ return {
           configuration = {
             evenBetterErrors = true,
             schema = { enabled = true },
+          },
+        },
+      },
+    })
+
+    vim.lsp.config("texlab", {
+      root_markers = { ".texlabroot", "texlabroot", ".git", ".latexmkrc", "latexmkrc", "Tectonic.toml" },
+      -- root_dir = function(fname)
+      --   return vim.fs.root(fname, { "main.tex", "ms.tex", ".texlabroot", ".latexmkrc", ".git" }) or vim.loop.cwd()
+      -- end,
+      settings = {
+        texlab = {
+          build = {
+            onSave = false,
+          },
+          forwardSearch = {
+            executable = "evince-synctex",
+            args = { "-f", "%l", "%p", '"code -g %f:%l"' },
           },
         },
       },

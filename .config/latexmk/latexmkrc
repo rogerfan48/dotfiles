@@ -1,0 +1,39 @@
+#############################################
+# ~/.latexmkrc  (macOS + XeLaTeX Global Setup)
+#############################################
+
+# === Compiler / Engine ===
+# Always use XeLaTeX for PDF builds (modern UTF-8 & fontspec-friendly)
+$pdf_mode  = 1;
+$pdflatex  = 'xelatex -interaction=nonstopmode -file-line-error %O %S';
+
+# === Bibliography ===
+# Prefer biber over bibtex for modern UTF-8 workflows
+$bibtex    = 'biber %O %B';
+
+# === Output & Aux Directories ===
+# $out_dir: final output (PDF)
+# $aux_dir : intermediate files (aux, log, etc.)
+$out_dir   = '.';
+$aux_dir   = 'build';
+$emulate_aux = 1;
+
+# === Cleaning Rules ===
+# tell latexmk these extensions are generated, helping with cleanup decisions
+push @generated_exts, 'synctex.gz';
+
+# what to clean up when -c (clean) is used
+@clean_ext = (
+  'aux','log','out','toc','lof','lot','fls','fdb_latexmk',
+  'bbl','bcf','blg','run.xml','synctex.gz'
+);
+
+# what to clean up when -C (clean all) is used
+@clean_full_ext = (@clean_ext, 'pdf');
+
+# === Viewer (macOS) PDF ===
+# Use Skim for auto-reload & SyncTeX; set Preview if you prefer.
+$pdf_previewer = 'open -a Skim';
+$preview_continuous_mode = 1;  # latexmk -pvc: auto-compile on file changes
+
+#############################################

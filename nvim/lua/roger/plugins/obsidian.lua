@@ -8,7 +8,7 @@ end
 return {
   -- "epwalsh/obsidian.nvim",
   "obsidian-nvim/obsidian.nvim",
-  version = "*",
+  version = "3.13.1",
   dependencies = {},
   config = function()
     local obsidian = require("obsidian")

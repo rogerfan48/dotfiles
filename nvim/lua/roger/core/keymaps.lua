@@ -278,7 +278,13 @@ M.lsp = function()
       local function with_desc(desc)
         return vim.tbl_extend("force", bufopts, { desc = desc })
       end
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
+
+      -- enable `vimtex` to have its own `K` texdoc mapping
+      if vim.bo[ev.buf].filetype == "tex" then
+        vim.keymap.set("n", "gK", vim.lsp.buf.hover, with_desc("Show hover Info (LSP)"))
+      else
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
+      end
       vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
       vim.keymap.set("n", "gd", ":Telescope lsp_definitions<CR>", with_desc("Show LSP definitions"))
       vim.keymap.set("n", "gi", ":Telescope lsp_implementations<CR>", with_desc("Show LSP implementations"))
@@ -500,8 +506,8 @@ M.telescope = function()
 end
 
 M.auto_session = function()
-  vim.keymap.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for root dir" })
-  vim.keymap.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" })
+  vim.keymap.set("n", "<leader>ws", "<cmd>AutoSession save<CR>", { desc = "Save session for root dir" })
+  vim.keymap.set("n", "<leader>wr", "<cmd>AutoSession restore<CR>", { desc = "Restore session for cwd" })
 end
 
 M.treesitter = {
@@ -875,6 +881,11 @@ M.vimtex = function()
   vim.keymap.set("n", "dsm", "<Plug>(vimtex-env-delete-math)", { desc = "Delete math environment" })
   vim.keymap.set({ "o", "x" }, "ii", "<Plug>(vimtex-im)", { desc = "Select inside itemize environment" })
   vim.keymap.set({ "o", "x" }, "ai", "<Plug>(vimtex-am)", { desc = "Select around itemize environment" })
+
+  vim.keymap.set("n", "yse", "<Plug>(vimtex-env-surround-line)", { desc = "Surround with LaTeX environment" })
+  vim.keymap.set("o", "yse", "<Plug>(vimtex-env-surround-operator)", { desc = "Surround with LaTeX environment" })
+  vim.keymap.set("x", "yse", "<Plug>(vimtex-env-surround-visual)", { desc = "Surround with LaTeX environment" })
+  vim.keymap.set({ "n", "x", "i" }, "ysc", "<Plug>(vimtex-cmd-create)", { desc = "Surround with LaTeX command" })
 end
 
 return M
