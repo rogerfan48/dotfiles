@@ -888,4 +888,17 @@ M.vimtex = function()
   vim.keymap.set({ "n", "x", "i" }, "ysc", "<Plug>(vimtex-cmd-create)", { desc = "Surround with LaTeX command" })
 end
 
+M.markdowny = function()
+  vim.api.nvim_create_autocmd("FileType", {
+    desc = "markdowny.nvim keymaps",
+    pattern = { "markdown", "gitcommit", "hgcommit" },
+    callback = function()
+      vim.keymap.set("v", "gb", ":lua require('markdowny').bold()<cr>", { buffer = 0, desc = "Markdown Bold", silent = true })
+      vim.keymap.set("v", "gi", ":lua require('markdowny').italic()<cr>", { buffer = 0, desc = "Markdown Italic", silent = true })
+      vim.keymap.set("v", "gl", ":lua require('markdowny').link()<cr>", { buffer = 0, desc = "Markdown Link", silent = true })
+      -- vim.keymap.set("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = 0 })
+    end,
+  })
+end
+
 return M
