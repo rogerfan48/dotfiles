@@ -27,7 +27,6 @@
 <hr>
 
 - All the files are settled in `~/.dotfiles/`
-- use `bash setup_link.sh` to establish actual links.
 
 ## Features
 
@@ -49,11 +48,54 @@
 - **Editing Productivity**: Faster editing with [Comment.nvim](https://github.com/numToStr/Comment.nvim), [better-escape.nvim](https://github.com/max397574/better-escape.nvim), [nvim-surround](https://github.com/kylechui/nvim-surround), [nvim-autopairs](https://github.com/windwp/nvim-autopairs), [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) and [substitute.nvim](https://github.com/gbprod/substitute.nvim).  
 - **Syntax Highlighting**: Advanced parsing & rainbow parentheses via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim).  
 - **Leetcode**: Solve problems directly in Neovim with [leetcode.nvim](https://github.com/kawre/leetcode.nvim).
-- **vimtex**: Comprehensive LaTeX support using [vimtex](https://github.com//lervag/vimtex) - see vimtex keymaps notes here -> [latex-keymaps](./latex-keymaps.md).
+- **vimtex**: Comprehensive LaTeX support using [vimtex](https://github.com//lervag/vimtex) - see vimtex keymaps notes here -> [vimtex-keymaps](./vimtex-keymaps.md).
 
-## Usage
+## Installation
 
-- use `nvimleet` in the terminal to use `leetcode.nvim`
+### Step 1. Clone the repo
+
+```bash
+cd ~
+git clone git@github.com:rogerfan48/dotfiles.git
+mv dotfiles .dotfiles
+```
+
+### Step 2. Run the setup script
+
+```bash
+cd ~/.dotfiles
+# For Ubuntu, before running, make sure uninstall apt-installed neovim to avoid conflicts
+sudo apt remove neovim
+
+bash initialization.sh
+```
+
+It'll run `./setup_link.sh` to create symlinks for all the required config files inside the initialization script. If you want to re-establish the symlinks one day, simply run: `bash ~/.dotfiles/setup_link.sh`
+
+Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
+
+### Step 3. Tmux and Neovim setup
+
+- `tmux new -s <session_name>`: start a new tmux session
+    - Inside tmux, type `Ctrl+Space + I` to install tmux plugins
+- `nvim`: open neovim
+    - It will auto-install plugins via lazy.nvim on first launch
+    - Inside neovim, run `:Copilot setup` to get the GitHub Copilot working
+
+## Structure and Customization
+
+- To see zsh customizations, check out `~/.dotfiles/.zshrc`.
+- To see what plugins are included, check out the `~/.dotfiles/nvim/lua/roger/plugins/` folders.
+- To see custom keymaps, check out `~/.dotfiles/nvim/lua/roger/core/keymaps.lua`.
+- To see custom TMUX keymaps and settings, check out `~/.dotfiles/.tmux.conf`.
+- To see vimtex keymaps introduction, check out `~/.dotfiles/vimtex-keymaps.md`.
+- Copilot Keymaps:
+    - `Option + l`: Accept Word
+    - `Option + ;`: Accept Line
+    - `Option + '`: Accept Full Suggestion
+    - `Option + Backspace`: Clear Suggestion
+    - you can also see/change keymaps in `~/.dotfiles/nvim/lua/roger/core/keymaps.lua` under "Copilot" section.
+- Use `nvimleet` in the terminal to use `leetcode.nvim`
 
 ## Extra
 
