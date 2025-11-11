@@ -314,6 +314,7 @@
 /* SEC: ----- Customized -----*/
 .markdown-body img {
   max-width: 550px !important;
+  width: 100% !important;
   border: grey 1px dashed;
   border-radius: 5px;
 }

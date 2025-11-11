@@ -896,7 +896,7 @@ M.markdowny = function()
       vim.keymap.set("v", "gb", ":lua require('markdowny').bold()<cr>", { buffer = 0, desc = "Markdown Bold", silent = true })
       vim.keymap.set("v", "gi", ":lua require('markdowny').italic()<cr>", { buffer = 0, desc = "Markdown Italic", silent = true })
       vim.keymap.set("v", "gl", ":lua require('markdowny').link()<cr>", { buffer = 0, desc = "Markdown Link", silent = true })
-      -- vim.keymap.set("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = 0 })
+      vim.keymap.set("v", "g`", ":lua require('markdowny').code()<cr>", { buffer = 0, desc = "Markdown Link", silent = true })
     end,
   })
 end
