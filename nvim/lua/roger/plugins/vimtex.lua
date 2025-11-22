@@ -6,6 +6,13 @@ return {
     -- Make Skim open in the background and not steal focus
     vim.g.vimtex_view_skim_sync = 1
     vim.g.vimtex_view_skim_activate = 0
+
+    -- Speed up
+    vim.g.vimtex_quickfix_mode = 0
+    vim.g.vimtex_syntax_conceal_disable = 1
+    vim.g.vimtex_fold_enabled = 0
+    vim.g.vimtex_diagnostics_enabled = 0 -- texlab does this better
+    vim.g.vimtex_toc_autoupdate = 0
   end,
   config = function()
     local keymaps = require("roger.core.keymaps")
