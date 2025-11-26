@@ -20,7 +20,7 @@ return {
         typescriptreact = { "prettier" },
         python = { "isort", "black_global" },
         dart = { "dart_format" },
-        markdown = { "markdownlint-cli2" },
+        markdown = { "markdownlint" },
         latex = { "latexindent" },
         json = { "prettier" },
         yaml = { "prettier" },
@@ -42,6 +42,9 @@ return {
             "-",
           },
           stdin = true,
+        },
+        markdownlint = {
+          prepend_args = { "--config", vim.fn.expand("~/.dotfiles/.markdownlint.jsonc") },
         },
       },
       -- format_on_save = {
