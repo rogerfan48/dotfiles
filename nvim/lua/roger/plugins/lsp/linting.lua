@@ -6,7 +6,7 @@ return {
     keymaps.linting()
 
     local lint = require("lint")
-    
+
     lint.debug = true
 
     lint.linters_by_ft = {
@@ -32,6 +32,23 @@ return {
       bash = { "shellcheck" },
     }
 
+    lint.linters.pylint.cmd = function()
+      -- Get the current python executable path detected by Neovim
+      local python_bin = vim.fn.exepath("python")
+
+      -- Assuming pylint is located in the same directory as the python executable
+      -- e.g., /path/to/venv/bin/pylint or C:\path\to\venv\Scripts\pylint.exe
+      local pylint_bin = vim.fn.fnamemodify(python_bin, ":h") .. "/pylint"
+
+      -- If pylint exists in that environment, return the full path
+      if vim.fn.executable(pylint_bin) == 1 then
+        return pylint_bin
+      end
+
+      -- Fallback to the system pylint
+      return "pylint"
+    end
+
     local function register_linters(spec)
       for name, cfg in pairs(spec) do
         -- Trigger lazy load first to get the native definition (if any)
@@ -48,7 +65,7 @@ return {
       },
       chktex = {
         ignore_exitcode = true,
-      }
+      },
     })
 
     local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
