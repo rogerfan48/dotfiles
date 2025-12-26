@@ -85,11 +85,25 @@ return {
 
       local names = {}
       for _, client in ipairs(clients) do
+        local client_name = client.name  -- not to modify the original name
+
         if client.name == "GitHub Copilot" then
-          client.name = "Copilot"
+          -- if copilot is disabled, skip it
+          if vim.g.copilot_enabled == false then
+            goto continue
+          end
+          client_name = "Copilot" -- shorten the name on display
         end
-        table.insert(names, client.name)
+
+        table.insert(names, client_name)
+        ::continue::
       end
+
+      -- if after filtering there are no names, return just the icon
+      if #names == 0 then
+        return " "
+      end
+
       return " " .. table.concat(names, ", ")
     end
 

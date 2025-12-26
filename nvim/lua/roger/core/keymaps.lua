@@ -820,6 +820,15 @@ M.img_clip = {
 }
 
 M.copilot = function()
+  vim.keymap.set("n", "<leader>co", function()
+    if vim.g.copilot_enabled then
+      vim.g.copilot_enabled = false
+      require("lualine").refresh()
+    else
+      vim.g.copilot_enabled = true
+      require("lualine").refresh()
+    end
+  end, { desc = "Toggle Copilot" })
   vim.keymap.set("i", "<M-BS>", "<Plug>(copilot-dismiss)", { desc = "Dismiss Copilot suggestion" })
   vim.keymap.set("i", "<M-l>", "<Plug>(copilot-accept-word)", { desc = "Accept Copilot word suggestion" })
   vim.keymap.set("i", "<M-;>", "<Plug>(copilot-accept-line)", { desc = "Accept Copilot line suggestion" })
