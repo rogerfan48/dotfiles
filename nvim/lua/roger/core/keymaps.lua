@@ -130,21 +130,21 @@ M.general = function()
   -- from comment.lua
   -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
 
-  vim.keymap.set("i", "<Tab>", function()
-    local jump_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
-    local line = vim.api.nvim_get_current_line()
-
-    local cursor_pos = vim.api.nvim_win_get_cursor(0)
-    local col = cursor_pos[2]
-
-    local next_char = string.sub(line, col + 1, col + 1)
-
-    if next_char and jump_chars[next_char] then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Right>", true, false, true), "n", false)
-    else
-      vim.api.nvim_put({ "\t" }, "c", true, true)
-    end
-  end, { noremap = true, silent = true, desc = "Smart Tab" })
+  -- vim.keymap.set("i", "<Tab>", function()
+  --   local jump_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
+  --   local line = vim.api.nvim_get_current_line()
+  --
+  --   local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  --   local col = cursor_pos[2]
+  --
+  --   local next_char = string.sub(line, col + 1, col + 1)
+  --
+  --   if next_char and jump_chars[next_char] then
+  --     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Right>", true, false, true), "n", false)
+  --   else
+  --     vim.api.nvim_put({ "\t" }, "c", true, true)
+  --   end
+  -- end, { noremap = true, silent = true, desc = "Smart Tab" })
 end
 
 M.folding = function()

@@ -44,7 +44,19 @@ return {
           if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           else
-            fallback()
+            local jump_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
+            local line = vim.api.nvim_get_current_line()
+
+            local cursor_pos = vim.api.nvim_win_get_cursor(0)
+            local col = cursor_pos[2]
+
+            local next_char = string.sub(line, col + 1, col + 1)
+
+            if next_char and jump_chars[next_char] then
+              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Right>", true, false, true), "n", false)
+            else
+              fallback()
+            end
           end
         end, { "i", "s" }),
         ["<S-Tab>"] = cmp.mapping(function(fallback)

@@ -67,7 +67,8 @@ return {
         local suffix = ""
         if title ~= nil then
           -- If title is given, transform it into valid file name.
-          suffix = title:gsub(" ", "-"):gsub("[^A-Za-z0-9_-]", "")
+          -- Keep spaces, ':', '_', and '-', remove only invalid filename characters
+          suffix = title:gsub("[^A-Za-z0-9:_ -]", "")
         else
           -- If title is nil, just add 4 random uppercase letters to the suffix.
           for _ = 1, 4 do

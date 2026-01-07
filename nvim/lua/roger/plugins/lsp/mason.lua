@@ -18,7 +18,7 @@ return {
         "cssls", -- css/scss
         "ts_ls", -- js/ts
         -- "emmet_ls", -- aid: HTML, JSX
-        "pyright", -- python
+        "basedpyright", -- python (支援 semantic tokens)
         "marksman", -- markdown
         "jsonls", -- JSON
         "texlab", -- latex

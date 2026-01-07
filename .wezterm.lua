@@ -24,17 +24,22 @@ config.window_decorations = "RESIZE"
 config.window_close_confirmation = "NeverPrompt"
 
 config.background = {
+  -- {
+  --   -- source = { File = home .. "/.dotfiles/bg_image/Sonoma.jpeg" },
+  --   source = { File = home .. "/.dotfiles/bg_image/chrome-lake.jpeg" },
+  --   width = "Cover",
+  --   height = "Cover",
+  -- },
+  -- {
+  --   source = { Color = "#1e1e2e" },
+  --   width = "100%",
+  --   height = "100%",
+  --   opacity = 0.88,
+  -- },
   {
-    -- source = { File = home .. "/.dotfiles/bg_image/Sonoma.jpeg" },
-    source = { File = home .. "/.dotfiles/bg_image/chrome-lake.jpeg" },
-    width = "Cover",
-    height = "Cover",
-  },
-  {
-    source = { Color = "#1e1e2e" },
+    source = { Color = "#1f1f1f" },
     width = "100%",
     height = "100%",
-    opacity = 0.93,
   },
 }
 

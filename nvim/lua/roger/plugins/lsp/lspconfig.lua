@@ -70,7 +70,17 @@ return {
     })
     -- vim.lsp.enable({ "html", "cssls", "ts_ls" })
 
-    vim.lsp.config("pyright", {})
+    vim.lsp.config("basedpyright", {
+      settings = {
+        python = {
+          analysis = {
+            typeCheckingMode = "standard",
+            autoSearchPaths = true,
+            useLibraryCodeForTypes = true,
+          },
+        },
+      },
+    })
 
     vim.lsp.config("marksman", {
       on_init = function(client)
