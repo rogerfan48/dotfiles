@@ -26,23 +26,34 @@ local function setWindowToAllDesktops()
     isWezTermSetToAllDesktops = true -- 設置標誌
 end
 
+-- macOS Sequoia bug: "All Desktops" 視窗會卡在高層級蓋住其他 App
+-- 解法：WezTerm 失焦時直接 hide，hide 後再 show 會重置視窗層級
+local appWatcher = hs.application.watcher.new(function(appName, eventType, _app)
+    if eventType == hs.application.watcher.deactivated and appName == weztermAppName then
+        local weztermApp = hs.application.get(weztermAppName)
+        if weztermApp then
+            weztermApp:hide()
+        end
+    end
+end)
+appWatcher:start()
+
 -- 熱鍵行為
 hs.hotkey.bind(hyper, toggleKey, function()
-    -- 找到 WezTerm 的應用程序
     local app = hs.application.get(weztermAppName)
     if app then
-        local mainWindow = app:mainWindow()
         if app:isFrontmost() then
             -- 如果 WezTerm 被聚焦，隱藏它
             app:hide()
         else
             -- 如果 WezTerm 未被聚焦
             if not isWezTermSetToAllDesktops then
-                -- 如果尚未設置為所有桌面顯示，初始化設置
                 setWindowToAllDesktops()
             end
-            -- 聚焦窗口並取消最小化
+            -- 顯示並聚焦（unhide 確保 hide 狀態也能正常還原）
+            local mainWindow = app:mainWindow()
             if mainWindow then
+                app:unhide()
                 mainWindow:unminimize()
                 mainWindow:focus()
             else

@@ -104,7 +104,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     -- 🔹 運算符與標點 (Operators) - 青色
     vim.api.nvim_set_hl(0, "@operator", { fg = "#89DDFF" })               -- +, -, *, /, =
     vim.api.nvim_set_hl(0, "@punctuation.delimiter", { fg = "#89DDFF" })  -- , ; :
-    vim.api.nvim_set_hl(0, "@punctuation.bracket", { fg = "#89DDFF" })    -- ( ) [ ] { }
+    vim.api.nvim_set_hl(0, "@punctuation.bracket", { fg = "#cfd4ff" })    -- ( ) [ ] { }
 
     -- 🔹 屬性與欄位 (Properties)
     vim.api.nvim_set_hl(0, "@property", { fg = "#cfd4ff" })               -- 物件屬性

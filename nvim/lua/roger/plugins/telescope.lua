@@ -53,6 +53,7 @@ return {
           file_ignore_patterns = {
             "^.git/", -- don't show .git/ in all Telescope utilities
             "^node_modules/",
+            "^.obsidian/"
           },
           path_display = { "smart" },
           mappings = {
