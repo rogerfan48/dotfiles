@@ -34,10 +34,20 @@ setopt hist_ignore_dups   # ignore consecutive duplicate commands
 setopt hist_reduce_blanks # don't record redundant space in the command history
 setopt hist_find_no_dups  # don't show duplicate when using Ctrl+R
 
-bindkey '^[[OPT-RIGHT]' forward-word # Alt-Right
-bindkey '^[[OPT-LEFT]' backward-word # Alt-Left
-bindkey '^[[OPT-BACKSPACE]' backward-kill-word
-bindkey '^[[CMD-BACKSPACE]' backward-kill-line
+# Navigation keybindings (standard escape sequences, works across terminals)
+# Cmd+Left/Right/Backspace are handled by WezTerm (macOS only, maps to Home/End/Ctrl+U)
+bindkey '\e[1;3D' backward-word         # Alt+Left  (CSI modifier encoding)
+bindkey '\e[1;3C' forward-word          # Alt+Right (CSI modifier encoding)
+bindkey '\eb'     backward-word         # Alt+Left  (ESC+b, fallback)
+bindkey '\ef'     forward-word          # Alt+Right (ESC+f, fallback)
+bindkey '\e\x7f'  backward-kill-word    # Alt+Backspace
+bindkey '\e[H'    beginning-of-line     # Home (xterm)
+bindkey '\eOH'    beginning-of-line     # Home (application mode)
+bindkey '\e[F'    end-of-line           # End  (xterm)
+bindkey '\eOF'    end-of-line           # End  (application mode)
+bindkey '\e[1;5D' beginning-of-line     # Ctrl+Left
+bindkey '\e[1;5C' end-of-line           # Ctrl+Right
+bindkey '\e[3;5~' kill-whole-line       # Ctrl+Delete
 
 export LANG=en_US.UTF-8 # !!! zh_TW.UTF-8
 
@@ -128,49 +138,21 @@ function kb() {
 
 path_prepend "$HOME/.local/bin"
 
-# SEC: RUBY
-if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
-  path_prepend "/opt/homebrew/opt/ruby/bin"
-  path_prepend "`gem environment gemdir`/bin"
-fi
-
-# SEC: Google Cloud SDK
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
-
-# SEC: Flutter pub global
-path_prepend "$HOME/development/flutter/bin"
-path_prepend "$HOME/.pub-cache/bin"
-
 # SEC: NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# SEC: CONDA
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 # SEC: Zoxide
-eval "$(zoxide init --cmd cd zsh)"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh # NOTE: Stay at the bottom of .zshrc
+command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"
 
 # SEC: Claude
 export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
 export MAX_MCP_OUTPUT_TOKENS=64000
+
+# SEC: Machine-local config (.zshrc.local is gitignored, each machine has its own)
+# For tools with machine-specific paths: ruby, flutter, gcloud, conda, custom scripts, etc.
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh # NOTE: Stay at the bottom of .zshrc

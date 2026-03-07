@@ -80,6 +80,14 @@ config.colors = {
   brights = bright_colors,
 }
 
+-- macOS Cmd key shortcuts (Cmd is macOS-only, must be handled by terminal emulator)
+-- Opt/Alt and standard keys are handled in .zshrc for portability
+config.keys = {
+  { key = "LeftArrow",  mods = "SUPER", action = wezterm.action.SendKey({ key = "Home" }) },
+  { key = "RightArrow", mods = "SUPER", action = wezterm.action.SendKey({ key = "End" }) },
+  { key = "Backspace",  mods = "SUPER", action = wezterm.action.SendString("\x15") },  -- Ctrl+U
+}
+
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 local window_frame_size = "10px"
 local window_frame_color = "#2e4063"

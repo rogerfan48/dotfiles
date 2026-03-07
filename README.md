@@ -82,6 +82,16 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
     - It will auto-install plugins via lazy.nvim on first launch
     - Inside neovim, run `:Copilot setup` to get the GitHub Copilot working
 
+### Step 4. Machine-local config
+
+Edit `~/.dotfiles/.zshrc.local` for this machine's specific settings. This file is **gitignored** — each machine has its own version, symlinked to `~/.zshrc.local` by `setup_link.sh`.
+
+`.zshrc` and `.zshrc.local` have a clear separation:
+- **`.zshrc`** (tracked): universal config that works on every machine — oh-my-zsh, zsh options, aliases, keybindings, nvm, zoxide, etc.
+- **`.zshrc.local`** (gitignored): tools whose install paths differ per machine — ruby, flutter, gcloud, conda, custom scripts, etc.
+
+For example, if you use conda, run `conda init zsh`, then move the generated block from `~/.zshrc` into `~/.dotfiles/.zshrc.local`.
+
 ## Structure and Customization
 
 - To see zsh customizations, check out `~/.dotfiles/.zshrc`.
