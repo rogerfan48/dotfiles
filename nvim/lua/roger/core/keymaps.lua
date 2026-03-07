@@ -895,6 +895,23 @@ M.vimtex = function()
   vim.keymap.set("o", "yse", "<Plug>(vimtex-env-surround-operator)", { desc = "Surround with LaTeX environment" })
   vim.keymap.set("x", "yse", "<Plug>(vimtex-env-surround-visual)", { desc = "Surround with LaTeX environment" })
   vim.keymap.set({ "n", "x", "i" }, "ysc", "<Plug>(vimtex-cmd-create)", { desc = "Surround with LaTeX command" })
+
+  vim.keymap.set("n", "<localleader>ld", function()
+    local dir = vim.fn.expand("%:p:h")
+    local exts = { "aux", "bbl", "bcf", "blg", "fls", "fdb_latexmk", "log", "out", "run.xml", "synctex.gz", "toc", "lof", "lot", "listing" }
+    local removed = {}
+    for _, ext in ipairs(exts) do
+      local f = dir .. "/main." .. ext
+      if vim.fn.delete(f) == 0 then
+        table.insert(removed, ext)
+      end
+    end
+    if #removed > 0 then
+      vim.notify("Cleaned: " .. table.concat(removed, ", "), vim.log.levels.INFO)
+    else
+      vim.notify("No aux files to clean", vim.log.levels.INFO)
+    end
+  end, { desc = "Clean LaTeX auxiliary files" })
 end
 
 M.markdowny = function()
