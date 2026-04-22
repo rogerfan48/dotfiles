@@ -1,0 +1,23 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "general": {
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "30d",
+      "warningAcknowledged": true
+    }
+  },
+  "ide": {
+    "hasSeenNudge": true,
+    "enabled": true
+  },
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": false
+    }
+  }
+}

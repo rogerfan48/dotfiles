@@ -21,6 +21,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".config/black/pyproject.toml"]="$HOME/.config/black/pyproject.toml"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".config/latexmk/latexmkrc"]="$HOME/.config/latexmk/latexmkrc"
+        [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
@@ -37,6 +38,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".config/black/pyproject.toml"]="$HOME/.config/black/pyproject.toml"
         [".config/marksman/config.toml"]="$HOME/.config/marksman/config.toml"
         [".config/latexmk/latexmkrc"]="$HOME/.config/latexmk/latexmkrc"
+        [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
     )
 else
