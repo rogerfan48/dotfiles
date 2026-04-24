@@ -86,6 +86,7 @@ config.keys = {
   { key = "LeftArrow",  mods = "SUPER", action = wezterm.action.SendKey({ key = "Home" }) },
   { key = "RightArrow", mods = "SUPER", action = wezterm.action.SendKey({ key = "End" }) },
   { key = "Backspace",  mods = "SUPER", action = wezterm.action.SendString("\x15") },  -- Ctrl+U
+  { key = "Return",     mods = "SHIFT", action = wezterm.action.SendString("\27[1;2P") }, -- S-CR → <F13>
 }
 
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }

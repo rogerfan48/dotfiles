@@ -694,14 +694,14 @@ M.outline_table = {
 M.table = { -- next and prev work in Normal and Insert mode. All other mappings work in Normal mode.
   next = "<TAB>", -- Go to next cell.
   prev = "<S-TAB>", -- Go to previous cell.
-  insert_row_up = "<A-k>", -- Insert a row above the current row.
-  insert_row_down = "<A-j>", -- Insert a row below the current row.
-  move_row_up = "<A-S-k>", -- Move the current row up.
-  move_row_down = "<A-S-j>", -- Move the current row down.
-  insert_column_left = "<A-h>", -- Insert a column to the left of current column.
-  insert_column_right = "<A-l>", -- Insert a column to the right of current column.
-  move_column_left = "<A-S-h>", -- Move the current column to the left.
-  move_column_right = "<A-S-l>", -- Move the current column to the right.
+  insert_row_up = "<A-S-k>", -- Insert a row above the current row.
+  insert_row_down = "<A-S-j>", -- Insert a row below the current row.
+  move_row_up = "<A-k>", -- Move the current row up.
+  move_row_down = "<A-j>", -- Move the current row down.
+  insert_column_left = "<A-S-h>", -- Insert a column to the left of current column.
+  insert_column_right = "<A-S-l>", -- Insert a column to the right of current column.
+  move_column_left = "<A-h>", -- Move the current column to the left.
+  move_column_right = "<A-l>", -- Move the current column to the right.
   insert_table = "<A-t>", -- Insert a new table.
   insert_table_alt = "<A-S-t>", -- Insert a new table that is not surrounded by pipes.
   delete_column = "<A-d>", -- Delete the column under cursor.
@@ -803,9 +803,70 @@ M.obsidian = function()
         return ""
       end
 
+      local function gf_link_in_tab()
+        local line = vim.api.nvim_get_current_line()
+
+        local link_start, link_end = line:find("%[%[.-%]%]")
+        if link_start then
+          local link_text = line:sub(link_start + 2, link_end - 2)
+          local note_id = link_text:match("([^|]+)")
+          if not note_id:match("%.md$") then
+            note_id = note_id .. ".md"
+          end
+
+          local vault_root = tostring(Obsidian.dir)
+          local matches = vim.fn.globpath(vault_root, "**/" .. note_id, 0, 1)
+
+          if #matches > 0 then
+            vim.schedule(function()
+              vim.cmd("tabedit " .. vim.fn.fnameescape(matches[1]))
+            end)
+          else
+            local title = note_id:gsub("%.md$", "")
+            vim.schedule(function()
+              vim.cmd(("Obsidian new_from_template %s general-template"):format(title))
+            end)
+          end
+
+          return ""
+        end
+
+        local md_link_start, _ = line:find("%[.-%]%((.-)%)")
+        if md_link_start then
+          local paren_index = line:find("%(", md_link_start)
+          if paren_index then
+            local target = line:match("%(([^)]+)%)", paren_index)
+            if target and not target:match("^https?://") then
+              vim.schedule(function()
+                vim.cmd("tabedit " .. vim.fn.fnameescape(target))
+              end)
+            else
+              vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), paren_index })
+              vim.cmd("Obsidian follow_link")
+            end
+            return ""
+          end
+        end
+
+        local angle_start, _ = line:find("<https?://[^>]+>")
+        if angle_start then
+          local target_col = angle_start + 1
+          vim.api.nvim_win_set_cursor(0, { vim.fn.line("."), target_col - 1 })
+          vim.cmd("Obsidian follow_link")
+          return ""
+        end
+
+        if fold_heading() then
+          return ""
+        end
+
+        return ""
+      end
+
       -- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
       vim.keymap.set("n", "gf", gf_link_in_line, { noremap = false, expr = true, buffer = ev.buf })
       vim.keymap.set("n", "<CR>", gf_link_in_line, { noremap = false, expr = true, buffer = ev.buf })
+      vim.keymap.set("n", "<F13>", gf_link_in_tab, { noremap = true, buffer = ev.buf })
       vim.keymap.set("n", "<leader><CR>", fold_heading, { noremap = true, buffer = ev.buf })
     end,
   })
