@@ -88,9 +88,9 @@ Edit `~/.dotfiles/.zshrc.local` for this machine's specific settings. This file 
 
 `.zshrc` and `.zshrc.local` have a clear separation:
 - **`.zshrc`** (tracked): universal config that works on every machine — oh-my-zsh, zsh options, aliases, keybindings, nvm, zoxide, etc.
-- **`.zshrc.local`** (gitignored): tools whose install paths differ per machine — ruby, flutter, gcloud, conda, custom scripts, etc.
+- **`.zshrc.local`** (gitignored): tools whose install paths differ per machine — ruby, flutter, gcloud, uv, custom scripts, etc.
 
-For example, if you use conda, run `conda init zsh`, then move the generated block from `~/.zshrc` into `~/.dotfiles/.zshrc.local`.
+For example, after installing uv (`curl -LsSf https://astral.sh/uv/install.sh | sh`), its shell hook is added automatically. Other tools like Ruby, Flutter, and gcloud whose install paths vary per machine go here too.
 
 ## Structure and Customization
 

@@ -44,6 +44,7 @@ return {
           if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           else
+            -- Tabout behavior
             local jump_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
             local line = vim.api.nvim_get_current_line()
 

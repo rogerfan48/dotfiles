@@ -10,7 +10,7 @@ vim.o.smartindent = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "javascript", "typescript", "html", "css" },
+  pattern = { "javascript", "typescript", "html", "css", "lua", "json", "yaml" },
   callback = function()
     vim.opt_local.tabstop = 2
     vim.opt_local.shiftwidth = 2

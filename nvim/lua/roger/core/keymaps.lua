@@ -129,22 +129,6 @@ M.general = function()
 
   -- from comment.lua
   -- 'gc' + motion.   Ex. gc3j(to 3 lines below), gcG(to EOF), gcc(one line)
-
-  -- vim.keymap.set("i", "<Tab>", function()
-  --   local jump_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
-  --   local line = vim.api.nvim_get_current_line()
-  --
-  --   local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  --   local col = cursor_pos[2]
-  --
-  --   local next_char = string.sub(line, col + 1, col + 1)
-  --
-  --   if next_char and jump_chars[next_char] then
-  --     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Right>", true, false, true), "n", false)
-  --   else
-  --     vim.api.nvim_put({ "\t" }, "c", true, true)
-  --   end
-  -- end, { noremap = true, silent = true, desc = "Smart Tab" })
 end
 
 M.folding = function()
@@ -292,6 +276,7 @@ M.lsp = function()
       vim.keymap.set("n", "gt", ":Telescope lsp_type_definitions<CR>", with_desc("Show LSP type definitions"))
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
+      vim.keymap.set("n", "gl", vim.diagnostic.open_float, with_desc("Show line diagnostics"))
       vim.keymap.set("n", "]d", vim.diagnostic.goto_next, with_desc("Go to next diagnostic"))
       vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, with_desc("Go to previous diagnostic"))
       vim.keymap.set("n", "<leader>rs", ":LspRestart<CR>", with_desc("Restart LSP"))

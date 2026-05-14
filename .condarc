@@ -1,2 +1,0 @@
-create_default_packages:
-  - pylint

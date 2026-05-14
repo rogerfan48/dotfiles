@@ -1,4 +1,5 @@
 return {
+  -- Tabout moved to /lsp/completions.lua
   -- {
   --   "abecodes/tabout.nvim",
   --   event = "InsertCharPre",

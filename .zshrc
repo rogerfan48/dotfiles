@@ -151,7 +151,7 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
 export MAX_MCP_OUTPUT_TOKENS=64000
 
 # SEC: Machine-local config (.zshrc.local is gitignored, each machine has its own)
-# For tools with machine-specific paths: ruby, flutter, gcloud, conda, custom scripts, etc.
+# For tools with machine-specific paths: ruby, flutter, gcloud, uv tools, custom scripts, etc.
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
