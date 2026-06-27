@@ -1,0 +1,7 @@
+extends: default
+
+rules:
+  document-start: disable
+    truthy:
+      # do not check the truthy values on the keys
+      check-keys: false
