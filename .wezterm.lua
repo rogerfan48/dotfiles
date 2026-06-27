@@ -16,7 +16,7 @@ config.font = wezterm.font_with_fallback({
   { family = "jf-openhuninn-2.0" },
   { family = "LXGW WenKai Mono TC", weight = "Bold" },
 })
-config.font_size = 13
+config.font_size = 12
 config.harfbuzz_features = { "calt=0" } -- disable ligatures
 
 config.enable_tab_bar = false
