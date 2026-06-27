@@ -45,7 +45,13 @@ return {
         return pylint_bin
       end
 
-      -- Fallback to the system pylint
+      -- Fallback to a globally-installed pylint. Prefer the uv-tool shim on
+      -- PATH explicitly so Mason's bin dir (prepended to Neovim's PATH) cannot
+      -- shadow it with a broken/duplicate install.
+      local uv_pylint = vim.fn.expand("~/.local/bin/pylint")
+      if vim.fn.executable(uv_pylint) == 1 then
+        return uv_pylint
+      end
       return "pylint"
     end
 
@@ -58,10 +64,15 @@ return {
       end
     end
 
+    -- ESLint: eslint_d bundles ESLint 9 (flat-config only). It finds the
+    -- nearest eslint.config.* walking up from the file, so projects use their
+    -- own config; files with no project config fall back to ~/eslint.config.mjs
+    -- (a personal default, symlinked from this repo). Nothing to configure here.
+
     -- get current settings: `:lua print(vim.inspect(require('lint').linters.chktex))`
     register_linters({
       markdownlint = {
-        args = { "--stdin", "--config", "~/.dotfiles/.markdownlint.jsonc" },
+        args = { "--stdin", "--config", vim.fn.expand("~/.dotfiles/.markdownlint.jsonc") },
       },
       chktex = {
         ignore_exitcode = true,

@@ -23,6 +23,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".config/yamllint/config"]="$HOME/.config/yamllint/config"
         [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
+        ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
     FILES_TO_LINK=(
@@ -40,6 +41,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".config/yamllint/config"]="$HOME/.config/yamllint/config"
         [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
+        ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
     )
 else
     echo "Unsupported OS: $OS"

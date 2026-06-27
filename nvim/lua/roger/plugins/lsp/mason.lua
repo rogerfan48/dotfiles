@@ -46,7 +46,7 @@ return {
         -- Linters
         -- "cppcheck", -- C/C++
         "eslint_d", -- JavaScript/TypeScript, React.js
-        "pylint", -- Python
+        -- "pylint", -- Python -> managed via `uv tool install pylint` (see linting.lua)
         -- "dartanalyzer", -- Dart
         "markdownlint", -- Markdown
         "jsonlint",
