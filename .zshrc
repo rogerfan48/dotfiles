@@ -143,8 +143,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# SEC: Zoxide
-command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"
+# SEC: Zoxide (interactive shells only — cd-tracking is pointless in scripts)
+[[ -o interactive ]] && command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"
 
 # SEC: Claude
 export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
