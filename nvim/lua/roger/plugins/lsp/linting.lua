@@ -64,10 +64,8 @@ return {
       end
     end
 
-    -- ESLint: eslint_d bundles ESLint 9 (flat-config only). It finds the
-    -- nearest eslint.config.* walking up from the file, so projects use their
-    -- own config; files with no project config fall back to ~/eslint.config.mjs
-    -- (a personal default, symlinked from this repo). Nothing to configure here.
+    -- ESLint: eslint_d resolves the nearest eslint.config.* up from the file,
+    -- falling back to ~/eslint.config.mjs (symlinked from this repo).
 
     -- get current settings: `:lua print(vim.inspect(require('lint').linters.chktex))`
     register_linters({
