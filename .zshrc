@@ -52,10 +52,10 @@ bindkey '\e[3;5~' kill-whole-line       # Ctrl+Delete
 export LANG=en_US.UTF-8 # !!! zh_TW.UTF-8
 
 OS=$(uname -s)
-if [[ "$OS" == "Linux" ]]; then
-    alias nvim="$HOME/.local/bin/nvim"
-fi
-alias vim=nvim
+export VISUAL="nvim"
+export EDITOR="nvim"
+# use `sudoedit <file>` to sudo single file
+# use `sudo -E nvim` to open with privilege, but need to use `fixnvim` to repair the ownership
 alias nvimleet='LEETCODE_SESSION=1 nvim -c "Leet"'
 
 # SEC: Plugins config
@@ -142,6 +142,13 @@ path_prepend "$HOME/.local/bin"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# SEC: PNPM
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 # SEC: Zoxide (interactive shells only — cd-tracking is pointless in scripts)
 [[ -o interactive ]] && command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"

@@ -238,6 +238,9 @@ if [[ "$OS" == "Darwin" ]]; then
     echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep..."
     brew install nvim bat cppcheck fzf node pngpaste lazygit ripgrep
 
+    echo "### Enabling pnpm via corepack..."
+    corepack enable pnpm
+
     echo "### Installing uv (Python package manager)..."
     if ! command -v uv >/dev/null 2>&1; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -338,6 +341,9 @@ elif [[ "$OS" == "Linux" ]]; then
     nvm install --lts
     nvm use --lts
     nvm alias default 'lts/*'
+
+    echo "### Enabling pnpm via corepack..."
+    corepack enable pnpm
 
     echo "### Installing Treesitter CLI..."
     npm install -g tree-sitter-cli
