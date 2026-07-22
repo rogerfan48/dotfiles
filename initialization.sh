@@ -64,80 +64,63 @@ set_zsh_default() {
 }
 
 install_neovim() {
-    echo "### Installing Neovim on Linux... (~/.nvim/)"
+    # Installs (or upgrades) Neovim via the official AppImage, extracted to
+    # ~/.nvim and symlinked into ~/.local/bin. Idempotent: safe to re-run.
+    local NVIM_VERSION="v0.12.4"
+    local INSTALL_DIR="$HOME/.nvim"
+    local BIN_DIR="$HOME/.local/bin"
+    local APPIMAGE_FILE="nvim-linux-x86_64.appimage"
+    local APPIMAGE_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/${APPIMAGE_FILE}"
 
-    # Check if wget is installed
-    if ! command -v wget >/dev/null 2>&1; then
-        echo "Error: wget is required. Installing wget..."
-        sudo apt-get install -y wget
-        if [[ $? -ne 0 ]]; then
-            echo "Error: Failed to install wget."
-            return 1
-        fi
-    fi
-
-    # Check if Neovim is already installed
-    if command -v nvim >/dev/null 2>&1; then
-        echo "Neovim is already installed. Checking version..."
-        if [[ "$(nvim --version | head -n 1)" != *"NVIM v0.12.4"* ]]; then
-            echo "Warning: A different Neovim version is installed. Consider removing it with 'sudo apt-get remove neovim'."
-        fi
+    # Already at the target version → nothing to do.
+    if command -v nvim >/dev/null 2>&1 && nvim --version | head -n 1 | grep -qF "NVIM ${NVIM_VERSION}"; then
+        echo "### Neovim ${NVIM_VERSION} already installed. Skipping."
         return
     fi
 
-    # Define variables
-    NVIM_VERSION="v0.12.4"
-    APPIMAGE_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage"
-    APPIMAGE_FILE="nvim-linux-x86_64.appimage"
-    INSTALL_DIR="$HOME/.nvim"
-    BIN_DIR="$HOME/.local/bin"
-
-    mkdir -p "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
-
-    if [[ ! -f "$APPIMAGE_FILE" ]]; then
-        echo "Downloading Neovim AppImage..."
-        wget -q "$APPIMAGE_URL" -O "$APPIMAGE_FILE"
-        if [[ $? -ne 0 ]]; then
-            echo "Error: Failed to download AppImage."
-            return 1
-        fi
-    else
-        echo "AppImage already downloaded."
+    # An nvim managed outside this script (apt/snap/system, not our symlink) →
+    # don't clobber it; tell the user where it actually is.
+    if command -v nvim >/dev/null 2>&1 && [[ "$(command -v nvim)" != "$BIN_DIR/nvim" ]]; then
+        echo "### !!! A different Neovim is installed outside this script:"
+        echo "###     $(command -v nvim)  ($(nvim --version | head -n 1))"
+        echo "###     Remove it manually, then re-run this script. Skipping Neovim."
+        return
     fi
+
+    echo "### Installing Neovim ${NVIM_VERSION} on Linux (${INSTALL_DIR})..."
+
+    if ! command -v wget >/dev/null 2>&1; then
+        echo "Installing wget..."
+        sudo apt-get install -y wget || { echo "Error: Failed to install wget."; return 1; }
+    fi
+
+    # Wipe any previous script-managed install so upgrades don't keep stale files.
+    rm -rf "$INSTALL_DIR/squashfs-root" "$INSTALL_DIR/$APPIMAGE_FILE"
+    mkdir -p "$INSTALL_DIR"
+    cd "$INSTALL_DIR" || return 1
+
+    echo "Downloading Neovim AppImage (${NVIM_VERSION})..."
+    wget -q "$APPIMAGE_URL" -O "$APPIMAGE_FILE" || { echo "Error: Failed to download AppImage."; return 1; }
     chmod u+x "$APPIMAGE_FILE"
 
-    if [[ ! -d "squashfs-root" ]]; then
-        echo "Extracting AppImage..."
-        ./"$APPIMAGE_FILE" --appimage-extract >/dev/null
-        if [[ $? -ne 0 ]]; then
-            echo "Error: Failed to extract AppImage."
-            rm -f "$APPIMAGE_FILE"
-            return 1
-        fi
-    else
-        echo "AppImage already extracted."
-    fi
-
-    echo "Cleaning up temporary AppImage file..."
+    echo "Extracting AppImage..."
+    ./"$APPIMAGE_FILE" --appimage-extract >/dev/null || {
+        echo "Error: Failed to extract AppImage."
+        rm -f "$APPIMAGE_FILE"
+        return 1
+    }
     rm -f "$APPIMAGE_FILE"
 
-    # Create symlink
     mkdir -p "$BIN_DIR"
     ln -sf "$INSTALL_DIR/squashfs-root/usr/bin/nvim" "$BIN_DIR/nvim"
 
-    # Verify installation
     if command -v nvim >/dev/null 2>&1; then
-        echo "Neovim installed successfully! Run 'nvim --version' to check."
+        echo "### Neovim installed: $(nvim --version | head -n 1)"
     else
-        echo "Installation completed, but nvim not found in PATH."
+        echo "### Installed to $BIN_DIR/nvim, but nvim is not on PATH — ensure $BIN_DIR is in \$PATH."
     fi
 
-    # TODO: Install optional dependencies for Neovim plugins
-    # echo "### Installing optional Neovim dependencies..."
-    # sudo apt-get install -y imagemagick xclip pandoc
-
-    echo "Neovim installation complete."
+    # TODO: optional plugin deps — sudo apt-get install -y imagemagick xclip pandoc
 }
 
 if ! command -v git >/dev/null 2>&1; then
