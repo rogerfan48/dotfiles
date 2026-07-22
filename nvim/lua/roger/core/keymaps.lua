@@ -269,12 +269,19 @@ M.lsp = function()
       else
         vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
       end
+
       vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
       local builtin = require("telescope.builtin")
-      vim.keymap.set("n", "gd", function() builtin.lsp_definitions({ reuse_win = true, jump_type = "vsplit" }) end, with_desc("Show LSP definitions"))
+      vim.keymap.set("n", "gd", function() builtin.lsp_definitions({ reuse_win = true }) end, with_desc("Show LSP definitions"))
       vim.keymap.set("n", "gi", function() builtin.lsp_implementations({ reuse_win = true }) end, with_desc("Show LSP implementations"))
-      vim.keymap.set("n", "gr", builtin.lsp_references, with_desc("Show LSP references"))
+      vim.keymap.set("n", "gr", function() builtin.lsp_references({ reuse_win = true }) end, with_desc("Show LSP references"))
       vim.keymap.set("n", "gt", function() builtin.lsp_type_definitions({ reuse_win = true }) end, with_desc("Show LSP type definitions"))
+
+      vim.keymap.set("n", "gsd", function() builtin.lsp_definitions({ jump_type = "vsplit" }) end, with_desc("Show LSP definitions"))
+      vim.keymap.set("n", "gsi", function() builtin.lsp_implementations({ jump_type = "vsplit" }) end, with_desc("Show LSP implementations"))
+      vim.keymap.set("n", "gsr", function() builtin.lsp_references({ jump_type = "vsplit" }) end, with_desc("Show LSP references"))
+      vim.keymap.set("n", "gst", function() builtin.lsp_type_definitions({ jump_type = "vsplit" }) end, with_desc("Show LSP type definitions"))
+
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
       vim.keymap.set("n", "gl", vim.diagnostic.open_float, with_desc("Show line diagnostics"))
