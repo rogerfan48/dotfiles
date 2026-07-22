@@ -270,10 +270,11 @@ M.lsp = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, with_desc("Show hover Info"))
       end
       vim.keymap.set("n", "gD", vim.lsp.buf.declaration, with_desc("Go to declaration"))
-      vim.keymap.set("n", "gd", ":Telescope lsp_definitions<CR>", with_desc("Show LSP definitions"))
-      vim.keymap.set("n", "gi", ":Telescope lsp_implementations<CR>", with_desc("Show LSP implementations"))
-      vim.keymap.set("n", "gr", ":Telescope lsp_references<CR>", with_desc("Show LSP references"))
-      vim.keymap.set("n", "gt", ":Telescope lsp_type_definitions<CR>", with_desc("Show LSP type definitions"))
+      local builtin = require("telescope.builtin")
+      vim.keymap.set("n", "gd", function() builtin.lsp_definitions({ reuse_win = true, jump_type = "vsplit" }) end, with_desc("Show LSP definitions"))
+      vim.keymap.set("n", "gi", function() builtin.lsp_implementations({ reuse_win = true }) end, with_desc("Show LSP implementations"))
+      vim.keymap.set("n", "gr", builtin.lsp_references, with_desc("Show LSP references"))
+      vim.keymap.set("n", "gt", function() builtin.lsp_type_definitions({ reuse_win = true }) end, with_desc("Show LSP type definitions"))
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, with_desc("Code action"))
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, with_desc("Rename symbol"))
       vim.keymap.set("n", "gl", vim.diagnostic.open_float, with_desc("Show line diagnostics"))
@@ -404,15 +405,19 @@ end
 
 M.telescope = function()
   local builtin = require("telescope.builtin")
-  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Find files in cwd", silent = true })
-  vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Find diagnostics" })
-  vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Find recent files" })
-  vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Grep string in cwd" })
-  -- vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor" })
-  vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
-  vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
-  vim.keymap.set("n", "<leader>fH", ":Telescope highlights<CR>", { desc = "Telescope highlights", silent = true })
-  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>", { desc = "Find todos", silent = true })
+  vim.keymap.set("n", "<leader>fj", ":Telescope find_files hidden=true<CR>", { desc = "Find: cwd", silent = true })
+  vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Telescope: diagnostics" })
+  vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Find: recent files" })
+  vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope: grep" })
+  vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Telescope: grep under cursor" })
+  vim.keymap.set("n", "<leader>fb", function()
+    builtin.buffers({ sort_mru = true })
+  end, { desc = "Telescope: buffers" })
+  vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope: help tags" })
+  vim.keymap.set("n", "<leader>fH", ":Telescope highlights<CR>", { desc = "Telescope: highlights", silent = true })
+  vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Telescope: keymaps" })
+  vim.keymap.set("n", "<leader>fm", builtin.man_pages, { desc = "Telescope: man page", silent = true })
+  vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>", { desc = "Telescope: todo", silent = true })
   vim.keymap.set("n", "<leader>fs", function()
     local pickers, finders, conf, previewers, actions, action_state =
       require("telescope.pickers"),
@@ -468,26 +473,18 @@ M.telescope = function()
         end,
       })
       :find()
-  end, { desc = "Find Sections in current file" })
-  vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Show keymaps" })
-  vim.keymap.set("n", "<leader>/", function()
-    builtin.current_buffer_fuzzy_find({
-      layout_config = {
-        preview_width = 0,
-      },
-    })
-  end, { desc = "Fuzzy find in current buffer" })
+  end, { desc = "Telescope: sections" })
   vim.keymap.set("n", "<leader>fo", function()
     builtin.live_grep({
       grep_open_files = true,
       prompt_title = "Live Grep in Open Files",
     })
-  end, { desc = "Fuzzy find open files" })
+  end, { desc = "Telescope: grep in open files" })
   vim.keymap.set("n", "<leader>fn", function()
     builtin.find_files({
       cwd = vim.fn.stdpath("config"),
     })
-  end, { desc = "Fuzzy find Neovim files" })
+  end, { desc = "Find: Neovim files" })
 end
 
 M.auto_session = function()

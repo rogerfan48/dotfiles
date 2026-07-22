@@ -1,7 +1,6 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.8",
     dependencies = {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -55,7 +54,7 @@ return {
             "^node_modules/",
             "^.obsidian/"
           },
-          path_display = { "smart" },
+          path_display = { "filename_first" },
           mappings = {
             i = {
               ["<C-k>"] = actions.move_selection_previous, -- move to prev result
@@ -69,6 +68,7 @@ return {
                 slow_scroll(bufnr, -1)
               end,
               ["<Esc>"] = actions.close,
+              ["<C-c>"] = function() vim.cmd("stopinsert") end,
             },
           },
         },
