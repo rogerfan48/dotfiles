@@ -1,27 +1,49 @@
----@diagnostic disable: missing-fields
 return {
   "nvim-treesitter/nvim-treesitter",
-  event = { "BufReadPre", "BufNewFile" },
+  branch = "main",
   build = ":TSUpdate",
+  event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "windwp/nvim-ts-autotag",
   },
   config = function()
-    local keymaps = require("roger.core.keymaps")
-    local configs = require("nvim-treesitter.configs")
-    configs.setup({
-      ensure_installed = { "lua", "c", "cpp", "latex" },
-      auto_install = true,
-      sync_install = false,
-      ignore_install = {},
-      highlight = { enable = true, additional_vim_regex_highlighting = { "latex" } },
-      indent = { enable = true, disable = { "python", "latex" } },
-      fold = { enable = true },
-      autotag = { enable = true },
-      incremental_selection = {
-        enable = true,
-        keymaps = keymaps.treesitter,
-      },
+    local ts = require("nvim-treesitter")
+    require("nvim-ts-autotag").setup()
+
+    -- set of parsers the plugin knows how to install
+    local available = {}
+    for _, lang in ipairs(ts.get_available()) do
+      available[lang] = true
+    end
+    -- set of parsers already on disk (kept in sync as we install more)
+    local installed = {}
+    for _, lang in ipairs(ts.get_installed("parsers")) do
+      installed[lang] = true
+    end
+
+    local function activate(buf, lang)
+      installed[lang] = true
+      pcall(vim.treesitter.start, buf, lang) -- Neovim-native highlighting
+    end
+
+    -- highlight on open; auto-install the parser first if we don't have it yet
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("roger_treesitter", { clear = true }),
+      callback = function(ev)
+        local lang = vim.treesitter.language.get_lang(ev.match) or ev.match
+        if not available[lang] then
+          return
+        end
+        if installed[lang] then
+          activate(ev.buf, lang)
+        else
+          ts.install({ lang }):await(vim.schedule_wrap(function(err)
+            if not err then
+              activate(ev.buf, lang)
+            end
+          end))
+        end
+      end,
     })
   end,
 }

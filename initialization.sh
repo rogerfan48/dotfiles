@@ -235,8 +235,8 @@ if [[ "$OS" == "Darwin" ]]; then
         echo "TPM is already installed."
     fi
 
-    echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep..."
-    brew install nvim bat cppcheck fzf node pngpaste lazygit ripgrep
+    echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep, tree-sitter..."
+    brew install nvim bat cppcheck fzf node pngpaste lazygit ripgrep tree-sitter
 
     echo "### Enabling pnpm via corepack..."
     corepack enable pnpm
