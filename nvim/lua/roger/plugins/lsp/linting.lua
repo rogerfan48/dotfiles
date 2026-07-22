@@ -21,6 +21,7 @@ return {
       javascriptreact = { "eslint_d" },
       typescriptreact = { "eslint_d" },
       python = { "pylint" },
+      go = { "golangcilint" },
       dart = {},
       markdown = { "markdownlint" },
       latex = { "chktex" },

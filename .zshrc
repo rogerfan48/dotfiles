@@ -150,6 +150,10 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
+# SEC: Go (Linux tarball lives in /usr/local/go; `go install` tools land in GOPATH/bin)
+[[ -d /usr/local/go/bin ]] && path_prepend "/usr/local/go/bin"
+command -v go &>/dev/null && path_prepend "$(go env GOPATH)/bin"
+
 # SEC: Zoxide (interactive shells only — cd-tracking is pointless in scripts)
 [[ -o interactive ]] && command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"
 

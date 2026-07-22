@@ -19,6 +19,7 @@ return {
         "ts_ls", -- js/ts
         -- "emmet_ls", -- aid: HTML, JSX
         "basedpyright", -- python (支援 semantic tokens)
+        -- "gopls", -- go -> system-level (see initialization.sh); needs Go toolchain anyway
         "marksman", -- markdown
         "jsonls", -- JSON
         "texlab", -- latex
@@ -48,6 +49,7 @@ return {
         "eslint_d", -- JavaScript/TypeScript, React.js
         -- "pylint", -- Python -> managed via `uv tool install pylint` (see linting.lua)
         -- "dartanalyzer", -- Dart
+        -- "golangci-lint", -- Go -> system-level (see initialization.sh)
         "markdownlint", -- Markdown
         "jsonlint",
         "yamllint",

@@ -252,6 +252,11 @@ if [[ "$OS" == "Darwin" ]]; then
     source "$HOME/.local/bin/env" 2>/dev/null || true
     uv tool install pylint
 
+    # Go tooling kept out of Mason (gopls does LSP + format + imports, golangci-lint lints).
+    echo "### Installing Go toolchain and tools (gopls, golangci-lint)..."
+    brew install go gopls golangci-lint ||
+        echo "!!! WARNING: Go tooling install failed — check the Go section in initialization.sh"
+
 # =======================
 # Setup for Linux (Ubuntu)
 # =======================
@@ -381,6 +386,25 @@ elif [[ "$OS" == "Linux" ]]; then
     echo "### Installing global Python tools via uv..."
     source "$HOME/.local/bin/env" 2>/dev/null || true
     uv tool install pylint
+
+    # Go tooling kept out of Mason (gopls does LSP + format + imports, golangci-lint lints).
+    echo "### Installing Go toolchain (latest, linux-amd64)..."
+    if ! command -v go >/dev/null 2>&1; then
+        GO_VERSION=$(curl -sSL "https://go.dev/VERSION?m=text" | head -n1)
+        curl -sSL "https://go.dev/dl/${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tar.gz &&
+            sudo rm -rf /usr/local/go &&
+            sudo tar -C /usr/local -xzf /tmp/go.tar.gz &&
+            rm -f /tmp/go.tar.gz &&
+            export PATH="/usr/local/go/bin:$PATH" ||
+            echo "!!! WARNING: Go install failed — check the Go section in initialization.sh"
+    fi
+
+    echo "### Installing gopls and golangci-lint into ~/.local/bin..."
+    GOBIN="$HOME/.local/bin" go install golang.org/x/tools/gopls@latest ||
+        echo "!!! WARNING: gopls install failed — check the Go section in initialization.sh"
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh |
+        sh -s -- -b "$HOME/.local/bin" ||
+        echo "!!! WARNING: golangci-lint install failed — check the Go section in initialization.sh"
 
 else
     echo "Unsupported operating system: $OS"

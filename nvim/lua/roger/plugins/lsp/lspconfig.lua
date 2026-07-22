@@ -101,6 +101,23 @@ return {
       filetypes = { "sh", "bash" },
     })
 
+    -- gopls: system-installed (see initialization.sh); staticcheck left to golangci-lint.
+    vim.lsp.config("gopls", {
+      settings = {
+        gopls = {
+          gofumpt = true,
+          completeUnimported = true,
+          usePlaceholders = true,
+          analyses = {
+            unusedparams = true,
+            nilness = true,
+            unusedwrite = true,
+          },
+        },
+      },
+    })
+    vim.lsp.enable("gopls")
+
     vim.lsp.config("taplo", {
       settings = {
         taplo = {
