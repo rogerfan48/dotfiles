@@ -21,6 +21,28 @@ return {
       installed[lang] = true
     end
 
+    -- Always-installed set, incl. injection-only parsers (html-in-markdown) that
+    -- the on-demand handler below never installs.
+    local ensure_installed = {
+      "bash", "c", "cpp", "css", "scss", "diff", "gitcommit", "go", "gomod",
+      "html", "javascript", "json", "jsonc", "lua", "luadoc", "markdown",
+      "markdown_inline", "python", "query", "regex", "toml", "tsx",
+      "typescript", "vim", "vimdoc", "yaml", "latex",
+    }
+    local to_install = {}
+    for _, lang in ipairs(ensure_installed) do
+      if available[lang] and not installed[lang] then
+        to_install[#to_install + 1] = lang
+      end
+    end
+    if #to_install > 0 then
+      ts.install(to_install):await(vim.schedule_wrap(function()
+        for _, lang in ipairs(to_install) do
+          installed[lang] = true
+        end
+      end))
+    end
+
     local function activate(buf, lang)
       installed[lang] = true
       pcall(vim.treesitter.start, buf, lang) -- Neovim-native highlighting

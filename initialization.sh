@@ -123,6 +123,32 @@ install_neovim() {
     # TODO: optional plugin deps — sudo apt-get install -y imagemagick xclip pandoc
 }
 
+# Force-rebuild parsers when Neovim changed (stamp-gated). Reinstalls the full set
+# rather than wiping, so injection-only parsers (html-in-markdown) survive.
+rebuild_treesitter_parsers() {
+    command -v nvim >/dev/null 2>&1 || return 0
+    local parser_dir="$HOME/.local/share/nvim/lazy/nvim-treesitter/parser"
+    [ -d "$parser_dir" ] || return 0 # not set up yet
+
+    local stamp="$parser_dir/.built-for"
+    local current
+    current="$(nvim --version | head -n 1)"
+    [ -f "$stamp" ] && [ "$(cat "$stamp" 2>/dev/null)" == "$current" ] && return 0
+
+    if ! command -v tree-sitter >/dev/null 2>&1; then
+        echo "### !!! tree-sitter CLI missing — skipping parser rebuild (npm install -g tree-sitter-cli, then :TSUpdate)."
+        return 0
+    fi
+
+    echo "### Neovim changed (${current}) — rebuilding treesitter parsers..."
+    if nvim --headless "+lua local ts=require('nvim-treesitter'); local l=ts.get_installed('parsers'); if #l>0 then ts.install(l,{force=true}):wait(600000) end" +qa; then
+        echo "$current" >"$stamp"
+        echo "### Treesitter parser rebuild complete."
+    else
+        echo "### !!! Parser rebuild failed — run :TSUpdate inside nvim."
+    fi
+}
+
 if ! command -v git >/dev/null 2>&1; then
     echo "Error: git is not installed. Please install git (e.g., via Homebrew on macOS or apt on Linux) and re-run this script."
     exit 1
@@ -401,6 +427,9 @@ fi
 
 # whether to set zsh as default shell
 set_zsh_default
+
+# Rebuild treesitter parsers if Neovim was upgraded (needs the tree-sitter CLI above).
+rebuild_treesitter_parsers
 
 # ----------------------------------------------------------------------
 # Finally, call setup_link.sh to create symbolic links for dotfiles
