@@ -87,9 +87,10 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=242
 
 # SEC: Extensions config
 
+typeset -U path PATH
+
 # add Neovim Mason bin into $PATH
-MASON_BIN="$HOME/.local/share/nvim/mason/bin"
-echo "$PATH" | grep -q "$MASON_BIN" || export PATH="$MASON_BIN:$PATH"
+export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
 alias bat="bat --paging never" # To prevent using paging when many lines
 if [[ "$OS" == "Darwin" ]]; then
@@ -99,10 +100,8 @@ elif [[ "$OS" == "Linux" ]]; then
 fi
 
 # SEC: Custom functions
-function path_prepend() {
-  if [[ ":$PATH:" != *":$1:"* ]]; then
-    export PATH="$1:$PATH"
-  fi
+function append_path() {
+  export PATH="$1:$PATH" # dedup handled by `typeset -U path` above
 }
 
 function mysass() {
@@ -136,7 +135,7 @@ function kb() {
     fi
 }
 
-path_prepend "$HOME/.local/bin"
+append_path "$HOME/.local/bin"
 
 # SEC: NVM
 export NVM_DIR="$HOME/.nvm"
@@ -145,14 +144,11 @@ export NVM_DIR="$HOME/.nvm"
 
 # SEC: PNPM
 export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+export PATH="$PNPM_HOME:$PATH"
 
 # SEC: Go (Linux tarball lives in /usr/local/go; `go install` tools land in GOPATH/bin)
-[[ -d /usr/local/go/bin ]] && path_prepend "/usr/local/go/bin"
-command -v go &>/dev/null && path_prepend "$(go env GOPATH)/bin"
+[[ -d /usr/local/go/bin ]] && append_path "/usr/local/go/bin"
+command -v go &>/dev/null && append_path "$(go env GOPATH)/bin"
 
 # SEC: Zoxide (interactive shells only — cd-tracking is pointless in scripts)
 [[ -o interactive ]] && command -v zoxide &>/dev/null && eval "$(zoxide init --cmd cd zsh)"
