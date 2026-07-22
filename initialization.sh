@@ -79,14 +79,14 @@ install_neovim() {
     # Check if Neovim is already installed
     if command -v nvim >/dev/null 2>&1; then
         echo "Neovim is already installed. Checking version..."
-        if [[ "$(nvim --version | head -n 1)" != *"NVIM v0.11.3"* ]]; then
+        if [[ "$(nvim --version | head -n 1)" != *"NVIM v0.12.4"* ]]; then
             echo "Warning: A different Neovim version is installed. Consider removing it with 'sudo apt-get remove neovim'."
         fi
         return
     fi
 
     # Define variables
-    NVIM_VERSION="v0.11.3"
+    NVIM_VERSION="v0.12.4"
     APPIMAGE_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage"
     APPIMAGE_FILE="nvim-linux-x86_64.appimage"
     INSTALL_DIR="$HOME/.nvim"
@@ -240,6 +240,11 @@ if [[ "$OS" == "Darwin" ]]; then
 
     echo "### Enabling pnpm via corepack..."
     corepack enable pnpm
+
+    # Homebrew's `tree-sitter` formula is lib-only (no CLI binary); nvim-treesitter
+    # (main branch) needs the `tree-sitter` CLI to compile parsers. Install it via npm.
+    echo "### Installing tree-sitter CLI..."
+    npm install -g tree-sitter-cli
 
     echo "### Installing uv (Python package manager)..."
     if ! command -v uv >/dev/null 2>&1; then

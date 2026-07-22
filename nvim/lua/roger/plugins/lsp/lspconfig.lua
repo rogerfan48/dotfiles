@@ -86,6 +86,15 @@ return {
       on_init = function(client)
         client.server_capabilities.semanticTokensProvider = nil
       end,
+      -- Don't show "Ambiguous link" diagnostics from marksman (scoped to this server).
+      handlers = {
+        ["textDocument/publishDiagnostics"] = function(err, result, ctx)
+          result.diagnostics = vim.tbl_filter(function(d)
+            return not (d.message and d.message:match("Ambiguous link"))
+          end, result.diagnostics or {})
+          return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx)
+        end,
+      },
     })
 
     vim.lsp.config("jsonls", {
@@ -166,29 +175,5 @@ return {
       severity_sort = true,
     })
 
-    -- -- SEC: A temp solution to solve dartls error, which be solved by designating `cmd` in flutter-tools.nvim
-    -- require("lspconfig").dartls.setup({
-    --   on_new_config = function(cfg, _)
-    --     local dart = vim.fn.exepath("dart")
-    --     if dart ~= "" then
-    --       cfg.cmd[1] = dart
-    --     end -- 把 ./bin/dart 改掉
-    --   end,
-    -- })
-
-    -- Don't show "Ambiguous link" from marksman
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      if client and client.name == "marksman" then
-        local filtered = {}
-        for _, diagnostic in ipairs(result.diagnostics or {}) do
-          if not diagnostic.message:match("Ambiguous link") then
-            table.insert(filtered, diagnostic)
-          end
-        end
-        result.diagnostics = filtered
-      end
-      vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-    end
   end,
 }

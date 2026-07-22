@@ -113,7 +113,7 @@ M.general = function()
   )
 
   local open_in_file_manager = function(file_path)
-    local sysname = vim.loop.os_uname().sysname
+    local sysname = (vim.uv or vim.loop).os_uname().sysname
     if sysname == "Darwin" then -- MacOS: by Finder
       vim.fn.jobstart({ "open", "-R", file_path }, { detach = true })
     elseif sysname == "Linux" then -- Linux: by xdg-open

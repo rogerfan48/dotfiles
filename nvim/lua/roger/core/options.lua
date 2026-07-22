@@ -63,7 +63,7 @@ vim.o.showbreak = "  " -- the beginning of the wrapped text
 vim.api.nvim_create_autocmd("BufWinEnter", {
   callback = function()
     vim.wo.foldmethod = "expr"
-    vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+    vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     vim.wo.foldtext = ""
     vim.wo.foldlevel = 99
   end
