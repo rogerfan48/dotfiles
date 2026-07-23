@@ -17,6 +17,7 @@ return {
         "html", -- html
         "cssls", -- css/scss
         "ts_ls", -- js/ts
+        "vue_ls", -- vue (provides @vue/typescript-plugin for ts_ls)
         -- "emmet_ls", -- aid: HTML, JSX
         "basedpyright", -- python (支援 semantic tokens)
         -- "gopls", -- go -> system-level (see initialization.sh); needs Go toolchain anyway

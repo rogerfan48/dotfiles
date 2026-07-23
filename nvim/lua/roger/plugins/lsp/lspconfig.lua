@@ -61,13 +61,28 @@ return {
     --     provideFormatter = true,
     --   },
     -- })
+
+    local vue_language_server_path = vim.fn.stdpath("data")
+    .. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+
     vim.lsp.config("ts_ls", {
-      filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+      filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx", "vue" },
       root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
       init_options = {
         hostInfo = "neovim",
+        plugins = {
+          {
+            name = "@vue/typescript-plugin",
+            location = vue_language_server_path,
+            languages = { "vue" },
+            configNamespace = "typescript",
+          },
+        },
       },
     })
+
+    vim.lsp.config("vue_ls", {})
+
     -- vim.lsp.enable({ "html", "cssls", "ts_ls" })
 
     vim.lsp.config("basedpyright", {
