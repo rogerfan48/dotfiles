@@ -53,8 +53,12 @@ set_zsh_default() {
     if [[ "$set_zsh" == "y" ]]; then
         if command -v zsh >/dev/null 2>&1; then
             echo "Setting zsh as the default shell..."
-            sudo bash -c "echo $(which zsh) >> /etc/shells" # because `chsh` only accepts shells in /etc/shells
-            chsh -s "$(command -v zsh)"
+            zsh_path="$(command -v zsh)"
+            # `chsh` only accepts shells listed in /etc/shells; add it once.
+            if ! grep -qxF "$zsh_path" /etc/shells; then
+                echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+            fi
+            chsh -s "$zsh_path"
         else
             echo "zsh is not installed. Please install zsh first."
         fi
@@ -244,8 +248,8 @@ if [[ "$OS" == "Darwin" ]]; then
         echo "TPM is already installed."
     fi
 
-    echo "Installing additional tools: nvim, bat, cppcheck, fzf, node, pngpaste, lazygit, ripgrep, tree-sitter..."
-    brew install nvim bat cppcheck fzf node pngpaste lazygit ripgrep tree-sitter
+    echo "Installing additional tools: nvim, bat, cppcheck, fzf, fd, node, pngpaste, lazygit, ripgrep, tree-sitter..."
+    brew install nvim bat cppcheck fzf fd node pngpaste lazygit ripgrep tree-sitter
 
     echo "### Enabling pnpm via corepack..."
     corepack enable pnpm
@@ -282,7 +286,7 @@ elif [[ "$OS" == "Linux" ]]; then
     echo "### Installing basic tools and dependencies..."
     sudo apt-get install -y bash zsh curl wget git fontconfig \
         unzip python3 python3-pip python3-venv \
-        bat cppcheck fzf ripgrep tmux \
+        bat cppcheck fzf fd-find ripgrep tmux \
         zsh-autosuggestions zsh-syntax-highlighting \
         liblua5.1-0-dev luarocks
 
@@ -291,6 +295,12 @@ elif [[ "$OS" == "Linux" ]]; then
         # build the symlink in a user-accessible path
         sudo ln -s "$(command -v batcat)" /usr/local/bin/bat
         echo "### Created symlink for bat."
+    fi
+
+    # For fd: Ubuntu ships the binary as `fdfind`; expose it as `fd` for telescope.
+    if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
+        sudo ln -s "$(command -v fdfind)" /usr/local/bin/fd
+        echo "### Created symlink for fd."
     fi
 
     install_neovim
@@ -369,7 +379,7 @@ elif [[ "$OS" == "Linux" ]]; then
 
     echo "### Handling problem of telescope-fzf-native with Mason"
     echo "### Installing build-essential for compiling native extensions..."
-    sudo apt install build-essential
+    sudo apt install -y build-essential
 
     echo "### Installing lazygit from binary..."
     if ! command -v lazygit >/dev/null 2>&1; then
