@@ -48,6 +48,12 @@ else
     exit 1
 fi
 
+LINK_WIDTH=0
+for file in "${!FILES_TO_LINK[@]}"; do
+    l="${FILES_TO_LINK[$file]}"
+    (( ${#l} > LINK_WIDTH )) && LINK_WIDTH=${#l}
+done
+
 OVERWRITE_LINKS=()
 NEW_LINKS=()
 echo "Checking existing links..."
@@ -61,9 +67,9 @@ for file in "${!FILES_TO_LINK[@]}"; do
     fi
 
     if [[ -e "$link" || -L "$link" ]]; then
-        OVERWRITE_LINKS+=("$link -> $target")
+        OVERWRITE_LINKS+=("$(printf '%-*s -> %s' "$LINK_WIDTH" "$link" "$target")")
     else
-        NEW_LINKS+=("$link -> $target")
+        NEW_LINKS+=("$(printf '%-*s -> %s' "$LINK_WIDTH" "$link" "$target")")
         NEW_FILES_TO_LINK+=( ["$file"]=${FILES_TO_LINK["$file"]} )
     fi
 done
@@ -123,7 +129,7 @@ for file in "${!FILES_TO_LINK[@]}"; do
     fi
 
     ln -sf "$target" "$link"
-    echo "Linked: $link -> $target"
+    printf 'Linked: %-*s -> %s\n' "$LINK_WIDTH" "$link" "$target"
 done
 
 echo "All symbolic links created!"
