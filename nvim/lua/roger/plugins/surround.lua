@@ -3,10 +3,6 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	version = "*", -- Use for stability; omit to use `main` branch for the latest features
 	config = function()
-    local keymaps = require("roger.core.keymaps")
-		local surround = require("nvim-surround")
-		surround.setup({
-      keymaps = keymaps,
-		})
+		require("nvim-surround").setup({}) -- v4: default keymaps auto-enabled
 	end,
 }

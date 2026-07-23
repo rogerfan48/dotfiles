@@ -217,5 +217,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
     -- `K` and Leetcode.nvim bg recovery
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+
+    -- Git status
+    -- See `colorscheme.lua` with Catppuccin color palette
   end,
 })

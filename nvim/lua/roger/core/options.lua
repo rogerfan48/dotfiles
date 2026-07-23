@@ -17,6 +17,8 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.o.winborder = "rounded"
+
 -- Spelling check
 vim.o.spell = true
 vim.o.spelllang = "en,cjk"
