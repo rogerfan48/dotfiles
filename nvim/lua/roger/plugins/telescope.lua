@@ -42,6 +42,7 @@ return {
 
       telescope.setup({
         defaults = {
+          debounce = 100,
           layout_strategy = "vertical",
           layout_config = {
             vertical = {
@@ -75,11 +76,11 @@ return {
         pickers = {
           live_grep = {
             additional_args = function(_)
-              return { "--hidden" }
+              return { "--hidden", "--glob=!**/.git/*", "--glob=!**/node_modules/*" }
             end
           },
           find_files = {
-            hidden = true,
+            find_command = { "fd", "--type", "f", "--hidden", "--exclude", ".git", "--exclude", "node_modules" },
           }
         },
         extensions = {
