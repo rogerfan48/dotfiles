@@ -296,7 +296,7 @@ M.formatting = function()
   local conform = require("conform")
   vim.keymap.set({ "n", "v" }, "<leader>gf", function()
     conform.format({
-      lsp_fallback = true,
+      lsp_format = "never",
       async = false,
       timeout_ms = 1000,
     })

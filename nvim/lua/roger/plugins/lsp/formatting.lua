@@ -18,6 +18,7 @@ return {
         typescript = { "prettier" },
         javascriptreact = { "prettier" },
         typescriptreact = { "prettier" },
+        vue = { "prettier" },
         python = { "isort", "black_global" },
         dart = { "dart_format" },
         markdown = { "markdownlint" },
