@@ -1,0 +1,62 @@
+[core]
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	pager = [ "${COLUMNS}" -ge 160 ] && delta --side-by-side || delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	features = catppuccin-mocha
+	navigate = true
+	line-numbers = true
+	hyperlinks = true
+	true-color = always
+[delta "catppuccin-mocha"]
+	dark = true
+	file-style = "#adcdff"
+	file-decoration-style = "#adcdff" box
+	; hunk-header-style = file line-number syntax
+	hunk-header-decoration-style = "#89c0d0" ul
+	hunk-header-file-style = "#89c0d0"
+	hunk-header-line-number-style = "#89c0d0"
+	line-numbers-left-style = "#89c0d0"
+	line-numbers-right-style = "#89c0d0"
+	line-numbers-minus-style = "#f38ba8"
+	line-numbers-plus-style = "#a6e3a1"
+	line-numbers-zero-style = "#6c7086"
+	minus-style = syntax "#3b282f"
+	minus-emph-style = syntax "#94284f"
+	plus-style = syntax "#273d2a"
+	plus-emph-style = syntax "#23782e"
+	blame-palette = "#1e1e2e #181825 #11111b #313244 #45475a"
+	commit-decoration-style = "#b4befe" box ul
+[color]
+	ui = auto
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	colorMoved = default
+[rerere]
+	enabled = true
+[commit]
+	verbose = true
+[branch]
+	sort = -committerdate
+[alias]
+	lg = log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[include]
+	path = ~/.gitconfig.local

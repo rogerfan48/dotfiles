@@ -4,5 +4,6 @@
 **/._.DS_Store
 
 .zshrc.local
+.gitconfig.local
 **/myenv/
 **/venv/

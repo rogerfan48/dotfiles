@@ -1,0 +1,4 @@
+# cp ~/.dotfiles/.gitconfig.local.example ~/.gitconfig.local
+[user]
+	name = Your Name
+	email = you@example.com

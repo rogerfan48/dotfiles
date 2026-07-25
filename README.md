@@ -84,13 +84,15 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
 
 ### Step 4. Machine-local config
 
-Edit `~/.dotfiles/.zshrc.local` for this machine's specific settings. This file is **gitignored** — each machine has its own version, symlinked to `~/.zshrc.local` by `setup_link.sh`.
+Two `*.local` files are **gitignored** and symlinked per machine, for anything that differs between machines:
 
-`.zshrc` and `.zshrc.local` have a clear separation:
-- **`.zshrc`** (tracked): universal config that works on every machine — oh-my-zsh, zsh options, aliases, keybindings, nvm, zoxide, etc.
-- **`.zshrc.local`** (gitignored): tools whose install paths differ per machine — ruby, flutter, gcloud, uv, custom scripts, etc.
-
-For example, after installing uv (`curl -LsSf https://astral.sh/uv/install.sh | sh`), its shell hook is added automatically. Other tools like Ruby, Flutter, and gcloud whose install paths vary per machine go here too.
+- **`~/.zshrc.local`** — put any machine-specific shell settings here (extra `PATH`, tool hooks, etc.).
+- **⚠️ Required — `~/.gitconfig.local`** — set your git `name`/`email` here, or commits won't work. `.gitconfig` pulls it in via `[include]`; `setup_link.sh` seeds it from `.gitconfig.local.example` on first run, so open it and fill in:
+  ```ini
+  [user]
+    name = Your Name
+    email = you@example.com
+  ```
 
 ## Structure and Customization
 

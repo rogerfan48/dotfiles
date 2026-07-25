@@ -1,7 +1,18 @@
 #!/bin/bash
 
+# --- output helpers -------------------------------------------------
+if [[ -t 1 ]]; then
+    C_RESET=$'\e[0m'; C_BLUE=$'\e[1;34m'; C_GREEN=$'\e[32m'
+    C_YELLOW=$'\e[33m'; C_RED=$'\e[1;31m'; C_DIM=$'\e[2m'
+fi
+step() { printf '%s\n' "${C_BLUE}▶ $*${C_RESET}"; }  # action in progress
+ok()   { printf '%s\n' "${C_GREEN}✓ $*${C_RESET}"; }  # done / success
+skip() { printf '%s\n' "${C_DIM}• $*${C_RESET}"; }    # nothing to do
+warn() { printf '%s\n' "${C_YELLOW}⚠ $*${C_RESET}"; }
+err()  { printf '%s\n' "${C_RED}✗ $*${C_RESET}"; }
+
 OS=$(uname -s)
-echo "Detected OS: $OS"
+step "Detected OS: $OS"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 declare -A FILES_TO_LINK
@@ -24,6 +35,9 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
         ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
+        [".gitconfig"]="$HOME/.gitconfig"
+        [".gitignore_global"]="$HOME/.gitignore_global"
+        [".config/lazygit/config.yml"]="$HOME/Library/Application Support/lazygit/config.yml"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
     FILES_TO_LINK=(
@@ -42,9 +56,12 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         [".config/.gemini/settings.json"]="$HOME/.gemini/settings.json"
         [".prettierrc"]="$HOME/.prettierrc"
         ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
+        [".gitconfig"]="$HOME/.gitconfig"
+        [".gitignore_global"]="$HOME/.gitignore_global"
+        [".config/lazygit/config.yml"]="$HOME/.config/lazygit/config.yml"
     )
 else
-    echo "Unsupported OS: $OS"
+    err "Unsupported OS: $OS"
     exit 1
 fi
 
@@ -54,51 +71,57 @@ for file in "${!FILES_TO_LINK[@]}"; do
     (( ${#l} > LINK_WIDTH )) && LINK_WIDTH=${#l}
 done
 
+link_line() {  # green check, aligned link, dim arrow + target
+    printf '  %s✓%s %-*s %s→ %s%s\n' \
+        "$C_GREEN" "$C_RESET" "$LINK_WIDTH" "$1" "$C_DIM" "$2" "$C_RESET"
+}
+
 OVERWRITE_LINKS=()
 NEW_LINKS=()
-echo "Checking existing links..."
+step "Checking existing links"
 for file in "${!FILES_TO_LINK[@]}"; do
     target="${DOTFILES_DIR}/$file"
     link="${FILES_TO_LINK[$file]}"
 
     if [[ ! -e "$target" ]]; then
-        echo "Warning: Target file '$target' does not exist. Skipping."
+        warn "Target '$target' does not exist, skipping"
         continue
     fi
 
     if [[ -e "$link" || -L "$link" ]]; then
-        OVERWRITE_LINKS+=("$(printf '%-*s -> %s' "$LINK_WIDTH" "$link" "$target")")
+        OVERWRITE_LINKS+=("$(printf '%-*s|%s' "$LINK_WIDTH" "$link" "$target")")
     else
-        NEW_LINKS+=("$(printf '%-*s -> %s' "$LINK_WIDTH" "$link" "$target")")
+        NEW_LINKS+=("$(printf '%-*s|%s' "$LINK_WIDTH" "$link" "$target")")
         NEW_FILES_TO_LINK+=( ["$file"]=${FILES_TO_LINK["$file"]} )
     fi
 done
 
-if [[ ${#OVERWRITE_LINKS[@]} -eq 0 ]]; then
-    echo "No existing links to overwrite. All links will be created without conflict."
-else
-    echo "The following links already exist and will be overwritten:"
-    for item in "${OVERWRITE_LINKS[@]}"; do
-        echo "  $item"
-    done
+print_pending() {  # dim bullet, link | target
+    local link="${1%%|*}" target="${1##*|}"
+    printf '  %s• %s → %s%s\n' "$C_DIM" "$link" "$target" "$C_RESET"
+}
 
-    echo -n "Do you want to overwrite all these links? (y/n): "
+if [[ ${#OVERWRITE_LINKS[@]} -eq 0 ]]; then
+    skip "No existing links to overwrite"
+else
+    warn "These links already exist and will be overwritten:"
+    for item in "${OVERWRITE_LINKS[@]}"; do print_pending "$item"; done
+
+    printf '%sOverwrite all these links? (y/n): %s' "$C_YELLOW" "$C_RESET"
     read -r answer
     if [[ "$answer" != "y" ]]; then
         if [[ ${#NEW_LINKS[@]} -eq 0 ]]; then
-            echo "No new links need to be established."
-            echo "No change being made!"
+            skip "No new links need to be established"
+            ok "No change being made!"
             exit 0
         else
-            echo "The following are new links and will be added:"
-            for item in "${NEW_LINKS[@]}"; do
-                echo "  $item"
-            done
+            step "These are new links and will be added:"
+            for item in "${NEW_LINKS[@]}"; do print_pending "$item"; done
 
-            echo -n "Do you want to add all these links? (y/n): "
+            printf '%sAdd all these links? (y/n): %s' "$C_YELLOW" "$C_RESET"
             read -r ans
             if [[ "$ans" != "y" ]]; then
-                echo "No change being made!"
+                ok "No change being made!"
                 exit 0
             else
                 FILES_TO_LINK=()
@@ -110,26 +133,29 @@ else
     fi
 fi
 
-echo "Creating symbolic links..."
+step "Creating symbolic links"
 for file in "${!FILES_TO_LINK[@]}"; do
     target="${DOTFILES_DIR}/$file"
     link="${FILES_TO_LINK[$file]}"
 
-    if [[ ! -e "$target" ]]; then
-        continue
-    fi
+    [[ -e "$target" ]] || continue
 
-    # Ensure the parent dir of "$link" exists
     link_dir=$(dirname "$link")
     mkdir -p "$link_dir"
 
     if [[ -d "$link" && ! -L "$link" ]]; then
-        echo "Removing existing directory: $link"
+        warn "Removing existing directory: $link"
         rm -rf "$link"
     fi
 
-    ln -sf "$target" "$link"
-    printf 'Linked: %-*s -> %s\n' "$LINK_WIDTH" "$link" "$target"
+    ln -sfn "$target" "$link"
+    link_line "$link" "$target"
 done
 
-echo "All symbolic links created!"
+ok "All symbolic links created"
+
+if [[ ! -e "$HOME/.gitconfig.local" ]]; then
+    cp "$DOTFILES_DIR/.gitconfig.local.example" "$HOME/.gitconfig.local"
+    warn "Created ~/.gitconfig.local from template"
+    warn "→ Set your git identity before committing: edit ~/.gitconfig.local (name & email)"
+fi

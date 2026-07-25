@@ -252,8 +252,8 @@ if [[ "$OS" == "Darwin" ]]; then
         skip "TPM already installed"
     fi
 
-    step "Installing tools: nvim bat cppcheck fzf fd node pngpaste lazygit ripgrep tree-sitter"
-    brew install nvim bat cppcheck fzf fd node pngpaste lazygit ripgrep tree-sitter
+    step "Installing tools: nvim bat cppcheck fzf fd node pngpaste lazygit ripgrep tree-sitter git-delta"
+    brew install nvim bat cppcheck fzf fd node pngpaste lazygit ripgrep tree-sitter git-delta
 
     if have pnpm; then
         skip "pnpm already enabled"
@@ -411,15 +411,25 @@ elif [[ "$OS" == "Linux" ]]; then
         sudo apt install -y build-essential
     fi
 
-    if have lazygit; then
-        skip "lazygit already installed"
+    LAZYGIT_VERSION=0.63.1
+    if have lazygit && lazygit --version | grep -q "version=${LAZYGIT_VERSION}"; then
+        skip "lazygit ${LAZYGIT_VERSION} already installed"
     else
-        step "Installing lazygit from binary"
-        LAZYGIT_VERSION=0.45.2
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        step "Installing lazygit ${LAZYGIT_VERSION} from binary"
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_linux_x86_64.tar.gz"
         tar xf lazygit.tar.gz lazygit
         sudo install lazygit /usr/local/bin
         rm lazygit.tar.gz lazygit
+    fi
+
+    if have delta; then
+        skip "git-delta already installed"
+    else
+        step "Installing git-delta from binary"
+        DELTA_VERSION=0.19.2
+        curl -Lo git-delta.deb "https://github.com/dandavison/delta/releases/download/${DELTA_VERSION}/git-delta_${DELTA_VERSION}_amd64.deb"
+        sudo dpkg -i git-delta.deb
+        rm git-delta.deb
     fi
 
     if have zoxide; then
