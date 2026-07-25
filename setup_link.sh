@@ -15,6 +15,21 @@ OS=$(uname -s)
 step "Detected OS: $OS"
 DOTFILES_DIR="$HOME/.dotfiles"
 
+# Machine-local files (gitignored) must exist in-repo before linking them out.
+# Pull a pre-existing real ~/<file> into the repo so its content is preserved.
+migrate_local() {
+    [[ ! -e "$DOTFILES_DIR/$1" && -f "$HOME/$1" && ! -L "$HOME/$1" ]] && mv "$HOME/$1" "$DOTFILES_DIR/$1"
+}
+migrate_local .zshrc.local
+migrate_local .gitconfig.local
+
+# .gitconfig.local is required (git identity), so seed a placeholder if still absent.
+GITCONFIG_LOCAL_SEEDED=false
+if [[ ! -e "$DOTFILES_DIR/.gitconfig.local" ]]; then
+    printf '[user]\n    name = Your Name\n    email = you@example.com\n' > "$DOTFILES_DIR/.gitconfig.local"
+    GITCONFIG_LOCAL_SEEDED=true
+fi
+
 declare -A FILES_TO_LINK
 declare -A NEW_FILES_TO_LINK
 if [[ "$OS" == "Darwin" ]]; then # macOS
@@ -37,6 +52,7 @@ if [[ "$OS" == "Darwin" ]]; then # macOS
         ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
         [".gitconfig"]="$HOME/.gitconfig"
         [".gitignore_global"]="$HOME/.gitignore_global"
+        [".gitconfig.local"]="$HOME/.gitconfig.local"
         [".config/lazygit/config.yml"]="$HOME/Library/Application Support/lazygit/config.yml"
     )
 elif [[ "$OS" == "Linux" ]]; then # Linux
@@ -58,6 +74,7 @@ elif [[ "$OS" == "Linux" ]]; then # Linux
         ["eslint.config.mjs"]="$HOME/eslint.config.mjs"
         [".gitconfig"]="$HOME/.gitconfig"
         [".gitignore_global"]="$HOME/.gitignore_global"
+        [".gitconfig.local"]="$HOME/.gitconfig.local"
         [".config/lazygit/config.yml"]="$HOME/.config/lazygit/config.yml"
     )
 else
@@ -154,8 +171,7 @@ done
 
 ok "All symbolic links created"
 
-if [[ ! -e "$HOME/.gitconfig.local" ]]; then
-    cp "$DOTFILES_DIR/.gitconfig.local.example" "$HOME/.gitconfig.local"
-    warn "Created ~/.gitconfig.local from template"
-    warn "→ Set your git identity before committing: edit ~/.gitconfig.local (name & email)"
+if [[ "$GITCONFIG_LOCAL_SEEDED" == true ]]; then
+    warn "Seeded .gitconfig.local with a placeholder identity"
+    warn "→ Set your git identity before committing: edit ~/.dotfiles/.gitconfig.local (name & email)"
 fi

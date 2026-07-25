@@ -84,15 +84,10 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
 
 ### Step 4. Machine-local config
 
-Two `*.local` files are **gitignored** and symlinked per machine, for anything that differs between machines:
+Two `.local` files live in `~/.dotfiles/`, are **gitignored**, and are symlinked to `$HOME` per machine — edit them here, in the repo, for anything that differs between machines:
 
-- **`~/.zshrc.local`** — put any machine-specific shell settings here (extra `PATH`, tool hooks, etc.).
-- **⚠️ Required — `~/.gitconfig.local`** — set your git `name`/`email` here, or commits won't work. `.gitconfig` pulls it in via `[include]`; `setup_link.sh` seeds it from `.gitconfig.local.example` on first run, so open it and fill in:
-  ```ini
-  [user]
-    name = Your Name
-    email = you@example.com
-  ```
+- **`.zshrc.local`** — machine-specific shell settings (extra `PATH`, tool hooks, etc.).
+- **⚠️ Required — `.gitconfig.local`** — set your git `name`/`email` here, or commits won't work. `.gitconfig` pulls it in via `[include]`; `setup_link.sh` seeds it with a placeholder on first run, so just fill it in.
 
 ## Structure and Customization
 
