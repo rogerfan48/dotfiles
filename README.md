@@ -49,6 +49,7 @@
 - **Syntax Highlighting**: Advanced parsing & rainbow parentheses via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim).  
 - **Leetcode**: Solve problems directly in Neovim with [leetcode.nvim](https://github.com/kawre/leetcode.nvim).
 - **vimtex**: Comprehensive LaTeX support using [vimtex](https://github.com//lervag/vimtex) - see vimtex keymaps notes here -> [vimtex-keymaps](./vimtex-keymaps.md).
+- **Terminal**: [Ghostty](https://ghostty.org/) — installed and configured by the setup script. A [WezTerm](https://wezterm.org/) config (`.wezterm.lua`) is kept in the repo but no longer linked or maintained.
 
 ## Installation
 
@@ -95,6 +96,7 @@ Two `.local` files live in `~/.dotfiles/`, are **gitignored**, and are symlinked
 - To see what plugins are included, check out the `~/.dotfiles/nvim/lua/roger/plugins/` folders.
 - To see custom keymaps, check out `~/.dotfiles/nvim/lua/roger/core/keymaps.lua`.
 - To see custom TMUX keymaps and settings, check out `~/.dotfiles/.tmux.conf`.
+- To see terminal settings, check out `~/.dotfiles/.config/ghostty/config`.
 - To see vimtex keymaps introduction, check out `~/.dotfiles/vimtex-keymaps.md`.
 - Copilot Keymaps:
     - `Option + l`: Accept Word

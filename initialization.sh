@@ -191,11 +191,21 @@ if [[ "$OS" == "Darwin" ]]; then
     step "Installing bash"
     brew install bash
 
-    step "Installing WezTerm"
-    if brew info --cask wezterm >/dev/null 2>&1; then
-        brew install --cask wezterm
+    if [[ -d "/Applications/Ghostty.app" ]]; then
+        skip "Ghostty already installed"
     else
-        brew install wezterm
+        step "Installing Ghostty"
+        brew install --cask ghostty
+    fi
+
+    # Cmd+Ctrl+drag moves a window from anywhere; Ghostty's hidden titlebar
+    # leaves no other drag target. Takes effect after re-login.
+    if [[ "$(defaults read -g NSWindowShouldDragOnGesture 2>/dev/null)" == "1" ]]; then
+        skip "Drag-anywhere gesture already enabled"
+    else
+        step "Enabling Cmd+Ctrl drag-anywhere gesture"
+        defaults write -g NSWindowShouldDragOnGesture -bool true
+        warn "Log out and back in to activate it"
     fi
 
     if ls "$HOME/Library/Fonts"/*JetBrainsMono*.ttf 1>/dev/null 2>&1; then
@@ -321,10 +331,10 @@ elif [[ "$OS" == "Linux" ]]; then
 
     install_neovim
 
-    if have wezterm; then
-        skip "WezTerm already installed"
+    if have ghostty; then
+        skip "Ghostty already installed"
     else
-        warn "WezTerm not detected — install from https://wezfurlong.org/wezterm/"
+        warn "Ghostty not detected — install from https://ghostty.org/download"
     fi
 
     if fc-list | grep -i "JetBrains Mono" >/dev/null 2>&1; then

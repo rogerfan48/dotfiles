@@ -1,0 +1,107 @@
+# Ghostty config — mirrors .wezterm.lua
+# Docs: ghostty +show-config --default --docs
+# Note: Ghostty has no inline comments
+
+macos-icon = blueprint
+
+#=============================================================================
+#  Window
+#=============================================================================
+
+window-height = 50
+window-width = 200
+window-padding-x = 0
+window-padding-y = 0
+
+# no titlebar; drag the window with ctrl+cmd or option from anywhere
+macos-titlebar-style = hidden
+confirm-close-surface = true
+window-save-state = always
+
+#=============================================================================
+#  Font
+#=============================================================================
+
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+font-style = SemiBold
+
+# disable ligatures
+font-feature = -calt
+
+# CJK: `font-family` does no codepoint fallback and skips non-monospace faces
+font-codepoint-map = U+2E80-U+2FDF,U+3000-U+303F,U+3100-U+312F,U+31A0-U+31BF,U+3400-U+4DBF,U+4E00-U+9FFF,U+F900-U+FAFF,U+FF00-U+FFEF=jf-openhuninn-2.0
+
+#=============================================================================
+#  Colors
+#=============================================================================
+
+background = #1f1f1f
+foreground = #cdd6f4
+
+cursor-color = #f5e0dc
+cursor-text = #11111b
+selection-background = #585b70
+selection-foreground = #cdd6f4
+split-divider-color = #6c7086
+
+# ANSI palette, in index order:
+#   black  red  green  yellow  blue  magenta  cyan  white
+
+# normal (0-7)
+palette = 0=#45475a
+palette = 1=#f38ba8
+palette = 2=#a6e3a1
+palette = 3=#f9e2af
+palette = 4=#6ec7ff
+palette = 5=#ffa3e7
+palette = 6=#94e2d5
+palette = 7=#bac2de
+
+# bright (8-15)
+palette = 8=#585b70
+palette = 9=#f38ba8
+palette = 10=#a6e3a1
+palette = 11=#f9e2af
+palette = 12=#6ec7ff
+palette = 13=#ffa3e7
+palette = 14=#94e2d5
+palette = 15=#a6adc8
+
+# background_image
+# background-image = ~/.dotfiles/bg_image/chrome-lake.jpeg
+# background-image-fit = cover
+# background-image-opacity = 0.12
+
+#=============================================================================
+#  Cursor
+#=============================================================================
+
+# no-cursor: shell integration otherwise forces a bar cursor at the prompt
+cursor-style = block
+cursor-style-blink = false
+# ssh-*: TERM=xterm-ghostty is unknown to remote hosts; install it there, else
+# fall back to xterm-256color
+shell-integration-features = no-cursor,ssh-env,ssh-terminfo
+
+#=============================================================================
+#  Keybinds
+#=============================================================================
+
+# macOS Cmd shortcuts (Cmd is macOS-only, must be handled by terminal emulator)
+# Opt/Alt and standard keys are handled in .zshrc for portability
+
+# Cmd+Left → Home
+keybind = super+left=csi:H
+
+# Cmd+Right → End
+keybind = super+right=csi:F
+
+# Cmd+Backspace → Ctrl+U
+keybind = super+backspace=text:\x15
+
+# Shift+Enter → <F13>
+keybind = shift+enter=text:\x1b[1;2P
+
+# send Alt instead of composing (é, ¬); nvim's <M-*> / <A-*> mappings need it
+macos-option-as-alt = true

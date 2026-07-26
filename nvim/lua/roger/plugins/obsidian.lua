@@ -8,7 +8,6 @@ end
 return {
   -- "epwalsh/obsidian.nvim",
   "obsidian-nvim/obsidian.nvim",
-  version = "3.13.1",
   dependencies = {},
   config = function()
     local obsidian = require("obsidian")
@@ -20,11 +19,11 @@ return {
       workspaces = {
         {
           name = "Workspace",
-          path = "/Users/roger/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace",
+          path = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace",
         },
         {
           name = "Workspace-Archive",
-          path = "/Users/roger/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace-Archive",
+          path = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Workspace-Archive",
         },
       },
 
@@ -48,9 +47,9 @@ return {
       --   workdays_only = true,
       -- },
 
-      -- completion of wiki links, local markdown links, and tags using nvim-cmp.
+      -- Completion is served by the built-in obsidian-ls LSP server
+      -- It flows through nvim-cmp `cmp-nvim-lsp` source
       completion = {
-        nvim_cmp = true, -- Set to false to disable completion.
         min_chars = 2, -- Trigger completion at 2 chars.
       },
 
@@ -85,47 +84,21 @@ return {
         return path:with_suffix(".md")
       end,
 
-      -- Optional, customize how wiki links are formatted. You can set this to one of:
-      --  * "use_alias_only", e.g. '[[Foo Bar]]'
-      --  * "prepend_note_id", e.g. '[[foo-bar|Foo Bar]]'
-      --  * "prepend_note_path", e.g. '[[foo-bar.md|Foo Bar]]'
-      --  * "use_path_only", e.g. '[[foo-bar.md]]'
-      -- Or you can set it to a function that takes a table of options and returns a string, like this:
-      wiki_link_func = function(opts)
-        return require("obsidian.util").wiki_link_id_prefix(opts)
-      end,
+      -- style       = "wiki" | "markdown" | function(opts) -> string
+      -- format      = "shortest" | "relative" | "absolute" (path form inside links)
+      -- auto_update = rewrite links pointing to a note when it is renamed
+      link = {
+        style = "wiki",
+        format = "shortest",
+        auto_update = true,
+      },
 
-      -- Optional, customize how markdown links are formatted.
-      markdown_link_func = function(opts)
-        return require("obsidian.util").markdown_link(opts)
-      end,
-
-      -- Either 'wiki' or 'markdown'.
-      preferred_link_style = "wiki",
-
-      -- Optional, boolean or a function that takes a filename and returns a boolean.
-      -- `true` indicates that you don't want obsidian.nvim to manage frontmatter.
-      disable_frontmatter = true,
-
-      -- Optional, alternatively you can customize the frontmatter data.
-      note_frontmatter_func = function(note)
-        -- Add the title of the note as an alias.
-        if note.title then
-          note:add_alias(note.title)
-        end
-
-        local out = { id = note.id, aliases = note.aliases, tags = note.tags }
-
-        -- `note.metadata` contains any manually added fields in the frontmatter.
-        -- So here we just make sure those fields are kept in the frontmatter.
-        if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-          for k, v in pairs(note.metadata) do
-            out[k] = v
-          end
-        end
-
-        return out
-      end,
+      -- enabled = false: obsidian never adds or rewrites the YAML frontmatter block.
+      -- To let it manage frontmatter, set enabled = true and optionally provide
+      -- `func` (fun(note) -> table) and `sort` (key order, e.g. { "id", "aliases", "tags" }).
+      frontmatter = {
+        enabled = false,
+      },
 
       -- Optional, for templates (see below).
       templates = {
@@ -155,37 +128,7 @@ return {
         },
       },
 
-      -- Sets how you follow URLs
-      follow_url_func = function(url)
-        vim.ui.open(url) -- need Neovim 0.10.0+
-      end,
-
-      -- Sets how you follow images
-      follow_img_func = function(img)
-        local current_dir = vim.fn.expand("%:p:h")
-        local img_name = vim.fn.fnamemodify(img, ":t")
-        local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img_name)
-        vim.ui.open(img_abs_path)
-        -- local current_dir = vim.fn.expand("%:p:h")
-        -- local img_name = vim.fn.fnamemodify(img, ":t")
-        -- local img_abs_path = vim.fn.resolve(current_dir .. "/assets/" .. img_name)
-        --
-        -- -- 用 qlmanage 開啟圖片（Quick Look）
-        -- vim.fn.jobstart({ "qlmanage", "-p", img_abs_path }, { detach = true })
-        --
-        -- -- 延遲一段時間，讓 Quick Look 有足夠時間啟動，
-        -- -- 然後利用 osascript 強制把 Quick Look 的視窗置頂
-        -- vim.defer_fn(function()
-        --   vim.fn.jobstart({
-        --     "osascript",
-        --     "-e",
-        --     'tell application "System Events" to set frontmost of the first process whose name is "qlmanage" to true',
-        --   }, { detach = true })
-        -- end, 100) -- 延遲時間可依需求調整（單位：毫秒）
-
-        -- print("Opening image with Quick Look:", img_abs_path)
-      end,
-
+      -- How links and images are opened (used for URLs and image files).
       open = {
         use_advanced_uri = false,
         func = vim.ui.open,
@@ -210,14 +153,12 @@ return {
         },
       },
 
-      -- Optional, sort search results by "path", "modified", "accessed", or "created".
-      -- The recommend value is "modified" and `true` for `sort_reversed`, which means, for example,
-      -- that `:ObsidianQuickSwitch` will show the notes sorted by latest modified time
-      sort_by = "modified",
-      sort_reversed = true,
-
-      -- Set the maximum number of lines to read from notes on disk when performing certain searches.
-      search_max_lines = 1000,
+      -- sort_by: "path" | "modified" | "accessed" | "created".
+      search = {
+        sort_by = "modified",
+        sort_reversed = true,
+        max_lines = 1000,
+      },
 
       -- Optional, determines how certain commands open notes. The valid options are:
       -- 1. "current" (the default) - to always open in the current window
@@ -227,44 +168,43 @@ return {
       -- 5. "hsplit_force" - always open a new horizontal split if the file is not in the adjacent
       open_notes_in = "current",
 
-      -- Optional, define your own callbacks to further customize behavior.
+      -- All callbacks are optional.
       callbacks = {
-        -- Runs at the end of `obsidian.setup()`.
-        post_setup = function(client) end,
+        -- Runs right after obsidian.setup() finishes.
+        -- post_setup = function() end,
 
-        -- Runs anytime you enter the buffer for a note.
-        enter_note = function(client, note) end,
+        -- Runs when `Note.create` builds a note object (opts.scope defaults to "plain").
+        -- create_note = function(note, opts) end,
 
-        -- Runs anytime you leave the buffer for a note.
-        leave_note = function(client, note) end,
+        -- Runs each time you enter / leave a note buffer.
+        -- enter_note = function(note) end,
+        -- leave_note = function(note) end,
 
-        -- Runs right before writing the buffer for a note.
-        -- NOTE: Delete space at the EOL, Delete blank lines at the EOF
-        pre_write_note = function(client, note)
+        -- Runs after an attachment is added (e.g. a pasted image).
+        -- add_attachment = function(path, ctx) end,
+
+        -- Runs anytime the active workspace is set / changed.
+        -- post_set_workspace = function(workspace) end,
+
+        -- Runs right before writing a note buffer.
+        -- Strip trailing whitespace (EOL) and blank lines at EOF.
+        pre_write_note = function(note)
           local bufnr = vim.api.nvim_get_current_buf()
-          -- 1) 取出全部行
           local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-
-          -- 2) 刪除每行末尾多餘的空白
           for i, line in ipairs(lines) do
             lines[i] = line:gsub("%s+$", "")
           end
           vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 
-          -- 3) 刪除尾端多餘的空行
           local total = #lines
           local last = total
           while last > 0 and lines[last]:match("^%s*$") do
             last = last - 1
           end
           if last < total then
-            -- 從第 last (0-based) 行開始，一口氣刪到檔尾
             vim.api.nvim_buf_set_lines(bufnr, last, total, false, {})
           end
         end,
-
-        -- Runs anytime the workspace is set/changed.
-        post_set_workspace = function(client, workspace) end,
       },
 
       -- Optional, configure additional syntax highlighting / extmarks.
@@ -278,7 +218,7 @@ return {
         -- The default folder to place images in via `:ObsidianPasteImg`.
         -- If this is a relative path it will be interpreted as relative to the vault root.
         -- You can always override this per image by passing a full path to the command instead of just a filename.
-        img_folder = "./assets", -- This is the default
+        folder = "./assets",
 
         -- Optional, customize the default name or prefix when pasting images via `:ObsidianPasteImg`.
         img_name_func = function()
@@ -286,9 +226,7 @@ return {
           return string.format("%s-", os.time())
         end,
 
-        -- A function that determines the text to insert in the note when pasting an image.
-        -- It takes two arguments, the `obsidian.Client` and an `obsidian.Path` to the image file.
-        -- This is the default implementation.
+        -- Text inserted in the note when pasting an image; receives the image `obsidian.Path`.
         img_text_func = function(path)
           return string.format("![%s](%s)", path.name, path)
         end,
@@ -302,17 +240,22 @@ return {
       },
     })
 
-    -- NOTE: Create `:ObsidianRenameID` to make 'renaming' apply `note_id_func`
-    vim.api.nvim_create_user_command("ObsidianCustomRename", function()
-      local newname = vim.fn.input("[Obsidian Rename] New File Name: ")
-      if newname ~= "" then
-        vim.cmd(("Obsidian rename %s"):format(newname))
+    -- rename calls save_to_buffer without asking should_save_frontmatter(),
+    -- so it writes frontmatter even when it is disabled.
+    -- Drop this once upstream PR #741 lands.
+    local Note = require("obsidian.note")
+    local save_to_buffer = Note.save_to_buffer
+    Note.save_to_buffer = function(self, opts)
+      opts = opts or {}
+      if opts.insert_frontmatter == nil then
+        opts.insert_frontmatter = self:should_save_frontmatter()
       end
-    end, { desc = "Rename current note" })
+      return save_to_buffer(self, opts)
+    end
 
     vim.api.nvim_create_user_command("ObsidianCustomSwitch", function()
       local q = vim.fn.input("[Obsidian Switch] Query: ")
       vim.cmd("Obsidian quick_switch " .. q)
-    end, { desc = "Quick switch / open" })
+    end, { desc = "Quick switch by query" })
   end,
 }

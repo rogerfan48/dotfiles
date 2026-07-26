@@ -714,7 +714,7 @@ M.obsidian = function()
   vim.keymap.set("n", "<leader>on", ":Obsidian new_from_template<CR>", { desc = "[OB] Create new note", silent = true })
   vim.keymap.set("n", "<leader>ob", ":Obsidian backlinks<CR>", { desc = "[OB] Check backlinks", silent = true })
   vim.keymap.set("n", "<leader>ot", ":Obsidian template<CR>", { desc = "[OB] Insert a template", silent = true })
-  vim.keymap.set("n", "<leader>or", ":ObsidianCustomRename<CR>", { desc = "[OB] Rename Note", silent = true })
+  vim.keymap.set("n", "<leader>or", ":Obsidian rename<CR>", { desc = "[OB] Rename Note", silent = true })
   vim.keymap.set("n", "<leader>oc", ":Obsidian toggle_checkbox<CR>", { desc = "[OB] Toggle checkbox", silent = true })
 
   vim.api.nvim_create_autocmd("User", {
@@ -870,6 +870,12 @@ end
 M.img_clip = {
   { "<leader>i", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
 }
+
+M.snacks_image = function()
+  vim.keymap.set("n", "<leader>mi", function()
+    require("snacks").image.hover()
+  end, { desc = "Show image at cursor", silent = true })
+end
 
 M.copilot = function()
   vim.keymap.set("n", "<leader>co", function()
