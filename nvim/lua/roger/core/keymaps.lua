@@ -89,6 +89,7 @@ M.general = function()
   -- tab management
   vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "Open new tab", silent = true })
   vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close current tab", silent = true })
+  vim.keymap.set("n", "<leader>tu", ":TabRestore<CR>", { desc = "Reopen last closed tab", silent = true })
   vim.keymap.set("n", "<leader>tk", ":tabn<CR>", { desc = "Go to next tab", silent = true })
   vim.keymap.set("n", "<leader>tj", ":tabp<CR>", { desc = "Go to previous tab", silent = true })
   vim.keymap.set("n", "<leader>tp", ":BufferLinePick<CR>", { desc = "Pick tab", silent = true })
