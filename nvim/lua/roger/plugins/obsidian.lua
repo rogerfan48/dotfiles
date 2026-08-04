@@ -255,7 +255,7 @@ return {
 
     vim.api.nvim_create_user_command("ObsidianCustomSwitch", function()
       local q = vim.fn.input("[Obsidian Switch] Query: ")
-      vim.cmd("Obsidian quick_switch " .. q)
+      vim.cmd("Obsidian quick_switch " .. q .. "-")
     end, { desc = "Quick switch by query" })
   end,
 }

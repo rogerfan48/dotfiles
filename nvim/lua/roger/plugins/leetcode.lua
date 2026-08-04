@@ -4,6 +4,21 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
+    {
+      -- leetcode.nvim calls `require("image").from_url` directly, so snacks.image
+      -- can't cover it. Integrations stay off: snacks owns markdown/obsidian.
+      "3rd/image.nvim",
+      build = false, -- skip the rockspec; use the magick CLI instead
+      opts = {
+        processor = "magick_cli",
+        backend = "kitty",
+        integrations = {},
+        max_width_window_percentage = 40,
+        tmux_show_only_in_active_window = true,
+        -- a float overlapping any part of the image clears the whole image
+        window_overlap_clear_enabled = true,
+      },
+    },
   },
   arg = "leetcode.nvim",
   opts = {
@@ -11,6 +26,7 @@ return {
     description = {
       width = "50%",
     },
+    image_support = true,
     keys = {
         toggle = { "q" },
         confirm = { "<CR>" },

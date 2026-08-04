@@ -2,7 +2,7 @@
 # Docs: ghostty +show-config --default --docs
 # Note: Ghostty has no inline comments
 
-macos-icon = blueprint
+macos-icon = official
 
 #=============================================================================
 #  Window
