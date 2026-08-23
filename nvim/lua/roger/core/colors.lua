@@ -218,6 +218,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
     -- `K` and Leetcode.nvim bg recovery
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 
+    hl = vim.api.nvim_get_hl(0, { name = "NeoTreeRootName", link = false })
+    hl.fg = "#ffffff"
+    hl.italic = true
+    vim.api.nvim_set_hl(0, "NeoTreeRootName", hl)
+
     -- Git status
     -- See `colorscheme.lua` with Catppuccin color palette
   end,
