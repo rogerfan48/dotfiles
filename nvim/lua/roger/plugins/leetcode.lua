@@ -12,7 +12,19 @@ return {
       opts = {
         processor = "magick_cli",
         backend = "kitty",
-        integrations = {},
+        -- `integrations = {}` is deep-merged, so every default stays on. Each
+        -- filetype has to be turned off by name.
+        integrations = {
+          markdown = { enabled = false },
+          asciidoc = { enabled = false },
+          typst = { enabled = false },
+          neorg = { enabled = false },
+          syslang = { enabled = false },
+          html = { enabled = false },
+          css = { enabled = false },
+          org = { enabled = false },
+        },
+        hijack_file_patterns = {},
         max_width_window_percentage = 40,
         tmux_show_only_in_active_window = true,
         -- a float overlapping any part of the image clears the whole image
