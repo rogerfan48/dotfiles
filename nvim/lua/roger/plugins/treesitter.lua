@@ -1,5 +1,5 @@
--- Parsers are compiled by the tree-sitter CLI with a C compiler. Without them
--- (e.g. glibc < 2.39 has no CLI build) only Neovim's bundled parsers highlight.
+-- Building parsers needs the tree-sitter CLI and a C compiler; without them only
+-- Neovim's bundled parsers work
 local can_build = vim.fn.executable("tree-sitter") == 1
   and (vim.fn.executable("cc") == 1 or vim.fn.executable("gcc") == 1 or vim.fn.executable("clang") == 1)
 
@@ -26,9 +26,8 @@ return {
       installed[lang] = true
     end
 
-    -- Always-installed set: languages that also show up injected in other files
-    -- (code blocks, html-in-markdown), which the on-demand handler below never
-    -- sees. Everything else installs when its file type is first opened.
+    -- Always-installed set, incl. injection-only parsers (html-in-markdown) that
+    -- the on-demand handler below never installs.
     local ensure_installed = {
       "bash", "c", "cpp", "diff", "gitcommit", "html", "json", "latex", "lua",
       "luadoc", "markdown", "markdown_inline", "python", "query", "regex",

@@ -2,9 +2,7 @@ return {
   "github/copilot.vim",
   init = function()
     vim.g.copilot_no_tab_map = true
-    -- Run the server bundled with the plugin; with npx on PATH it would
-    -- download another copy (~0.9 GB in ~/.npm)
-    vim.g.copilot_npx = false
+    vim.g.copilot_npx = false -- bundled server; npx would cache ~0.9 GB in ~/.npm
   end,
   config = function()
     vim.g.copilot_filetypes = {

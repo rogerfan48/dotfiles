@@ -1,8 +1,6 @@
--- Language tools install on first use: opening a file type installs its Mason
--- packages below (server, formatter, linter); mason-lspconfig then enables the
--- server and it attaches to the open buffers. gopls / golangci-lint, pylint,
--- cppcheck and chktex come from the system instead (see initialization.sh).
--- `mason_skip` in core/config_local.lua keeps chosen packages off a machine.
+-- Mason packages per file type, installed the first time such a file is opened;
+-- mason-lspconfig then enables the server for the open buffers. `mason_skip` in
+-- core/config_local.lua keeps packages off a machine.
 local packages_by_ft = {
   c = { "clangd", "clang-format" },
   cpp = { "clangd", "clang-format" },
@@ -27,9 +25,6 @@ local packages_by_ft = {
   tex = { "texlab", "latexindent" },
 }
 
--- Package sources that need a runtime on PATH (Mason would fail without it)
-local runtime_for = { npm = "npm", pypi = "python3", cargo = "cargo", golang = "go", gem = "gem" }
-
 local function notify(msg, level)
   vim.schedule(function()
     vim.notify(msg, level or vim.log.levels.INFO, { title = "Mason" })
@@ -41,20 +36,7 @@ local function setup_on_demand()
   for _, name in ipairs(require("roger.core.config").mason_skip or {}) do
     skip[name] = true
   end
-  local requested = {} -- filetypes already handled this session
-  local usable = {} -- runtime -> bool, checked once on first need
-
-  -- Mason's pip needs python >= 3.8 (e.g. RHEL 8 ships 3.6)
-  local function runtime_usable(runtime)
-    if usable[runtime] == nil then
-      usable[runtime] = vim.fn.executable(runtime) == 1
-      if usable[runtime] and runtime == "python3" then
-        vim.fn.system({ "python3", "-c", "import sys; sys.exit(sys.version_info < (3, 8))" })
-        usable[runtime] = vim.v.shell_error == 0
-      end
-    end
-    return usable[runtime]
-  end
+  local requested = {} -- file types already handled this session
 
   local function install_for(ft)
     local wanted = packages_by_ft[ft]
@@ -62,41 +44,33 @@ local function setup_on_demand()
       return
     end
     requested[ft] = true
-    for _, runtime in pairs(runtime_for) do -- probe here: the callback below may run in a fast event
-      runtime_usable(runtime)
-    end
     local registry = require("mason-registry")
-    registry.refresh(function() -- downloads the registry on a new machine
-      local started, blocked = {}, {}
+    registry.refresh(function()
+      local pkgs = {}
       for _, name in ipairs(wanted) do
         local ok, pkg = pcall(registry.get_package, name)
         if ok and not skip[name] and not pkg:is_installed() and not pkg:is_installing() then
-          local runtime = runtime_for[pkg.spec.source.id:match("^pkg:(%w+)/")]
-          if runtime and not usable[runtime] then
-            blocked[#blocked + 1] = ("%s (needs %s%s)"):format(name, runtime, runtime == "python3" and " >= 3.8" or "")
-          else
-            started[#started + 1] = pkg
-          end
+          pkgs[#pkgs + 1] = pkg
         end
       end
-      if #blocked > 0 then
-        notify("Skipped " .. table.concat(blocked, ", "), vim.log.levels.WARN)
-      end
-      if #started == 0 then
+      if #pkgs == 0 then
         return
       end
-      local names = vim.tbl_map(function(pkg) return pkg.name end, started)
-      notify(("Installing %s for %s ..."):format(table.concat(names, ", "), ft))
-      local pending, failed = #started, {}
-      for _, pkg in ipairs(started) do
+      local names = table.concat(vim.tbl_map(function(pkg) return pkg.name end, pkgs), ", ")
+      notify(("Installing %s for %s ..."):format(names, ft))
+      local pending, failed = #pkgs, {}
+      for _, pkg in ipairs(pkgs) do
         pkg:install({}, function(success, err)
           if not success then
             failed[#failed + 1] = ("%s: %s"):format(pkg.name, tostring(err))
           end
           pending = pending - 1
-          if pending == 0 and #failed == 0 then
-            notify(("%s ready"):format(table.concat(names, ", ")))
-          elseif pending == 0 then
+          if pending > 0 then
+            return
+          end
+          if #failed == 0 then
+            notify(names .. " ready")
+          else
             notify("Install failed\n" .. table.concat(failed, "\n"), vim.log.levels.ERROR)
           end
         end)
@@ -104,7 +78,7 @@ local function setup_on_demand()
     end)
   end
 
-  -- Real files only: hover docs and noice popups are markdown "nofile" buffers
+  -- Real files only: hover docs and noice popups are markdown buffers too
   local function is_file(buf)
     return vim.bo[buf].buftype == ""
   end
@@ -130,11 +104,8 @@ return {
   },
   config = function()
     require("mason").setup({
-      -- venvs start with the system's pip, which can be too old for current
-      -- wheels (e.g. pip 20 on Ubuntu 20.04 cannot install clang-format)
-      pip = { upgrade_pip = true },
+      pip = { upgrade_pip = true }, -- a distro's old pip can't install current wheels
     })
-    -- Enables every installed server, including ones installed later on
     require("mason-lspconfig").setup({ automatic_enable = true })
     setup_on_demand()
   end,

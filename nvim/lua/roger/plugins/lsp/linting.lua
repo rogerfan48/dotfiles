@@ -87,7 +87,6 @@ return {
           return
         end
 
-        -- Skip linters that aren't installed (e.g. no cppcheck without sudo)
         lint.try_lint(nil, {
           filter = function(linter)
             local cmd = type(linter.cmd) == "function" and linter.cmd() or linter.cmd

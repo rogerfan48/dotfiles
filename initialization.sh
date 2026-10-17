@@ -46,18 +46,6 @@ done
 export ASSUME_YES # setup_link.sh asks through the same helper
 
 # --- shared helpers ---------------------------------------------------
-# .gitconfig says diff3 because git < 2.35 aborts on zdiff3; where the local
-# git supports it, .gitconfig.local (read later, so it wins) upgrades to zdiff3.
-set_conflict_style() {
-    local file="$DOTFILES_DIR/.gitconfig.local" v
-    [[ -f "$file" ]] || return 0
-    git config -f "$file" merge.conflictStyle >/dev/null && return 0 # already decided here
-    v="$(git --version | grep -oE '[0-9]+\.[0-9]+' | head -n 1)"
-    if [[ "$(printf '%s\n2.35\n' "$v" | sort -V | head -n 1)" == 2.35 ]]; then
-        git config -f "$file" merge.conflictStyle zdiff3 && ok "git $v: merge.conflictStyle zdiff3 (.gitconfig.local)"
-    fi
-}
-
 install_jetbrainsmono_font() {
     local font_url="https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip"
     local temp_zip="/tmp/JetBrainsMono.zip"
@@ -132,9 +120,7 @@ rebuild_treesitter_parsers() {
     local parser_dir="$HOME/.local/share/nvim/site/parser" # nvim-treesitter (main) install dir
     [ -d "$parser_dir" ] || return 0 # not set up yet
 
-    # The stamp lives next to parser/: nvim-treesitter reads every file inside it as a language
-    local stamp="$HOME/.local/share/nvim/site/.parsers-built-for"
-    [ -f "$parser_dir/.built-for" ] && mv "$parser_dir/.built-for" "$stamp" # old location
+    local stamp="$HOME/.local/share/nvim/site/.parsers-built-for" # inside parser/ it reads as a language
     local current
     current="$(nvim --version | head -n 1)"
     if [ ! -f "$stamp" ]; then
@@ -770,7 +756,6 @@ setup_linux() {
 
     section "Links"
     bash "$DOTFILES_DIR/setup_link.sh"
-    set_conflict_style
 
     section "Shell and plugins"
     if have tmux && [[ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" && -e "$HOME/.tmux.conf" ]]; then
@@ -858,7 +843,6 @@ if [[ "$OS" == "Darwin" ]]; then
     rebuild_treesitter_parsers
     step "Creating dotfiles symbolic links"
     bash "$DOTFILES_DIR/setup_link.sh"
-    set_conflict_style
     ok "Environment initialization complete!"
 elif [[ "$OS" == "Linux" ]]; then
     for c in tar gunzip install sort; do
