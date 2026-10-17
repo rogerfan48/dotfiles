@@ -17,6 +17,15 @@ M.general = function()
 
   vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor pos" })
 
+  -- Tabout: jump over the closing char. nvim-cmp's <Tab> falls back to this, so it
+  -- keeps working when cmp is disabled (e.g. LeetCode sessions).
+  local tabout_chars = { [")"] = true, ["]"] = true, ["}"] = true, [">"] = true, ['"'] = true, ["'"] = true }
+  vim.keymap.set("i", "<Tab>", function()
+    local col = vim.api.nvim_win_get_cursor(0)[2]
+    local next_char = vim.api.nvim_get_current_line():sub(col + 1, col + 1)
+    return tabout_chars[next_char] and "<Right>" or "<Tab>"
+  end, { expr = true, desc = "Tabout or insert Tab" })
+
   -- Misspell correction
   -- "z=": check misspell correction options
   -- "zg": add the word into good word pool
