@@ -682,8 +682,9 @@ choose_login_shell() {
 write_bashrc_block() {
     local rc="$HOME/.bashrc" begin="# >>> dotfiles >>>" end="# <<< dotfiles <<<"
     touch "$rc"
-    sed -i -e "/^$begin\$/,/^$end\$/d" \
-        -e '/^# >>> dotfiles-nosudo >>>$/,/^# <<< dotfiles-nosudo <<<$/d' "$rc"
+    sed -i "/^$begin\$/,/^$end\$/d" "$rc"
+    # the block must start on its own line even if the file lacks a final newline
+    [[ -s "$rc" && -n "$(tail -c 1 "$rc")" ]] && echo >>"$rc"
     {
         echo "$begin"
         cat <<'EOF'
