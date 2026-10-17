@@ -7,7 +7,9 @@ return {
     {
       -- leetcode.nvim calls `require("image").from_url` directly, so snacks.image
       -- can't cover it. Integrations stay off: snacks owns markdown/obsidian.
-      "3rd/image.nvim",
+      -- TODO: back to "3rd/image.nvim" once the visual-mode fix is merged upstream
+      "rogerfan48/image.nvim",
+      branch = "fix/preserve-visual-mode",
       build = false, -- skip the rockspec; use the magick CLI instead
       opts = {
         processor = "magick_cli",
