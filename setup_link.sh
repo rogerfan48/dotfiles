@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# --- output helpers -------------------------------------------------
-if [[ -t 1 ]]; then
-    C_RESET=$'\e[0m'; C_BLUE=$'\e[1;34m'; C_GREEN=$'\e[32m'
-    C_YELLOW=$'\e[33m'; C_RED=$'\e[1;31m'; C_DIM=$'\e[2m'
-fi
-step() { printf '%s\n' "${C_BLUE}▶ $*${C_RESET}"; }  # action in progress
-ok()   { printf '%s\n' "${C_GREEN}✓ $*${C_RESET}"; }  # done / success
-skip() { printf '%s\n' "${C_DIM}• $*${C_RESET}"; }    # nothing to do
-warn() { printf '%s\n' "${C_YELLOW}⚠ $*${C_RESET}"; }
-err()  { printf '%s\n' "${C_RED}✗ $*${C_RESET}"; }
+source "$(dirname "${BASH_SOURCE[0]}")/lib/ui.sh"
 
 OS=$(uname -s)
 step "Detected OS: $OS"
@@ -31,7 +22,6 @@ if [[ ! -e "$DOTFILES_DIR/.gitconfig.local" ]]; then
 fi
 
 declare -A FILES_TO_LINK
-declare -A NEW_FILES_TO_LINK
 if [[ "$OS" == "Darwin" ]]; then # macOS
     FILES_TO_LINK=(
         [".zshrc"]="$HOME/.zshrc"
@@ -95,8 +85,8 @@ link_line() {  # green check, aligned link, dim arrow + target
         "$C_GREEN" "$C_RESET" "$LINK_WIDTH" "$1" "$C_DIM" "$2" "$C_RESET"
 }
 
-OVERWRITE_LINKS=()
-NEW_LINKS=()
+# Sort each entry: already linked (nothing to do), new, or something in the way
+LINKED=() NEW=() CONFLICT=()
 step "Checking existing links"
 for file in "${!FILES_TO_LINK[@]}"; do
     target="${DOTFILES_DIR}/$file"
@@ -107,71 +97,50 @@ for file in "${!FILES_TO_LINK[@]}"; do
         continue
     fi
 
-    if [[ -e "$link" || -L "$link" ]]; then
-        OVERWRITE_LINKS+=("$(printf '%-*s|%s' "$LINK_WIDTH" "$link" "$target")")
+    if [[ -L "$link" && "$(readlink "$link")" == "$target" ]]; then
+        LINKED+=("$file")
+    elif [[ -e "$link" || -L "$link" ]]; then
+        CONFLICT+=("$file")
     else
-        NEW_LINKS+=("$(printf '%-*s|%s' "$LINK_WIDTH" "$link" "$target")")
-        NEW_FILES_TO_LINK+=( ["$file"]=${FILES_TO_LINK["$file"]} )
+        NEW+=("$file")
     fi
 done
 
-print_pending() {  # dim bullet, link | target
-    local link="${1%%|*}" target="${1##*|}"
-    printf '  %s• %s → %s%s\n' "$C_DIM" "$link" "$target" "$C_RESET"
+print_pending() {  # dim bullet, aligned link → target
+    printf '  %s• %-*s → %s%s\n' "$C_DIM" "$LINK_WIDTH" "${FILES_TO_LINK[$1]}" "$DOTFILES_DIR/$1" "$C_RESET"
 }
 
-if [[ ${#OVERWRITE_LINKS[@]} -eq 0 ]]; then
-    skip "No existing links to overwrite"
-else
-    warn "These links already exist and will be overwritten:"
-    for item in "${OVERWRITE_LINKS[@]}"; do print_pending "$item"; done
-
-    printf '%sOverwrite all these links? (y/n): %s' "$C_YELLOW" "$C_RESET"
-    read -r answer
-    if [[ "$answer" != "y" ]]; then
-        if [[ ${#NEW_LINKS[@]} -eq 0 ]]; then
-            skip "No new links need to be established"
-            ok "No change being made!"
-            exit 0
-        else
-            step "These are new links and will be added:"
-            for item in "${NEW_LINKS[@]}"; do print_pending "$item"; done
-
-            printf '%sAdd all these links? (y/n): %s' "$C_YELLOW" "$C_RESET"
-            read -r ans
-            if [[ "$ans" != "y" ]]; then
-                ok "No change being made!"
-                exit 0
-            else
-                FILES_TO_LINK=()
-                for key in "${!NEW_FILES_TO_LINK[@]}"; do
-                    FILES_TO_LINK["$key"]="${NEW_FILES_TO_LINK["$key"]}"
-                done
-            fi
-        fi
+[[ ${#LINKED[@]} -gt 0 ]] && skip "${#LINKED[@]} links already in place"
+TODO=("${NEW[@]}")
+if [[ ${#CONFLICT[@]} -gt 0 ]]; then
+    warn "These paths are in the way; files and folders are kept as <path>.bak-<time>:"
+    for file in "${CONFLICT[@]}"; do print_pending "$file"; done
+    if ask "Replace them with links?" y; then
+        TODO+=("${CONFLICT[@]}")
+    else
+        skip "Keeping them"
     fi
 fi
 
-step "Creating symbolic links"
-for file in "${!FILES_TO_LINK[@]}"; do
-    target="${DOTFILES_DIR}/$file"
-    link="${FILES_TO_LINK[$file]}"
-
-    [[ -e "$target" ]] || continue
-
-    link_dir=$(dirname "$link")
-    mkdir -p "$link_dir"
-
-    if [[ -d "$link" && ! -L "$link" ]]; then
-        warn "Removing existing directory: $link"
-        rm -rf "$link"
-    fi
-
-    ln -sfn "$target" "$link"
-    link_line "$link" "$target"
-done
-
-ok "All symbolic links created"
+if [[ ${#TODO[@]} -eq 0 ]]; then
+    ok "Nothing new to link"
+else
+    step "Creating symbolic links"
+    backup_suffix="bak-$(date +%Y%m%d-%H%M%S)"
+    for file in "${TODO[@]}"; do
+        target="${DOTFILES_DIR}/$file"
+        link="${FILES_TO_LINK[$file]}"
+        mkdir -p "$(dirname "$link")"
+        if [[ -L "$link" ]]; then
+            rm -f "$link" # a link to somewhere else: nothing to keep
+        elif [[ -e "$link" ]]; then
+            mv "$link" "$link.$backup_suffix" && warn "Kept the old one as $link.$backup_suffix"
+        fi
+        ln -s "$target" "$link"
+        link_line "$link" "$target"
+    done
+    ok "All symbolic links created"
+fi
 
 if [[ "$GITCONFIG_LOCAL_SEEDED" == true ]]; then
     warn "Seeded .gitconfig.local with a placeholder identity"

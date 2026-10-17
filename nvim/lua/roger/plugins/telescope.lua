@@ -94,7 +94,8 @@ return {
         },
       })
 
-      telescope.load_extension("fzf")
+      -- libfzf is built with make + cc; without them keep telescope's own sorter
+      pcall(telescope.load_extension, "fzf")
     end,
   },
   {

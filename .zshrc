@@ -93,10 +93,12 @@ typeset -U path PATH
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
 alias bat="bat --paging never" # To prevent using paging when many lines
-if [[ "$OS" == "Darwin" ]]; then
-    source <(fzf --zsh) # Set up fzf key bindings and fuzzy completion
-elif [[ "$OS" == "Linux" ]]; then
-    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf key bindings and fuzzy completion: fzf >= 0.48 on PATH (brew, initialization.sh),
+# else an older git install in ~/.fzf (its fzf.zsh also puts fzf on PATH)
+if command -v fzf >/dev/null; then
+    source <(fzf --zsh)
+elif [[ -f ~/.fzf.zsh ]]; then
+    source ~/.fzf.zsh
 fi
 
 # SEC: Custom functions

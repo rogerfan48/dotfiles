@@ -1,6 +1,9 @@
 return {
   "akinsho/flutter-tools.nvim",
-  lazy = false,
+  ft = "dart",
+  cond = function() -- only where the Flutter SDK is installed
+    return vim.fn.executable("flutter") == 1
+  end,
   dependencies = {
     "nvim-lua/plenary.nvim",
     "stevearc/dressing.nvim",

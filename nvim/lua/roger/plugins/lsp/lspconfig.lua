@@ -125,7 +125,7 @@ return {
       filetypes = { "sh", "bash" },
     })
 
-    -- gopls: system-installed (see initialization.sh); staticcheck left to golangci-lint.
+    -- gopls: system-installed and optional (see initialization.sh); staticcheck left to golangci-lint.
     vim.lsp.config("gopls", {
       settings = {
         gopls = {
@@ -140,7 +140,9 @@ return {
         },
       },
     })
-    vim.lsp.enable("gopls")
+    if vim.fn.executable("gopls") == 1 then
+      vim.lsp.enable("gopls")
+    end
 
     vim.lsp.config("taplo", {
       settings = {

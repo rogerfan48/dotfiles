@@ -87,7 +87,13 @@ return {
           return
         end
 
-        lint.try_lint()
+        -- Skip linters that aren't installed (e.g. no cppcheck without sudo)
+        lint.try_lint(nil, {
+          filter = function(linter)
+            local cmd = type(linter.cmd) == "function" and linter.cmd() or linter.cmd
+            return vim.fn.executable(cmd) == 1
+          end,
+        })
       end,
     })
 

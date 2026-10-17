@@ -65,11 +65,11 @@ mv dotfiles .dotfiles
 
 ```bash
 cd ~/.dotfiles
-# For Ubuntu, before running, make sure uninstall apt-installed neovim to avoid conflicts
-sudo apt remove neovim
-
-bash initialization.sh
+bash initialization.sh   # -y: take the defaults · --dry-run: show the plan only
 ```
+
+- **macOS**: installs with Homebrew.
+- **Linux** (x86_64 / aarch64, no sudo needed): shows a plan, then installs pinned prebuilt tools under `~/.local`. sudo is only offered for missing system packages (tmux, gcc, ...). Without root, zsh comes from [zsh-bin](https://github.com/romkatv/zsh-bin) and interactive bash switches to it (`NO_ZSH=1 bash` stays in bash). To upgrade, bump a version at the top of the script (`--check-updates` lists newer releases) and re-run.
 
 It'll run `./setup_link.sh` to create symlinks for all the required config files inside the initialization script. If you want to re-establish the symlinks one day, simply run: `bash ~/.dotfiles/setup_link.sh`
 
@@ -81,13 +81,15 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
     - Inside tmux, type `Ctrl+Space + I` to install tmux plugins
 - `nvim`: open neovim
     - It will auto-install plugins via lazy.nvim on first launch
+    - Language servers, formatters and linters install (Mason) the first time you open a file type
     - Inside neovim, run `:Copilot setup` to get the GitHub Copilot working
 
 ### Step 4. Machine-local config
 
-Two `.local` files live in `~/.dotfiles/`, are **gitignored**, and are symlinked to `$HOME` per machine — edit them here, in the repo, for anything that differs between machines:
+These `.local` files live in `~/.dotfiles/`, are **gitignored**, and (except the nvim one) are symlinked to `$HOME` per machine — edit them here, in the repo, for anything that differs between machines:
 
 - **`.zshrc.local`** — machine-specific shell settings (extra `PATH`, tool hooks, etc.).
+- **`nvim/lua/roger/core/config_local.lua`** — Neovim overrides, e.g. `return { mason_skip = { "basedpyright" } }` to keep big Mason packages off a server with a disk quota.
 - **⚠️ Required — `.gitconfig.local`** — set your git `name`/`email` here, or commits won't work. `.gitconfig` pulls it in via `[include]`; `setup_link.sh` seeds it with a placeholder on first run, so just fill it in.
 
 ## Structure and Customization

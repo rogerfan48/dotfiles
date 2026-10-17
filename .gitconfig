@@ -42,7 +42,9 @@
 [fetch]
 	prune = true
 [merge]
-	conflictStyle = zdiff3
+	; zdiff3 needs git >= 2.35 and older git aborts on it, so the shared value is
+	; diff3; initialization.sh sets zdiff3 in .gitconfig.local where git allows
+	conflictStyle = diff3
 [diff]
 	colorMoved = default
 [rerere]

@@ -1,7 +1,12 @@
+-- Parsers are compiled by the tree-sitter CLI with a C compiler. Without them
+-- (e.g. glibc < 2.39 has no CLI build) only Neovim's bundled parsers highlight.
+local can_build = vim.fn.executable("tree-sitter") == 1
+  and (vim.fn.executable("cc") == 1 or vim.fn.executable("gcc") == 1 or vim.fn.executable("clang") == 1)
+
 return {
   "nvim-treesitter/nvim-treesitter",
   branch = "main",
-  build = ":TSUpdate",
+  build = can_build and ":TSUpdate" or nil,
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "windwp/nvim-ts-autotag",
@@ -21,17 +26,17 @@ return {
       installed[lang] = true
     end
 
-    -- Always-installed set, incl. injection-only parsers (html-in-markdown) that
-    -- the on-demand handler below never installs.
+    -- Always-installed set: languages that also show up injected in other files
+    -- (code blocks, html-in-markdown), which the on-demand handler below never
+    -- sees. Everything else installs when its file type is first opened.
     local ensure_installed = {
-      "bash", "c", "cpp", "css", "scss", "diff", "gitcommit", "go", "gomod",
-      "html", "javascript", "json", "jsonc", "lua", "luadoc", "markdown",
-      "markdown_inline", "python", "query", "regex", "toml", "tsx",
-      "typescript", "vim", "vimdoc", "yaml", "latex",
+      "bash", "c", "cpp", "diff", "gitcommit", "html", "json", "latex", "lua",
+      "luadoc", "markdown", "markdown_inline", "python", "query", "regex",
+      "toml", "vim", "vimdoc", "yaml",
     }
     local to_install = {}
     for _, lang in ipairs(ensure_installed) do
-      if available[lang] and not installed[lang] then
+      if can_build and available[lang] and not installed[lang] then
         to_install[#to_install + 1] = lang
       end
     end
@@ -53,6 +58,10 @@ return {
       group = vim.api.nvim_create_augroup("roger_treesitter", { clear = true }),
       callback = function(ev)
         local lang = vim.treesitter.language.get_lang(ev.match) or ev.match
+        if not can_build then
+          pcall(vim.treesitter.start, ev.buf, lang) -- bundled parsers only
+          return
+        end
         if not available[lang] then
           return
         end
