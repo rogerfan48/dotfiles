@@ -12,14 +12,14 @@
 # To upgrade a tool, bump its version here and re-run.
 
 # --- pinned versions (Linux) ----------------------------------------
-NVIM_VERSION=0.12.4
+NVIM_VERSION=0.12.5    # old-glibc builds (neovim-releases) lag; pin a version it has
 TS_VERSION=0.27.1      # tree-sitter CLI; nvim-treesitter (main) needs >= 0.26.1
 RG_VERSION=15.2.0
 FD_VERSION=10.5.0
 FZF_VERSION=0.74.5     # >= 0.48 for `fzf --bash` / `fzf --zsh`
 BAT_VERSION=0.26.1
-LAZYGIT_VERSION=0.63.1
-DELTA_VERSION=0.19.2
+LAZYGIT_VERSION=0.66.2
+DELTA_VERSION=0.20.1
 NODE_VERSION=24.22.0   # LTS
 GO_VERSION=1.27.2
 ZSH_BIN_COMMIT=0c5d2f31679a6bd9a639c1d0b027feed7c271625 # romkatv/zsh-bin installer (zsh 5.8)
@@ -132,7 +132,9 @@ rebuild_treesitter_parsers() {
     local parser_dir="$HOME/.local/share/nvim/site/parser" # nvim-treesitter (main) install dir
     [ -d "$parser_dir" ] || return 0 # not set up yet
 
-    local stamp="$parser_dir/.built-for"
+    # The stamp lives next to parser/: nvim-treesitter reads every file inside it as a language
+    local stamp="$HOME/.local/share/nvim/site/.parsers-built-for"
+    [ -f "$parser_dir/.built-for" ] && mv "$parser_dir/.built-for" "$stamp" # old location
     local current
     current="$(nvim --version | head -n 1)"
     if [ ! -f "$stamp" ]; then
@@ -146,10 +148,10 @@ rebuild_treesitter_parsers() {
         return 0
     fi
 
-    step "Neovim changed (${current}) — rebuilding treesitter parsers"
-    if nvim --headless "+lua local ts=require('nvim-treesitter'); local l=ts.get_installed('parsers'); if #l>0 then ts.install(l,{force=true}):wait(600000) end" +qa; then
+    if run "Rebuilding treesitter parsers for ${current}" \
+        nvim --headless "+lua local ts=require('nvim-treesitter'); local l=ts.get_installed('parsers'); if #l>0 then ts.install(l,{force=true}):wait(600000) end" +qa; then
         echo "$current" >"$stamp"
-        ok "Treesitter parser rebuild complete"
+        ok "Treesitter parsers rebuilt for ${current}"
     else
         warn "Parser rebuild failed — run :TSUpdate inside nvim"
     fi
@@ -615,7 +617,7 @@ plan_linux() {
     plan_tool fd "$FD_VERSION" "" "4 MB" inst_fd
     plan_tool fzf "$FZF_VERSION" 0.48 "5 MB" inst_fzf
     plan_tool bat "$BAT_VERSION" "" "6 MB" inst_bat
-    plan_tool lazygit "$LAZYGIT_VERSION" "" "19 MB" inst_lazygit
+    plan_tool lazygit "$LAZYGIT_VERSION" 0.64 "19 MB" inst_lazygit # config.yml: git.diffRenderers
     plan_tool delta "$DELTA_VERSION" "" "7 MB" inst_delta
     if [[ "$WANT_NODE" == true ]]; then
         plan_tool node "$NODE_VERSION" 20 "190 MB" inst_node 2.28
