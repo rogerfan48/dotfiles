@@ -88,7 +88,7 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
 
 These `.local` files live in `~/.dotfiles/`, are **gitignored**, and (except the nvim one) are symlinked to `$HOME` per machine — edit them here, in the repo, for anything that differs between machines:
 
-- **`.zshrc.local`** — machine-specific shell settings (extra `PATH`, tool hooks, etc.).
+- **`.zshrc.local`** — machine-specific shell settings (extra `PATH`, tool hooks, etc.). On Linux, `export MACHINE_NAME=nano4` sets the name shown after the OS icon in the tmux status bar (defaults to the hostname).
 - **`nvim/lua/roger/core/config_local.lua`** — Neovim overrides, e.g. `return { mason_skip = { "basedpyright" } }` to keep big Mason packages off a server with a disk quota.
 - **⚠️ Required — `.gitconfig.local`** — set your git `name`/`email` here, or commits won't work. `.gitconfig` pulls it in via `[include]`; `setup_link.sh` seeds it with a placeholder on first run, so just fill it in.
 
