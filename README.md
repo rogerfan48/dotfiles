@@ -79,6 +79,7 @@ Remember to restart your terminal after this step, or `zsh` + `source ~/.zshrc`.
 
 - `tmux new -s <session_name>`: start a new tmux session
     - Inside tmux, type `Ctrl+Space + I` to install tmux plugins
+    - `NO_RESTORE=1 tmux`: start the tmux server without auto-restoring the last saved sessions (only takes effect when no server is running)
 - `nvim`: open neovim
     - It will auto-install plugins via lazy.nvim on first launch
     - Language servers, formatters and linters install (Mason) the first time you open a file type
